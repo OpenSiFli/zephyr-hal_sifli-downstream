@@ -384,71 +384,71 @@ typedef enum IRQn
 #include "mem_map.h"
 
 //================== CORE ===================
-#include "cache.h"
+#include "regs/cache.h"
 #define CACHE_BASE          0xE0080000
 #define hwp_cache       ((CACHE_TypeDef         *)    CACHE_BASE)
 
 //================== Peripherals ===================
-#include "bt_mac.h"
-#include "bt_phy.h"
-#include "bt_rfc.h"
-#include "hpsys_rcc.h"
-#include "lpsys_rcc.h"
-#include "dmac.h"
-#include "extdma.h"
+#include "regs/bt_mac.h"
+#include "regs/bt_phy.h"
+#include "regs/bt_rfc.h"
+#include "regs/hpsys_rcc.h"
+#include "regs/lpsys_rcc.h"
+#include "regs/dmac.h"
+#include "regs/extdma.h"
 #include "usart.h"
-#include "epic.h"
-#include "v2d_gpu.h"
-#include "spi.h"
+#include "regs/epic.h"
+#include "regs/v2d_gpu.h"
+#include "regs/spi.h"
 #include "gpt.h"
-#include "atim.h"
-#include "audprc.h"
+#include "regs/atim.h"
+#include "regs/audprc.h"
 #include "btim.h"
-#include "mailbox1.h"
-#include "mailbox2.h"
-#include "rtc.h"
-#include "mpi.h"
+#include "regs/mailbox1.h"
+#include "regs/mailbox2.h"
+#include "regs/rtc.h"
+#include "regs/mpi.h"
 #include "nn_acc.h"
-#include "fft.h"
-#include "dsi_host.h"
-#include "dsi_phy.h"
+#include "regs/fft.h"
+#include "regs/dsi_host.h"
+#include "regs/dsi_phy.h"
 #include "lptim.h"
-#include "i2c.h"
-#include "hpsys_cfg.h"
-#include "lpsys_cfg.h"
-#include "efusec.h"
-#include "i2s.h"
+#include "regs/i2c.h"
+#include "regs/hpsys_cfg.h"
+#include "regs/lpsys_cfg.h"
+#include "regs/efusec.h"
+#include "regs/i2s.h"
 #include "crc.h"
-#include "lcd_if.h"
-#include "sdmmc.h"
-#include "sdhci.h"
-#include "aes_acc.h"
-#include "gpio1.h"
-#include "gpio2.h"
-#include "hpsys_pinmux.h"
-#include "lpsys_pinmux.h"
-#include "hpsys_aon.h"
-#include "lpsys_aon.h"
-#include "pmuc.h"
-#include "gpadc.h"
-#include "sdadc.h"
+#include "regs/lcd_if.h"
+#include "regs/sdmmc.h"
+#include "regs/sdhci.h"
+#include "regs/aes_acc.h"
+#include "regs/gpio1.h"
+#include "regs/gpio2.h"
+#include "regs/hpsys_pinmux.h"
+#include "regs/lpsys_pinmux.h"
+#include "regs/hpsys_aon.h"
+#include "regs/lpsys_aon.h"
+#include "regs/pmuc.h"
+#include "regs/gpadc.h"
+#include "regs/sdadc.h"
 #include "tsen.h"
-#include "trng.h"
-#include "ptc.h"
-#include "ezip.h"
-#include "patch.h"
-#include "wdt.h"
-#include "pdm.h"
-#include "busmon.h"
-#include "lpcomp.h"
-#include "usbc_x.h"
-#include "audcodec_hp.h"
-#include "audcodec_lp.h"
-#include "can.h"
-#include "sci.h"
-#include "facc.h"
-#include "jpegdec.h"
-#include "jpegenc.h"
+#include "regs/trng.h"
+#include "regs/ptc.h"
+#include "regs/ezip.h"
+#include "regs/patch.h"
+#include "regs/wdt.h"
+#include "regs/pdm.h"
+#include "regs/busmon.h"
+#include "regs/lpcomp.h"
+#include "regs/usbc_x.h"
+#include "regs/audcodec_hp.h"
+#include "regs/audcodec_lp.h"
+#include "regs/can.h"
+#include "regs/sci.h"
+#include "regs/facc.h"
+#include "regs/jpegdec.h"
+#include "regs/jpegenc.h"
 
 /** @addtogroup Peripheral_memory_map
   * @{
@@ -870,20 +870,7 @@ typedef enum
     SF_SUCCESS = !SF_ERROR
 } ErrorStatus;
 
-
-#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
-
-#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
-
-#define READ_BIT(REG, BIT)    ((REG) & (BIT))
-
-#define CLEAR_REG(REG)        ((REG) = (0x0))
-
-#define WRITE_REG(REG, VAL)   ((REG) = (VAL))
-
-#define READ_REG(REG)         ((REG))
-
-#define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
+#include "cmsis_utils.h"
 
 #define IS_LPUART_INSTANCE(INSTANCE)    (0)
 

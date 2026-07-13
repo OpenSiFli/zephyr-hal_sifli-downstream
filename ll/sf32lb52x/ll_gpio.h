@@ -8,7 +8,8 @@
 #define __LL_GPIO_H
 
 #include <stdint.h>
-#include "register.h"
+#include "mem_map.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"

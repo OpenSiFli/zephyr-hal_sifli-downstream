@@ -8,7 +8,8 @@
 #define __LL_CRC_H
 
 #include <stdint.h>
-#include "register.h"
+#include "crc.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"

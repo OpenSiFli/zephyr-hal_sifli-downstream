@@ -8,7 +8,8 @@
 #define __LL_GPADC_H
 
 #include <stdint.h>
-#include "register.h"
+#include "regs/gpadc.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"

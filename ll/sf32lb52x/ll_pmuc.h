@@ -8,7 +8,8 @@
 #define __LL_PMUC_H
 
 #include <stdint.h>
-#include "register.h"
+#include "regs/pmuc.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"
