@@ -8,7 +8,8 @@
 #define __LL_AES_H
 
 #include <stdint.h>
-#include "register.h"
+#include "regs/aes_acc.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"

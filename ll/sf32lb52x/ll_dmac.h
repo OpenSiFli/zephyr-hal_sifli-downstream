@@ -8,7 +8,8 @@
 #define __LL_DMAC_H
 
 #include <stdint.h>
-#include "register.h"
+#include "regs/dmac.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"

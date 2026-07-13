@@ -294,56 +294,56 @@ typedef enum IRQn
 #include "mem_map.h"
 
 //================== CORE ===================
-#include "cache.h"
+#include "regs/cache.h"
 #define CACHE_BASE          0xE0080000
 #define hwp_cache       ((CACHE_TypeDef         *)    CACHE_BASE)
-#include "bt_mac.h"
-#include "bt_phy.h"
-#include "bt_rfc.h"
-#include "hpsys_rcc.h"
-#include "lpsys_rcc.h"
-#include "dmac.h"
-#include "extdma.h"
+#include "regs/bt_mac.h"
+#include "regs/bt_phy.h"
+#include "regs/bt_rfc.h"
+#include "regs/hpsys_rcc.h"
+#include "regs/lpsys_rcc.h"
+#include "regs/dmac.h"
+#include "regs/extdma.h"
 #include "usart.h"
-#include "epic.h"
-#include "spi.h"
+#include "regs/epic.h"
+#include "regs/spi.h"
 #include "gpt.h"
-#include "atim.h"
-#include "audprc.h"
+#include "regs/atim.h"
+#include "regs/audprc.h"
 #include "btim.h"
-#include "mailbox1.h"
-#include "mailbox2.h"
-#include "rtc.h"
-#include "mpi.h"
+#include "regs/mailbox1.h"
+#include "regs/mailbox2.h"
+#include "regs/rtc.h"
+#include "regs/mpi.h"
 #include "lptim.h"
-#include "i2c.h"
-#include "hpsys_cfg.h"
-#include "lpsys_cfg.h"
-#include "efusec.h"
-#include "i2s.h"
+#include "regs/i2c.h"
+#include "regs/hpsys_cfg.h"
+#include "regs/lpsys_cfg.h"
+#include "regs/efusec.h"
+#include "regs/i2s.h"
 #include "crc.h"
-#include "lcd_if.h"
-#include "sd.h"
-#include "aes_acc.h"
-#include "gpio1.h"
-#include "gpio2.h"
-#include "hpsys_pinmux.h"
-#include "lpsys_pinmux.h"
-#include "hpsys_aon.h"
-#include "lpsys_aon.h"
-#include "pmuc.h"
-#include "gpadc.h"
-#include "trng.h"
-#include "ptc.h"
-#include "ezip.h"
-#include "patch.h"
-#include "wdt.h"
-#include "pdm.h"
-#include "usbc_x.h"
-#include "audcodec.h"
+#include "regs/lcd_if.h"
+#include "regs/sd.h"
+#include "regs/aes_acc.h"
+#include "regs/gpio1.h"
+#include "regs/gpio2.h"
+#include "regs/hpsys_pinmux.h"
+#include "regs/lpsys_pinmux.h"
+#include "regs/hpsys_aon.h"
+#include "regs/lpsys_aon.h"
+#include "regs/pmuc.h"
+#include "regs/gpadc.h"
+#include "regs/trng.h"
+#include "regs/ptc.h"
+#include "regs/ezip.h"
+#include "regs/patch.h"
+#include "regs/wdt.h"
+#include "regs/pdm.h"
+#include "regs/usbc_x.h"
+#include "regs/audcodec.h"
 #include "tsen.h"
-#include "secu1.h"
-#include "secu2.h"
+#include "regs/secu1.h"
+#include "regs/secu2.h"
 
 /******************* Base Addresss Definition ******************/
 //================== MCU_HPSYS ===================
@@ -389,8 +389,6 @@ typedef enum IRQn
 #define I2C3_BASE           0x5009e000
 #define I2C4_BASE           0x5009f000
 //------------------------------------
-#define GPIO1_BASE          0x500a0000
-//------------------------------------
 #define GPTIM2_BASE         0x500b0000
 #define BTIM2_BASE          0x500b1000
 //------------------------------------
@@ -420,7 +418,6 @@ typedef enum IRQn
 #define LPSYS_AON_BASE      0x40040000
 #define LPTIM3_BASE         0x40042000
 //------------------------------------
-#define GPIO2_BASE          0x40080000
 #define BT_RFC_MEM_BASE     0x40082000
 #define BT_RFC_REG_BASE     0x40082800
 #define BT_PHY_BASE         0x40084000
@@ -641,28 +638,7 @@ typedef enum
     SUCCESS = !ERROR
 } ErrorStatus;
 
-
-#define MAKE_REG_VAL(val, mask, offset)  ((((uint32_t)(val)) << (offset)) & (mask))
-
-#define MAKE_REG_VAL2(val, bits_name)    ((((uint32_t)(val)) << (bits_name##_Pos)) & (bits_name##_Msk))
-
-#define GET_REG_VAL(reg, mask, offset)   ((((uint32_t)(reg)) & (mask)) >> (offset))
-
-#define GET_REG_VAL2(reg, bits_name)     ((((uint32_t)(reg)) & (bits_name##_Msk)) >> (bits_name##_Pos))
-
-#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
-
-#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
-
-#define READ_BIT(REG, BIT)    ((REG) & (BIT))
-
-#define CLEAR_REG(REG)        ((REG) = (0x0))
-
-#define WRITE_REG(REG, VAL)   ((REG) = (VAL))
-
-#define READ_REG(REG)         ((REG))
-
-#define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
+#include "cmsis_utils.h"
 
 #define IS_LPUART_INSTANCE(INSTANCE)    (0)
 
