@@ -504,6 +504,76 @@ static inline void ll_cfg_config_pta_pinr(HPSYS_CFG_TypeDef *CFGx,
                value);
 }
 
+/*==============================================================================
+ * CAU2 HPBG (High-Performance Bandgap)
+ *============================================================================*/
+
+/**
+ * @brief Enable the CAU2 HPBG rail (CAU2_CR.HPBG_EN + CAU2_CR.HPBG_VDDPSW_EN).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_hpbg_enable(HPSYS_CFG_TypeDef *CFGx)
+{
+    SET_BIT(CFGx->CAU2_CR,
+            HPSYS_CFG_CAU2_CR_HPBG_EN | HPSYS_CFG_CAU2_CR_HPBG_VDDPSW_EN);
+}
+
+/**
+ * @brief Disable the CAU2 HPBG rail (CAU2_CR.HPBG_EN + CAU2_CR.HPBG_VDDPSW_EN).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_hpbg_disable(HPSYS_CFG_TypeDef *CFGx)
+{
+    CLEAR_BIT(CFGx->CAU2_CR,
+              HPSYS_CFG_CAU2_CR_HPBG_EN | HPSYS_CFG_CAU2_CR_HPBG_VDDPSW_EN);
+}
+
+/*==============================================================================
+ * ANAU Bandgap (ANAU_CR)
+ *============================================================================*/
+
+/**
+ * @brief Enable the ANAU bandgap (ANAU_CR.EN_BG).
+ * @note Required before TSEN/GPADC analog measurement (see reference manual
+ *       8.2.3.3); shared with GPADC, recommended to keep enabled.
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_anau_bandgap_enable(HPSYS_CFG_TypeDef *CFGx)
+{
+    SET_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
+}
+
+/**
+ * @brief Disable the ANAU bandgap (ANAU_CR.EN_BG).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_anau_bandgap_disable(HPSYS_CFG_TypeDef *CFGx)
+{
+    CLEAR_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
+}
+
+/*==============================================================================
+ * System Reset Control (SYSCR)
+ *============================================================================*/
+
+/**
+ * @brief Route WDT1 timeout to SoC reset (SYSCR.WDT1_REBOOT).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_wdt1_reboot_set(HPSYS_CFG_TypeDef *CFGx)
+{
+    SET_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_WDT1_REBOOT);
+}
+
+/**
+ * @brief Disable WDT1 SoC reset routing (SYSCR.WDT1_REBOOT).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_wdt1_reboot_clear(HPSYS_CFG_TypeDef *CFGx)
+{
+    CLEAR_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_WDT1_REBOOT);
+}
+
 #ifdef __cplusplus
 }
 #endif
