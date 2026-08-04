@@ -1,0 +1,736 @@
+/*
+ * SPDX-FileCopyrightText: 2026 SiFli Technologies(Nanjing) Co., Ltd
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#ifndef __LL_MPI_H
+#define __LL_MPI_H
+
+#include <stdint.h>
+#include "regs/mpi.h"
+#include "cmsis_utils.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @file ll_mpi.h
+ * @brief Header-only low-level Memory Parallel Interface (MPI) APIs for SF32LB52x.
+ *
+ * MPI is a multi-protocol external memory interface supporting QSPI NOR Flash,
+ * OPI PSRAM, and HyperBus devices. Each instance has two chip-selects (CS1/CS2).
+ */
+
+/*==============================================================================
+ * Device Type (DCR)
+ *============================================================================*/
+
+/** @defgroup LL_MPI_PROTO Protocol Mode */
+/** @{ */
+#define LL_MPI_PROTO_SPI   (0x0UL)
+#define LL_MPI_PROTO_OPI   (0x1UL)
+#define LL_MPI_PROTO_HYPER (0x2UL)
+/** @} */
+
+/** @defgroup LL_MPI_CS Chip Select */
+/** @{ */
+#define LL_MPI_CS_1 (1UL)
+#define LL_MPI_CS_2 (2UL)
+/** @} */
+
+/** @defgroup LL_MPI_RB_SIZE Row Boundary Size (DCR.RBSIZE) */
+/** @{ */
+#define LL_MPI_RB_SIZE_NONE      (0x0UL) /**< No row boundary */
+#define LL_MPI_RB_SIZE_16_BYTES  (0x1UL)
+#define LL_MPI_RB_SIZE_32_BYTES  (0x2UL)
+#define LL_MPI_RB_SIZE_64_BYTES  (0x3UL)
+#define LL_MPI_RB_SIZE_128_BYTES (0x4UL)
+#define LL_MPI_RB_SIZE_256_BYTES (0x5UL)
+/** @} */
+
+/** @defgroup LL_MPI_FIFOCR FIFO Flush */
+/** @{ */
+#define LL_MPI_FIFOCR_FLUSH (MPI_FIFOCR_RXCLR | MPI_FIFOCR_TXCLR)
+/** @} */
+
+/*==============================================================================
+ * Basic Control
+ *============================================================================*/
+
+static inline void ll_mpi_enable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_EN);
+}
+
+static inline void ll_mpi_disable(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_EN);
+}
+
+static inline uint32_t ll_mpi_is_enabled(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->CR, MPI_CR_EN) ? 1UL : 0UL;
+}
+
+static inline uint32_t ll_mpi_is_busy(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_BUSY) ? 1UL : 0UL;
+}
+
+static inline void ll_mpi_abort(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_ABORT);
+}
+
+/*==============================================================================
+ * Chip Select & Protocol Configuration
+ *============================================================================*/
+
+/**
+ * @brief Enable or disable status-match polling for a command sequence.
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs Chip select, 1 or 2.
+ * @param[in] en Non-zero to enable status-match polling, zero to disable it.
+ * @note Maps to CR.SME1 (CS1/CMD1) or CR.SME2 (CS2/CMD2). Invalid chip
+ *       selects are ignored.
+ */
+static inline void ll_mpi_set_status_match_enable(MPI_TypeDef *mpi, uint32_t cs, uint32_t en)
+{
+	if (cs == LL_MPI_CS_1) {
+		MODIFY_REG(mpi->CR, MPI_CR_SME1, en ? MPI_CR_SME1 : 0UL);
+	} else if (cs == LL_MPI_CS_2) {
+		MODIFY_REG(mpi->CR, MPI_CR_SME2, en ? MPI_CR_SME2 : 0UL);
+	}
+}
+
+/**
+ * @brief Set protocol mode (SPI / OPI / HyperBus)
+ */
+static inline void ll_mpi_set_protocol(MPI_TypeDef *mpi, uint32_t proto)
+{
+	if (proto == LL_MPI_PROTO_OPI) {
+		SET_BIT(mpi->CR, MPI_CR_OPIE);
+	} else {
+		CLEAR_BIT(mpi->CR, MPI_CR_OPIE);
+	}
+	if (proto == LL_MPI_PROTO_HYPER) {
+		SET_BIT(mpi->DCR, MPI_DCR_HYPER);
+	} else {
+		CLEAR_BIT(mpi->DCR, MPI_DCR_HYPER);
+	}
+}
+
+/**
+ * @brief Set dual-flash mode (CR.DFM).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] en Non-zero to enable dual-flash mode, zero to disable.
+ */
+static inline void ll_mpi_set_dual_flash_mode(MPI_TypeDef *mpi, uint32_t en)
+{
+	MODIFY_REG(mpi->CR, MPI_CR_DFM, en ? MPI_CR_DFM : 0UL);
+}
+
+/**
+ * @brief Enable the CMD2 (chip select 2) command execution (CR.CMD2E).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_enable_command2(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_CMD2E);
+}
+
+/**
+ * @brief Disable the CMD2 (chip select 2) command execution (CR.CMD2E).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_disable_command2(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_CMD2E);
+}
+
+/**
+ * @brief Set status-match comparison mode (CR.SMM).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] mode 0 for AND mode, 1 for OR mode.
+ */
+static inline void ll_mpi_set_status_match_mode(MPI_TypeDef *mpi, uint32_t mode)
+{
+	MODIFY_REG(mpi->CR, MPI_CR_SMM, mode ? MPI_CR_SMM : 0UL);
+}
+
+static inline void ll_mpi_set_status_match_value(MPI_TypeDef *mpi, uint32_t value)
+{
+	WRITE_REG(mpi->SMR, value);
+}
+
+static inline void ll_mpi_set_status_match_mask(MPI_TypeDef *mpi, uint32_t mask)
+{
+	WRITE_REG(mpi->SMKR, mask);
+}
+
+/**
+ * @brief Set the row boundary size (DCR.RBSIZE).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] size Row boundary size, one of @ref LL_MPI_RB_SIZE.
+ */
+static inline void ll_mpi_set_row_boundary_size(MPI_TypeDef *mpi, uint32_t size)
+{
+	MODIFY_REG(mpi->DCR, MPI_DCR_RBSIZE,
+		   MAKE_REG_VAL(size, MPI_DCR_RBSIZE_Msk, MPI_DCR_RBSIZE_Pos));
+}
+
+/**
+ * @brief Enable DQS (data strobe) for OPI PSRAM
+ */
+static inline void ll_mpi_enable_dqs(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->DCR, MPI_DCR_DQSE);
+}
+
+/*==============================================================================
+ * Clock Configuration
+ *============================================================================*/
+
+/**
+ * @brief Set MPI clock prescaler divider.
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] div Divider value; MCLK = FCLK / div (div 0 and 1 select /1).
+ * @note FLASH clock = MCLK, PSRAM clock = MCLK / 2.
+ */
+static inline void ll_mpi_set_clock_div(MPI_TypeDef *mpi, uint8_t div)
+{
+	MODIFY_REG(mpi->PSCLR, MPI_PSCLR_DIV, div);
+}
+
+/*==============================================================================
+ * Clock Signal Control (MISCR)
+ *============================================================================*/
+
+/**
+ * @brief Set the receive clock inversion (MISCR.RXCLKINV).
+ * @param[in] mpi     MPI instance pointer.
+ * @param[in] invert Non-zero to invert the receive clock, zero otherwise.
+ */
+static inline void ll_mpi_set_rx_clk_invert(MPI_TypeDef *mpi, uint32_t invert)
+{
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_RXCLKINV, invert ? MPI_MISCR_RXCLKINV : 0UL);
+}
+
+/**
+ * @brief Set the SCK clock inversion (MISCR.SCKINV).
+ * @param[in] mpi     MPI instance pointer.
+ * @param[in] invert Non-zero to invert SCK, zero otherwise.
+ */
+static inline void ll_mpi_set_sck_invert(MPI_TypeDef *mpi, uint32_t invert)
+{
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_SCKINV, invert ? MPI_MISCR_SCKINV : 0UL);
+}
+
+/**
+ * @brief Set the SCK delay (MISCR.SCKDLY).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] dly SCK delay value.
+ */
+static inline void ll_mpi_set_sck_delay(MPI_TypeDef *mpi, uint32_t dly)
+{
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_SCKDLY,
+		   MAKE_REG_VAL(dly, MPI_MISCR_SCKDLY_Msk, MPI_MISCR_SCKDLY_Pos));
+}
+
+/**
+ * @brief Set the DQS delay (MISCR.DQSDLY).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] dly DQS delay value.
+ */
+static inline void ll_mpi_set_dqs_delay(MPI_TypeDef *mpi, uint32_t dly)
+{
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_DQSDLY,
+		   MAKE_REG_VAL(dly, MPI_MISCR_DQSDLY_Msk, MPI_MISCR_DQSDLY_Pos));
+}
+
+/*==============================================================================
+ * Timing Configuration
+ *============================================================================*/
+
+/**
+ * @brief Configure CS timing parameters (in MPI clock cycles)
+ * @param cslmax  CS low max
+ * @param cslmin  CS low min
+ * @param cshmin  CS high min
+ * @param trcmin  TRC min
+ */
+static inline void ll_mpi_set_cs_timing(MPI_TypeDef *mpi, uint32_t cslmax, uint32_t cslmin,
+					uint32_t cshmin, uint32_t trcmin)
+{
+	MODIFY_REG(mpi->DCR, MPI_DCR_CSLMAX,
+		   MAKE_REG_VAL(cslmax, MPI_DCR_CSLMAX_Msk, MPI_DCR_CSLMAX_Pos));
+	MODIFY_REG(mpi->DCR, MPI_DCR_CSLMIN,
+		   MAKE_REG_VAL(cslmin, MPI_DCR_CSLMIN_Msk, MPI_DCR_CSLMIN_Pos));
+	MODIFY_REG(mpi->DCR, MPI_DCR_CSHMIN,
+		   MAKE_REG_VAL(cshmin, MPI_DCR_CSHMIN_Msk, MPI_DCR_CSHMIN_Pos));
+	MODIFY_REG(mpi->DCR, MPI_DCR_TRCMIN,
+		   MAKE_REG_VAL(trcmin, MPI_DCR_TRCMIN_Msk, MPI_DCR_TRCMIN_Pos));
+}
+
+/**
+ * @brief Set the timing register (TIMR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] val Raw TIMR value.
+ */
+static inline void ll_mpi_set_timing(MPI_TypeDef *mpi, uint32_t val)
+{
+	WRITE_REG(mpi->TIMR, val);
+}
+
+/**
+ * @brief Set the command interval register (CIR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] val Raw CIR value.
+ */
+static inline void ll_mpi_set_comm_interval(MPI_TypeDef *mpi, uint32_t val)
+{
+	WRITE_REG(mpi->CIR, val);
+}
+
+/**
+ * @brief Set fixed-latency mode (DCR.FIXLAT).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] en Non-zero to enable fixed latency, zero otherwise.
+ */
+static inline void ll_mpi_set_fixed_latency(MPI_TypeDef *mpi, uint32_t en)
+{
+	MODIFY_REG(mpi->DCR, MPI_DCR_FIXLAT, en ? MPI_DCR_FIXLAT : 0UL);
+}
+
+/*==============================================================================
+ * DMA
+ *============================================================================*/
+
+static inline void ll_mpi_enable_dma(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_DMAE);
+}
+
+static inline void ll_mpi_disable_dma(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_DMAE);
+}
+
+/*==============================================================================
+ * Command Execution (CS1/CS2)
+ *============================================================================*/
+
+/**
+ * @brief Execute indirect read/write command on specified CS
+ * @param cs    Chip select (1 or 2)
+ * @param cmd   Command byte
+ * @param addr  Address
+ * @param alt   Alternate bytes
+ * @param dummy Dummy cycles
+ * @param len   Data length in bytes (1..2^20)
+ * @note DLR.DLEN stores len-1: the reference manual defines value n as
+ *       transferring n+1 bytes (0 means one byte). Invalid chip selects and a
+ *       zero length are ignored.
+ */
+static inline void ll_mpi_set_command(MPI_TypeDef *mpi, uint32_t cs, uint8_t cmd, uint32_t addr,
+				      uint8_t alt, uint8_t dummy, uint32_t len)
+{
+	if ((cs != LL_MPI_CS_1) && (cs != LL_MPI_CS_2)) {
+		return;
+	}
+	if (len == 0U) {
+		return;
+	}
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->AR1, addr);
+		WRITE_REG(mpi->ABR1, (uint32_t)alt);
+		WRITE_REG(mpi->DLR1, MAKE_REG_VAL(len - 1U, MPI_DLR1_DLEN_Msk, MPI_DLR1_DLEN_Pos));
+		MODIFY_REG(mpi->CCR1, MPI_CCR1_DCYC,
+			   MAKE_REG_VAL(dummy, MPI_CCR1_DCYC_Msk, MPI_CCR1_DCYC_Pos));
+		WRITE_REG(mpi->CMDR1, (uint32_t)cmd);
+	} else {
+		WRITE_REG(mpi->AR2, addr);
+		WRITE_REG(mpi->ABR2, (uint32_t)alt);
+		WRITE_REG(mpi->DLR2, MAKE_REG_VAL(len - 1U, MPI_DLR2_DLEN_Msk, MPI_DLR2_DLEN_Pos));
+		MODIFY_REG(mpi->CCR2, MPI_CCR2_DCYC,
+			   MAKE_REG_VAL(dummy, MPI_CCR2_DCYC_Msk, MPI_CCR2_DCYC_Pos));
+		WRITE_REG(mpi->CMDR2, (uint32_t)cmd);
+	}
+}
+
+/**
+ * @brief Configure the communication configuration register (CCR) for a chip select.
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs Chip select, 1 or 2.
+ * @param[in] imode Instruction mode.
+ * @param[in] admode Address mode.
+ * @param[in] adsize Address size.
+ * @param[in] abmode Alternate byte mode.
+ * @param[in] absize Alternate byte size.
+ * @param[in] dcyc Dummy cycles.
+ * @param[in] dmode Data mode.
+ * @param[in] fmode Function mode, 0 for read and 1 for write.
+ */
+static inline void ll_mpi_set_command_config(MPI_TypeDef *mpi, uint32_t cs, uint32_t imode,
+					     uint32_t admode, uint32_t adsize, uint32_t abmode,
+					     uint32_t absize, uint32_t dcyc, uint32_t dmode,
+					     uint32_t fmode)
+{
+	if ((cs != LL_MPI_CS_1) && (cs != LL_MPI_CS_2)) {
+		return;
+	}
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->CCR1,
+			  MAKE_REG_VAL(imode, MPI_CCR1_IMODE_Msk, MPI_CCR1_IMODE_Pos) |
+			  MAKE_REG_VAL(admode, MPI_CCR1_ADMODE_Msk, MPI_CCR1_ADMODE_Pos) |
+			  MAKE_REG_VAL(adsize, MPI_CCR1_ADSIZE_Msk, MPI_CCR1_ADSIZE_Pos) |
+			  MAKE_REG_VAL(abmode, MPI_CCR1_ABMODE_Msk, MPI_CCR1_ABMODE_Pos) |
+			  MAKE_REG_VAL(absize, MPI_CCR1_ABSIZE_Msk, MPI_CCR1_ABSIZE_Pos) |
+			  MAKE_REG_VAL(dcyc, MPI_CCR1_DCYC_Msk, MPI_CCR1_DCYC_Pos) |
+			  MAKE_REG_VAL(dmode, MPI_CCR1_DMODE_Msk, MPI_CCR1_DMODE_Pos) |
+			  MAKE_REG_VAL(fmode, MPI_CCR1_FMODE_Msk, MPI_CCR1_FMODE_Pos));
+	} else {
+		WRITE_REG(mpi->CCR2,
+			  MAKE_REG_VAL(imode, MPI_CCR2_IMODE_Msk, MPI_CCR2_IMODE_Pos) |
+			  MAKE_REG_VAL(admode, MPI_CCR2_ADMODE_Msk, MPI_CCR2_ADMODE_Pos) |
+			  MAKE_REG_VAL(adsize, MPI_CCR2_ADSIZE_Msk, MPI_CCR2_ADSIZE_Pos) |
+			  MAKE_REG_VAL(abmode, MPI_CCR2_ABMODE_Msk, MPI_CCR2_ABMODE_Pos) |
+			  MAKE_REG_VAL(absize, MPI_CCR2_ABSIZE_Msk, MPI_CCR2_ABSIZE_Pos) |
+			  MAKE_REG_VAL(dcyc, MPI_CCR2_DCYC_Msk, MPI_CCR2_DCYC_Pos) |
+			  MAKE_REG_VAL(dmode, MPI_CCR2_DMODE_Msk, MPI_CCR2_DMODE_Pos) |
+			  MAKE_REG_VAL(fmode, MPI_CCR2_FMODE_Msk, MPI_CCR2_FMODE_Pos));
+	}
+}
+
+/**
+ * @brief Write the raw communication configuration register (CCR) for a chip select.
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs  Chip select, 1 or 2.
+ * @param[in] ccr Raw CCR value (pre-encoded protocol fields).
+ */
+static inline void ll_mpi_write_command_config(MPI_TypeDef *mpi, uint32_t cs, uint32_t ccr)
+{
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->CCR1, ccr);
+	} else if (cs == LL_MPI_CS_2) {
+		WRITE_REG(mpi->CCR2, ccr);
+	}
+}
+
+/**
+ * @brief Set the command byte for a chip select (CMDRx).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs  Chip select, 1 or 2.
+ * @param[in] cmd Command byte.
+ */
+static inline void ll_mpi_set_command_byte(MPI_TypeDef *mpi, uint32_t cs, uint8_t cmd)
+{
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->CMDR1, (uint32_t)cmd);
+	} else if (cs == LL_MPI_CS_2) {
+		WRITE_REG(mpi->CMDR2, (uint32_t)cmd);
+	}
+}
+
+/**
+ * @brief Set the address for a chip select (ARx).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] cs   Chip select, 1 or 2.
+ * @param[in] addr Address value.
+ */
+static inline void ll_mpi_set_address(MPI_TypeDef *mpi, uint32_t cs, uint32_t addr)
+{
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->AR1, addr);
+	} else if (cs == LL_MPI_CS_2) {
+		WRITE_REG(mpi->AR2, addr);
+	}
+}
+
+/**
+ * @brief Set the data length for a chip select (DLRx.DLEN, stores len-1).
+ * @note DLR.DLEN stores len-1: the reference manual defines value n as
+ *       transferring n+1 bytes (0 means one byte).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs  Chip select, 1 or 2.
+ * @param[in] len Data length in bytes (must be > 0).
+ */
+static inline void ll_mpi_set_data_length(MPI_TypeDef *mpi, uint32_t cs, uint32_t len)
+{
+	if (cs == LL_MPI_CS_1) {
+		MODIFY_REG(mpi->DLR1, MPI_DLR1_DLEN,
+			   MAKE_REG_VAL(len - 1U, MPI_DLR1_DLEN_Msk, MPI_DLR1_DLEN_Pos));
+	} else if (cs == LL_MPI_CS_2) {
+		MODIFY_REG(mpi->DLR2, MPI_DLR2_DLEN,
+			   MAKE_REG_VAL(len - 1U, MPI_DLR2_DLEN_Msk, MPI_DLR2_DLEN_Pos));
+	}
+}
+
+/**
+ * @brief Set the alternate bytes for a chip select (ABRx).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cs  Chip select, 1 or 2.
+ * @param[in] alt Alternate byte value.
+ */
+static inline void ll_mpi_set_alt_bytes(MPI_TypeDef *mpi, uint32_t cs, uint32_t alt)
+{
+	if (cs == LL_MPI_CS_1) {
+		WRITE_REG(mpi->ABR1, alt);
+	} else if (cs == LL_MPI_CS_2) {
+		WRITE_REG(mpi->ABR2, alt);
+	}
+}
+
+/**
+ * @brief Get data register for indirect read/write
+ */
+static inline uint32_t ll_mpi_read_data(MPI_TypeDef *mpi)
+{
+	return READ_REG(mpi->DR);
+}
+
+static inline void ll_mpi_write_data(MPI_TypeDef *mpi, uint32_t data)
+{
+	WRITE_REG(mpi->DR, data);
+}
+
+/*==============================================================================
+ * AHB Command Configuration
+ *============================================================================*/
+
+/**
+ * @brief Set the AHB read command configuration (HRCCR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] ccr Raw HRCCR value.
+ */
+static inline void ll_mpi_set_ahb_read_config(MPI_TypeDef *mpi, uint32_t ccr)
+{
+	WRITE_REG(mpi->HRCCR, ccr);
+}
+
+/**
+ * @brief Set the AHB write command configuration (HWCCR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] ccr Raw HWCCR value.
+ */
+static inline void ll_mpi_set_ahb_write_config(MPI_TypeDef *mpi, uint32_t ccr)
+{
+	WRITE_REG(mpi->HWCCR, ccr);
+}
+
+/**
+ * @brief Set the AHB read command (HCMDR.RCMD).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cmd Read command byte.
+ */
+static inline void ll_mpi_set_ahb_read_command(MPI_TypeDef *mpi, uint8_t cmd)
+{
+	MODIFY_REG(mpi->HCMDR, MPI_HCMDR_RCMD,
+		   MAKE_REG_VAL(cmd, MPI_HCMDR_RCMD_Msk, MPI_HCMDR_RCMD_Pos));
+}
+
+/**
+ * @brief Set the AHB write command (HCMDR.WCMD).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] cmd Write command byte.
+ */
+static inline void ll_mpi_set_ahb_write_command(MPI_TypeDef *mpi, uint8_t cmd)
+{
+	MODIFY_REG(mpi->HCMDR, MPI_HCMDR_WCMD,
+		   MAKE_REG_VAL(cmd, MPI_HCMDR_WCMD_Msk, MPI_HCMDR_WCMD_Pos));
+}
+
+/**
+ * @brief Set the AHB alternate bytes (HRABR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] alt Alternate byte value.
+ */
+static inline void ll_mpi_set_ahb_alt_bytes(MPI_TypeDef *mpi, uint32_t alt)
+{
+	WRITE_REG(mpi->HRABR, alt);
+}
+
+/*==============================================================================
+ * Status & Interrupt
+ *============================================================================*/
+
+static inline uint32_t ll_mpi_get_transfer_complete_flag(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_TCF) ? 1UL : 0UL;
+}
+
+static inline void ll_mpi_clear_transfer_complete_flag(MPI_TypeDef *mpi)
+{
+	WRITE_REG(mpi->SCR, MPI_SCR_TCFC);
+}
+
+static inline void ll_mpi_enable_transfer_complete_interrupt(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_TCIE);
+}
+
+static inline void ll_mpi_disable_transfer_complete_interrupt(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_TCIE);
+}
+
+static inline uint32_t ll_mpi_get_row_boundary_flag(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_RBXF) ? 1UL : 0UL;
+}
+
+static inline void ll_mpi_clear_row_boundary_flag(MPI_TypeDef *mpi)
+{
+	WRITE_REG(mpi->SCR, MPI_SCR_RBXFC);
+}
+
+static inline uint32_t ll_mpi_get_cs_violation_flag(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_CSVF) ? 1UL : 0UL;
+}
+
+static inline void ll_mpi_clear_cs_violation_flag(MPI_TypeDef *mpi)
+{
+	WRITE_REG(mpi->SCR, MPI_SCR_CSVFC);
+}
+
+static inline uint32_t ll_mpi_get_status_match_flag(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_SMF) ? 1UL : 0UL;
+}
+
+static inline void ll_mpi_clear_status_match_flag(MPI_TypeDef *mpi)
+{
+	WRITE_REG(mpi->SCR, MPI_SCR_SMFC);
+}
+
+static inline void ll_mpi_enable_row_boundary_interrupt(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_RBXIE);
+}
+
+static inline void ll_mpi_disable_row_boundary_interrupt(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_RBXIE);
+}
+
+static inline void ll_mpi_enable_cs_violation_interrupt(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_CSVIE);
+}
+
+static inline void ll_mpi_disable_cs_violation_interrupt(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_CSVIE);
+}
+
+static inline void ll_mpi_enable_status_match_interrupt(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_SMIE);
+}
+
+static inline void ll_mpi_disable_status_match_interrupt(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_SMIE);
+}
+
+/*==============================================================================
+ * Write Protection
+ *============================================================================*/
+
+static inline void ll_mpi_enable_write(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CR, MPI_CR_WP);
+}
+
+static inline void ll_mpi_disable_write(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CR, MPI_CR_WP);
+}
+
+/*==============================================================================
+ * FIFO
+ *============================================================================*/
+
+/**
+ * @brief Flush FIFO
+ */
+static inline void ll_mpi_flush_fifo(MPI_TypeDef *mpi)
+{
+	WRITE_REG(mpi->FIFOCR, LL_MPI_FIFOCR_FLUSH);
+}
+
+/**
+ * @brief Set the FIFO TX slots (FIFOCR.TXSLOTS).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] slots TX slots value.
+ */
+static inline void ll_mpi_set_fifo_tx_slots(MPI_TypeDef *mpi, uint32_t slots)
+{
+	MODIFY_REG(mpi->FIFOCR, MPI_FIFOCR_TXSLOTS,
+		   MAKE_REG_VAL(slots, MPI_FIFOCR_TXSLOTS_Msk, MPI_FIFOCR_TXSLOTS_Pos));
+}
+
+/*==============================================================================
+ * Calibration
+ *============================================================================*/
+
+/**
+ * @brief Start MPI delay calibration (CALCR.EN).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_enable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CALCR, MPI_CALCR_EN);
+}
+
+/**
+ * @brief Stop MPI delay calibration (CALCR.EN).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_disable(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CALCR, MPI_CALCR_EN);
+}
+
+/**
+ * @brief Check whether delay calibration is complete (CALCR.DONE).
+ * @param[in] mpi MPI instance pointer.
+ * @return Non-zero when calibration is done, 0 otherwise.
+ */
+static inline uint32_t ll_mpi_is_calibration_done(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->CALCR, MPI_CALCR_DONE) != 0UL;
+}
+
+/**
+ * @brief Read the calibration delay value (CALCR.DELAY).
+ * @param[in] mpi MPI instance pointer.
+ * @return Calibration delay value.
+ */
+static inline uint32_t ll_mpi_get_calibration_delay(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->CALCR, MPI_CALCR_DELAY);
+}
+
+/*==============================================================================
+ * Watchdog
+ *============================================================================*/
+
+/**
+ * @brief Set the MPI watchdog timer value (WDTR).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] val Watchdog timer value.
+ */
+static inline void ll_mpi_set_watchdog(MPI_TypeDef *mpi, uint32_t val)
+{
+	WRITE_REG(mpi->WDTR, val);
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __LL_MPI_H */
