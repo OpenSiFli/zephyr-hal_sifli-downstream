@@ -158,6 +158,15 @@ static inline void ll_rtc_set_time_format_24h(RTC_TypeDef *rtc)
 }
 
 /**
+ * @brief Set time in 12h format
+ * @param[in] rtc RTC instance pointer.
+ */
+static inline void ll_rtc_set_time_format_12h(RTC_TypeDef *rtc)
+{
+	SET_BIT(rtc->CR, RTC_CR_FMT);
+}
+
+/**
  * @brief Get the current time register value (raw TR: SS[9:0], SU, ST, MNU,
  *        MNT, HU, HT, PM).
  * @param[in] rtc RTC instance pointer.
@@ -595,6 +604,118 @@ static inline void ll_rtc_write_backup(RTC_TypeDef *rtc, uint32_t idx, uint32_t 
 static inline uint32_t ll_rtc_read_backup(RTC_TypeDef *rtc, uint32_t idx)
 {
 	return (idx < 10U) ? (&rtc->BKP0R)[idx] : 0UL;
+}
+
+/**
+ * @brief Shift the subsecond counter (SHIFTR.SUBFS[9:0]).
+ * @param[in] rtc   RTC instance pointer.
+ * @param[in] subfs Subsecond shift value (10 bits).
+ */
+static inline void ll_rtc_shift_subsecond(RTC_TypeDef *rtc, uint32_t subfs)
+{
+	MODIFY_REG(rtc->SHIFTR, RTC_SHIFTR_SUBFS,
+		   MAKE_REG_VAL(subfs, RTC_SHIFTR_SUBFS_Msk, RTC_SHIFTR_SUBFS_Pos));
+}
+
+/**
+ * @brief Add one second to the calendar (SHIFTR.ADD1S).
+ * @param[in] rtc RTC instance pointer.
+ */
+static inline void ll_rtc_add_one_second(RTC_TypeDef *rtc)
+{
+	SET_BIT(rtc->SHIFTR, RTC_SHIFTR_ADD1S);
+}
+
+/**
+ * @brief Set the RTC alarm output type (OR.RTC_ALARM_TYPE).
+ * @param[in] rtc  RTC instance pointer.
+ * @param[in] type Alarm output type.
+ */
+static inline void ll_rtc_set_alarm_output_type(RTC_TypeDef *rtc, uint32_t type)
+{
+	MODIFY_REG(rtc->OR, RTC_OR_RTC_ALARM_TYPE,
+		   MAKE_REG_VAL(type, RTC_OR_RTC_ALARM_TYPE_Msk, RTC_OR_RTC_ALARM_TYPE_Pos));
+}
+
+/**
+ * @brief Set the RTC output remap (OR.RTC_OUT_RMP).
+ * @param[in] rtc RTC instance pointer.
+ * @param[in] rmp Output remap selection.
+ */
+static inline void ll_rtc_set_output_remap(RTC_TypeDef *rtc, uint32_t rmp)
+{
+	MODIFY_REG(rtc->OR, RTC_OR_RTC_OUT_RMP,
+		   MAKE_REG_VAL(rmp, RTC_OR_RTC_OUT_RMP_Msk, RTC_OR_RTC_OUT_RMP_Pos));
+}
+
+/**
+ * @brief Configure the PBR pad control register (PBRCR).
+ * @param[in] rtc     RTC instance pointer.
+ * @param[in] rto     RTO bit.
+ * @param[in] sns     SNS bit.
+ * @param[in] dbg_sel Debug select (4 bits).
+ */
+static inline void ll_rtc_set_pbr_config(RTC_TypeDef *rtc, uint32_t rto, uint32_t sns,
+					 uint32_t dbg_sel)
+{
+	MODIFY_REG(rtc->PBRCR, RTC_PBRCR_RTO | RTC_PBRCR_SNS | RTC_PBRCR_DBG_SEL,
+		   MAKE_REG_VAL(rto, RTC_PBRCR_RTO_Msk, RTC_PBRCR_RTO_Pos) |
+		   MAKE_REG_VAL(sns, RTC_PBRCR_SNS_Msk, RTC_PBRCR_SNS_Pos) |
+		   MAKE_REG_VAL(dbg_sel, RTC_PBRCR_DBG_SEL_Msk, RTC_PBRCR_DBG_SEL_Pos));
+}
+
+/**
+ * @brief Write a PBR pad control register by index (PBR0R..PBR3R).
+ * @param[in] rtc RTC instance pointer.
+ * @param[in] idx PBR index, 0..3.
+ * @param[in] val Raw register value.
+ */
+static inline void ll_rtc_write_pbr(RTC_TypeDef *rtc, uint32_t idx, uint32_t val)
+{
+	if (idx < 4U) {
+		(&rtc->PBR0R)[idx] = val;
+	}
+}
+
+/**
+ * @brief Read a PBR pad control register by index (PBR0R..PBR3R).
+ * @param[in] rtc RTC instance pointer.
+ * @param[in] idx PBR index, 0..3.
+ * @return Raw register value, or 0 if idx is out of range.
+ */
+static inline uint32_t ll_rtc_read_pbr(RTC_TypeDef *rtc, uint32_t idx)
+{
+	return (idx < 4U) ? (&rtc->PBR0R)[idx] : 0UL;
+}
+
+/**
+ * @brief Set the PA WKUP pull-down enable mask (PAWK1R.PE).
+ * @param[in] rtc  RTC instance pointer.
+ * @param[in] mask Pin mask (PA00..PA44), 1 = pull-down enabled by default.
+ */
+static inline void ll_rtc_set_wkup_pull_down(RTC_TypeDef *rtc, uint32_t mask)
+{
+	WRITE_REG(rtc->PAWK1R, mask);
+}
+
+/**
+ * @brief Set the PA WKUP pull strength mask (PAWK2R.PS).
+ * @param[in] rtc  RTC instance pointer.
+ * @param[in] mask Pin mask.
+ */
+static inline void ll_rtc_set_wkup_pull_strength(RTC_TypeDef *rtc, uint32_t mask)
+{
+	WRITE_REG(rtc->PAWK2R, mask);
+}
+
+/**
+ * @brief Set the PA WKUP input mask (PAWK3R.IS).
+ * @param[in] rtc  RTC instance pointer.
+ * @param[in] mask Pin mask.
+ */
+static inline void ll_rtc_set_wkup_input(RTC_TypeDef *rtc, uint32_t mask)
+{
+	WRITE_REG(rtc->PAWK3R, mask);
 }
 
 #ifdef __cplusplus

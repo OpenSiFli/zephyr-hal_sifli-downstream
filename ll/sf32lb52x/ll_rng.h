@@ -412,6 +412,15 @@ static inline void ll_rng_start_calibration(TRNG_TypeDef *trng)
 }
 
 /**
+ * @brief Stop calibration (CAL_CFG.enable = 0).
+ * @param[in] trng TRNG instance pointer.
+ */
+static inline void ll_rng_stop_calibration(TRNG_TypeDef *trng)
+{
+	CLEAR_BIT(trng->CAL_CFG, TRNG_CAL_CFG_ENABLE);
+}
+
+/**
  * @brief Check whether calibration is done (CAL_CFG.done).
  * @param[in] trng TRNG instance pointer.
  * @return Non-zero when calibration is done.

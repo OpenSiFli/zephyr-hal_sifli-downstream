@@ -1119,6 +1119,158 @@ static inline uint32_t ll_audcodec_get_status(AUDCODEC_TypeDef *codec)
 	return READ_REG(codec->APB_STAT);
 }
 
+/**
+ * @brief Get the function ID (ID.FUNC).
+ * @param[in] codec Audio codec instance pointer.
+ * @return Function ID.
+ */
+static inline uint32_t ll_audcodec_get_id(AUDCODEC_TypeDef *codec)
+{
+	return READ_REG(codec->ID);
+}
+
+/**
+ * @brief Configure the DC test (COMMON_CFG).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] tr    DC test point select (3 bits).
+ * @param[in] br    DC test block select (3 bits).
+ * @param[in] mr    DC test macro select (3 bits).
+ */
+static inline void ll_audcodec_set_dc_test_config(AUDCODEC_TypeDef *codec, uint32_t tr,
+						  uint32_t br, uint32_t mr)
+{
+	MODIFY_REG(codec->COMMON_CFG,
+		   AUDCODEC_COMMON_CFG_DC_TR | AUDCODEC_COMMON_CFG_DC_BR |
+			   AUDCODEC_COMMON_CFG_DC_MR,
+		   MAKE_REG_VAL(tr, AUDCODEC_COMMON_CFG_DC_TR_Msk, AUDCODEC_COMMON_CFG_DC_TR_Pos) |
+		   MAKE_REG_VAL(br, AUDCODEC_COMMON_CFG_DC_BR_Msk, AUDCODEC_COMMON_CFG_DC_BR_Pos) |
+		   MAKE_REG_VAL(mr, AUDCODEC_COMMON_CFG_DC_MR_Msk, AUDCODEC_COMMON_CFG_DC_MR_Pos));
+}
+
+/**
+ * @brief Set the ADC2 peripheral circuits bias mode (ADC2_CFG1.PERI_BM).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] bm    Bias mode (2 bits).
+ */
+static inline void ll_audcodec_set_adc2_peri_bm(AUDCODEC_TypeDef *codec, uint32_t bm)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_PERI_BM,
+		   MAKE_REG_VAL(bm, AUDCODEC_ADC2_CFG1_PERI_BM_Msk, AUDCODEC_ADC2_CFG1_PERI_BM_Pos));
+}
+
+/**
+ * @brief Invert the ADC2 output clock (ADC2_CFG1.CLKOUT_INV).
+ * @param[in] codec Audio codec instance pointer.
+ */
+static inline void ll_audcodec_adc2_clkout_inv_enable(AUDCODEC_TypeDef *codec)
+{
+	SET_BIT(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_CLKOUT_INV);
+}
+
+/**
+ * @brief Use the non-inverted ADC2 output clock (ADC2_CFG1.CLKOUT_INV = 0).
+ * @param[in] codec Audio codec instance pointer.
+ */
+static inline void ll_audcodec_adc2_clkout_inv_disable(AUDCODEC_TypeDef *codec)
+{
+	CLEAR_BIT(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_CLKOUT_INV);
+}
+
+/**
+ * @brief Enable ADC2 VCM quick settling (ADC2_CFG1.VCMST).
+ * @param[in] codec Audio codec instance pointer.
+ */
+static inline void ll_audcodec_adc2_vcmst_enable(AUDCODEC_TypeDef *codec)
+{
+	SET_BIT(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VCMST);
+}
+
+/**
+ * @brief Disable ADC2 VCM quick settling (ADC2_CFG1.VCMST = 0).
+ * @param[in] codec Audio codec instance pointer.
+ */
+static inline void ll_audcodec_adc2_vcmst_disable(AUDCODEC_TypeDef *codec)
+{
+	CLEAR_BIT(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VCMST);
+}
+
+/**
+ * @brief Set the ADC2 chopping frequency (ADC2_CFG1.FCHOP_SEL).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] sel   Chopping frequency select (2 bits).
+ */
+static inline void ll_audcodec_set_adc2_fchop_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_FCHOP_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_FCHOP_SEL_Msk, AUDCODEC_ADC2_CFG1_FCHOP_SEL_Pos));
+}
+
+/**
+ * @brief Set the ADC2 VREF code (ADC2_CFG1.VREF_SEL).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] sel   VREF select (3 bits).
+ */
+static inline void ll_audcodec_set_adc2_vref_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VREF_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_VREF_SEL_Msk, AUDCODEC_ADC2_CFG1_VREF_SEL_Pos));
+}
+
+/**
+ * @brief Set the ADC2 second/third opamp bias mode (ADC2_CFG1.BM_INT2).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] bm    Bias mode (3 bits).
+ */
+static inline void ll_audcodec_set_adc2_bm_int2(AUDCODEC_TypeDef *codec, uint32_t bm)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_BM_INT2,
+		   MAKE_REG_VAL(bm, AUDCODEC_ADC2_CFG1_BM_INT2_Msk, AUDCODEC_ADC2_CFG1_BM_INT2_Pos));
+}
+
+/**
+ * @brief Set the ADC2 first opamp bias mode (ADC2_CFG1.BM_INT1).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] bm    Bias mode (3 bits).
+ */
+static inline void ll_audcodec_set_adc2_bm_int1(AUDCODEC_TypeDef *codec, uint32_t bm)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_BM_INT1,
+		   MAKE_REG_VAL(bm, AUDCODEC_ADC2_CFG1_BM_INT1_Msk, AUDCODEC_ADC2_CFG1_BM_INT1_Pos));
+}
+
+/**
+ * @brief Set the ADC2 start voltage (ADC2_CFG1.VST_SEL).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] sel   Start voltage select (3 bits).
+ */
+static inline void ll_audcodec_set_adc2_vst_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VST_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_VST_SEL_Msk, AUDCODEC_ADC2_CFG1_VST_SEL_Pos));
+}
+
+/**
+ * @brief Set the ADC2 gain code (ADC2_CFG1.GC).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] gc    Gain code (5 bits).
+ */
+static inline void ll_audcodec_set_adc2_gain(AUDCODEC_TypeDef *codec, uint32_t gc)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_GC,
+		   MAKE_REG_VAL(gc, AUDCODEC_ADC2_CFG1_GC_Msk, AUDCODEC_ADC2_CFG1_GC_Pos));
+}
+
+/**
+ * @brief Set the ADC2 sampling frequency (ADC2_CFG1.FSP).
+ * @param[in] codec Audio codec instance pointer.
+ * @param[in] fsp   Sampling frequency select (2 bits).
+ */
+static inline void ll_audcodec_set_adc2_fsp(AUDCODEC_TypeDef *codec, uint32_t fsp)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_FSP,
+		   MAKE_REG_VAL(fsp, AUDCODEC_ADC2_CFG1_FSP_Msk, AUDCODEC_ADC2_CFG1_FSP_Pos));
+}
+
 #ifdef __cplusplus
 }
 #endif

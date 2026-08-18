@@ -141,9 +141,19 @@ static inline void ll_atim_enable_one_pulse(ATIM_TypeDef *tim)
 	SET_BIT(tim->CR1, ATIM_CR1_OPM);
 }
 
+static inline void ll_atim_disable_one_pulse(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CR1, ATIM_CR1_OPM);
+}
+
 static inline void ll_atim_enable_auto_reload_preload(ATIM_TypeDef *tim)
 {
 	SET_BIT(tim->CR1, ATIM_CR1_ARPE);
+}
+
+static inline void ll_atim_disable_auto_reload_preload(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CR1, ATIM_CR1_ARPE);
 }
 
 /*==============================================================================
@@ -533,6 +543,11 @@ static inline void ll_atim_enable_break_interrupt(ATIM_TypeDef *tim)
 	SET_BIT(tim->DIER, ATIM_DIER_BIE);
 }
 
+static inline void ll_atim_disable_break_interrupt(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->DIER, ATIM_DIER_BIE);
+}
+
 static inline uint32_t ll_atim_get_break_flag(ATIM_TypeDef *tim)
 {
 	return READ_BIT(tim->SR, ATIM_SR_BIF) ? 1UL : 0UL;
@@ -561,6 +576,407 @@ static inline uint32_t ll_atim_calc_update_freq(uint32_t clk_freq, uint16_t psc,
 static inline uint32_t ll_atim_calc_pwm_duty(uint32_t arr, uint32_t permille)
 {
 	return (uint32_t)((((uint64_t)arr + 1U) * permille) / 1000U);
+}
+
+/**
+ * @brief Enable capture/compare preloaded control (CR2.CCPC).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_ccpc_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CR2, ATIM_CR2_CCPC);
+}
+
+/**
+ * @brief Disable capture/compare preloaded control (CR2.CCPC = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_ccpc_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CR2, ATIM_CR2_CCPC);
+}
+
+/**
+ * @brief Set the master mode selection (CR2.MMS[6:4]).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] mms Master mode selection value.
+ */
+static inline void ll_atim_set_master_mode_selection(ATIM_TypeDef *tim, uint32_t mms)
+{
+	MODIFY_REG(tim->CR2, ATIM_CR2_MMS,
+		   MAKE_REG_VAL(mms, ATIM_CR2_MMS_Msk, ATIM_CR2_MMS_Pos));
+}
+
+/**
+ * @brief Set the master mode selection 2 (CR2.MMS2[23:20]).
+ * @param[in] tim  ATIM instance pointer.
+ * @param[in] mms2 Master mode selection 2 value.
+ */
+static inline void ll_atim_set_master_mode_selection2(ATIM_TypeDef *tim, uint32_t mms2)
+{
+	MODIFY_REG(tim->CR2, ATIM_CR2_MMS2,
+		   MAKE_REG_VAL(mms2, ATIM_CR2_MMS2_Msk, ATIM_CR2_MMS2_Pos));
+}
+
+/**
+ * @brief Force TI1 to the CH1 input (CR2.TI1S).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_ti1_selection_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CR2, ATIM_CR2_TI1S);
+}
+
+/**
+ * @brief Select TIMx_CH1 as TI1 (CR2.TI1S = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_ti1_selection_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CR2, ATIM_CR2_TI1S);
+}
+
+/**
+ * @brief Set the output idle state of an OC channel (CR2.OISx, channel 1..4).
+ * @param[in] tim        ATIM instance pointer.
+ * @param[in] ch         Channel, 1..4.
+ * @param[in] idle_high  1 = OCx high on idle, 0 = low.
+ */
+static inline void ll_atim_set_output_idle_state(ATIM_TypeDef *tim, uint32_t ch,
+						 uint32_t idle_high)
+{
+	uint32_t bit;
+
+	switch (ch) {
+	case 1U:
+		bit = ATIM_CR2_OIS1;
+		break;
+	case 2U:
+		bit = ATIM_CR2_OIS2;
+		break;
+	case 3U:
+		bit = ATIM_CR2_OIS3;
+		break;
+	case 4U:
+		bit = ATIM_CR2_OIS4;
+		break;
+	default:
+		return;
+	}
+	idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
+}
+
+/**
+ * @brief Set the complementary output idle state (CR2.OISxN, channel 1..3).
+ * @note CR2 only provides OIS1N/OIS2N/OIS3N; channel 4 has no complement.
+ * @param[in] tim        ATIM instance pointer.
+ * @param[in] ch         Channel, 1..3.
+ * @param[in] idle_high  1 = OCxN high on idle, 0 = low.
+ */
+static inline void ll_atim_set_output_idle_state_n(ATIM_TypeDef *tim, uint32_t ch,
+						   uint32_t idle_high)
+{
+	uint32_t bit;
+
+	switch (ch) {
+	case 1U:
+		bit = ATIM_CR2_OIS1N;
+		break;
+	case 2U:
+		bit = ATIM_CR2_OIS2N;
+		break;
+	case 3U:
+		bit = ATIM_CR2_OIS3N;
+		break;
+	default:
+		return;
+	}
+	idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
+}
+
+/**
+ * @brief Set the trigger selection (SMCR.TS[6:4]).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] ts  Trigger selection value.
+ */
+static inline void ll_atim_set_trigger_selection(ATIM_TypeDef *tim, uint32_t ts)
+{
+	MODIFY_REG(tim->SMCR, ATIM_SMCR_TS,
+		   MAKE_REG_VAL(ts, ATIM_SMCR_TS_Msk, ATIM_SMCR_TS_Pos));
+}
+
+/**
+ * @brief Set the slave mode selection (SMCR.SMS[19:16]).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] sms Slave mode selection value.
+ */
+static inline void ll_atim_set_slave_mode(ATIM_TypeDef *tim, uint32_t sms)
+{
+	MODIFY_REG(tim->SMCR, ATIM_SMCR_SMS,
+		   MAKE_REG_VAL(sms, ATIM_SMCR_SMS_Msk, ATIM_SMCR_SMS_Pos));
+}
+
+/**
+ * @brief Enable the external clock mode (SMCR.ECE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_external_clock_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->SMCR, ATIM_SMCR_ECE);
+}
+
+/**
+ * @brief Disable the external clock mode (SMCR.ECE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_external_clock_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->SMCR, ATIM_SMCR_ECE);
+}
+
+/**
+ * @brief Set the external trigger filter (SMCR.ETF[11:8]).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] etf External trigger filter value.
+ */
+static inline void ll_atim_set_external_trigger_filter(ATIM_TypeDef *tim, uint32_t etf)
+{
+	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETF,
+		   MAKE_REG_VAL(etf, ATIM_SMCR_ETF_Msk, ATIM_SMCR_ETF_Pos));
+}
+
+/**
+ * @brief Set the external trigger prescaler (SMCR.ETPS[13:12]).
+ * @param[in] tim  ATIM instance pointer.
+ * @param[in] etps External trigger prescaler value.
+ */
+static inline void ll_atim_set_external_trigger_prescaler(ATIM_TypeDef *tim, uint32_t etps)
+{
+	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETPS,
+		   MAKE_REG_VAL(etps, ATIM_SMCR_ETPS_Msk, ATIM_SMCR_ETPS_Pos));
+}
+
+/**
+ * @brief Set the external trigger polarity (SMCR.ETP).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] etp 1 = active low/inverted, 0 = non-inverted.
+ */
+static inline void ll_atim_set_external_trigger_polarity(ATIM_TypeDef *tim, uint32_t etp)
+{
+	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETP,
+		   MAKE_REG_VAL(etp, ATIM_SMCR_ETP_Msk, ATIM_SMCR_ETP_Pos));
+}
+
+/**
+ * @brief Enable master/slave mode (SMCR.MSM).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_master_slave_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->SMCR, ATIM_SMCR_MSM);
+}
+
+/**
+ * @brief Disable master/slave mode (SMCR.MSM = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_master_slave_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->SMCR, ATIM_SMCR_MSM);
+}
+
+/**
+ * @brief Set the OC5 output compare mode (CCMR3.OC5M[23:20]).
+ * @param[in] tim  ATIM instance pointer.
+ * @param[in] mode Output compare mode (use LL_ATIM_OC_MODE_*).
+ */
+static inline void ll_atim_oc5_set_mode(ATIM_TypeDef *tim, uint32_t mode)
+{
+	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC5M,
+		   MAKE_REG_VAL(mode, ATIM_CCMR3_OC5M_Msk, ATIM_CCMR3_OC5M_Pos));
+}
+
+/**
+ * @brief Enable OC5 preload (CCMR3.OC5PE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc5_preload_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
+}
+
+/**
+ * @brief Disable OC5 preload (CCMR3.OC5PE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc5_preload_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
+}
+
+/**
+ * @brief Enable OC5 clear (CCMR3.OC5CE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc5_clear_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
+}
+
+/**
+ * @brief Disable OC5 clear (CCMR3.OC5CE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc5_clear_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
+}
+
+/**
+ * @brief Set the OC6 output compare mode (CCMR3.OC6M[31:28]).
+ * @param[in] tim  ATIM instance pointer.
+ * @param[in] mode Output compare mode (use LL_ATIM_OC_MODE_*).
+ */
+static inline void ll_atim_oc6_set_mode(ATIM_TypeDef *tim, uint32_t mode)
+{
+	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC6M,
+		   MAKE_REG_VAL(mode, ATIM_CCMR3_OC6M_Msk, ATIM_CCMR3_OC6M_Pos));
+}
+
+/**
+ * @brief Enable OC6 preload (CCMR3.OC6PE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc6_preload_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
+}
+
+/**
+ * @brief Disable OC6 preload (CCMR3.OC6PE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc6_preload_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
+}
+
+/**
+ * @brief Enable OC6 clear (CCMR3.OC6CE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc6_clear_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
+}
+
+/**
+ * @brief Disable OC6 clear (CCMR3.OC6CE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_oc6_clear_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
+}
+
+/**
+ * @brief Set the group channel 5 selection (CCMR3.GC5C1..C3).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] grp Group selection value (3 bits: GC5C1/GC5C2/GC5C3).
+ */
+static inline void ll_atim_set_group_ch5(ATIM_TypeDef *tim, uint32_t grp)
+{
+	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_GC5C1 | ATIM_CCMR3_GC5C2 | ATIM_CCMR3_GC5C3,
+		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C1_Msk, ATIM_CCMR3_GC5C1_Pos) |
+		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C2_Msk, ATIM_CCMR3_GC5C2_Pos) |
+		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C3_Msk, ATIM_CCMR3_GC5C3_Pos));
+}
+
+/**
+ * @brief Enable the BRK2 BKIN input (AF2.BK2INE).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_input_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->AF2, ATIM_AF2_BK2INE);
+}
+
+/**
+ * @brief Disable the BRK2 BKIN input (AF2.BK2INE = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_input_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2INE);
+}
+
+/**
+ * @brief Enable the BRK2 COMP1 input (AF2.BK2CMP1E).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_cmp1_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
+}
+
+/**
+ * @brief Disable the BRK2 COMP1 input (AF2.BK2CMP1E = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_cmp1_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
+}
+
+/**
+ * @brief Enable the BRK2 COMP2 input (AF2.BK2CMP2E).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_cmp2_enable(ATIM_TypeDef *tim)
+{
+	SET_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
+}
+
+/**
+ * @brief Disable the BRK2 COMP2 input (AF2.BK2CMP2E = 0).
+ * @param[in] tim ATIM instance pointer.
+ */
+static inline void ll_atim_brk2_cmp2_disable(ATIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
+}
+
+/**
+ * @brief Set the BRK2 BKIN2 input polarity (AF2.BK2INP).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] pol 1 = active high, 0 = active low.
+ */
+static inline void ll_atim_brk2_input_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
+{
+	MODIFY_REG(tim->AF2, ATIM_AF2_BK2INP,
+		   MAKE_REG_VAL(pol, ATIM_AF2_BK2INP_Msk, ATIM_AF2_BK2INP_Pos));
+}
+
+/**
+ * @brief Set the BRK2 COMP1 input polarity (AF2.BK2CMP1P).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] pol 1 = active high, 0 = active low.
+ */
+static inline void ll_atim_brk2_cmp1_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
+{
+	MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP1P,
+		   MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP1P_Msk, ATIM_AF2_BK2CMP1P_Pos));
+}
+
+/**
+ * @brief Set the BRK2 COMP2 input polarity (AF2.BK2CMP2P).
+ * @param[in] tim ATIM instance pointer.
+ * @param[in] pol 1 = active high, 0 = active low.
+ */
+static inline void ll_atim_brk2_cmp2_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
+{
+	MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP2P,
+		   MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP2P_Msk, ATIM_AF2_BK2CMP2P_Pos));
 }
 
 #ifdef __cplusplus

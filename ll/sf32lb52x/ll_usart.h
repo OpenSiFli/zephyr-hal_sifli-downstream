@@ -667,6 +667,110 @@ static inline void ll_usart_request_rxdata_flush(USART_TypeDef *USARTx)
     WRITE_REG(USARTx->RQR, USART_RQR_RXFRQ);
 }
 
+/**
+ * @brief Set the USART clock prescaler (GTPR.PSC[7:0]).
+ * @param[in] USARTx USART instance pointer.
+ * @param[in] psc    Prescaler value (0 = no division).
+ */
+static inline void ll_usart_set_prescaler(USART_TypeDef *USARTx, uint32_t psc)
+{
+    MODIFY_REG(USARTx->GTPR, USART_GTPR_PSC,
+               MAKE_REG_VAL(psc, USART_GTPR_PSC_Msk, USART_GTPR_PSC_Pos));
+}
+
+/**
+ * @brief Set the guard time (GTPR.GT[15:8]).
+ * @param[in] USARTx USART instance pointer.
+ * @param[in] gt     Guard time value in baud-clock units.
+ */
+static inline void ll_usart_set_guard_time(USART_TypeDef *USARTx, uint32_t gt)
+{
+    MODIFY_REG(USARTx->GTPR, USART_GTPR_GT,
+               MAKE_REG_VAL(gt, USART_GTPR_GT_Msk, USART_GTPR_GT_Pos));
+}
+
+/**
+ * @brief Set the receiver timeout value (RTOR.RTO[23:0]).
+ * @param[in] USARTx USART instance pointer.
+ * @param[in] rto    Receiver timeout in baud-clock units.
+ */
+static inline void ll_usart_set_rx_timeout(USART_TypeDef *USARTx, uint32_t rto)
+{
+    MODIFY_REG(USARTx->RTOR, USART_RTOR_RTO,
+               MAKE_REG_VAL(rto, USART_RTOR_RTO_Msk, USART_RTOR_RTO_Pos));
+}
+
+/**
+ * @brief Set the block length (RTOR.BLEN[31:24]).
+ * @param[in] USARTx USART instance pointer.
+ * @param[in] blen   Block length value.
+ */
+static inline void ll_usart_set_block_length(USART_TypeDef *USARTx, uint32_t blen)
+{
+    MODIFY_REG(USARTx->RTOR, USART_RTOR_BLEN,
+               MAKE_REG_VAL(blen, USART_RTOR_BLEN_Msk, USART_RTOR_BLEN_Pos));
+}
+
+/**
+ * @brief Read the debug receive data register (DRDR.DATA).
+ * @param[in] USARTx USART instance pointer.
+ * @return Debug receive data.
+ */
+static inline uint32_t ll_usart_read_debug_rx(USART_TypeDef *USARTx)
+{
+    return READ_REG(USARTx->DRDR);
+}
+
+/**
+ * @brief Write the debug transmit data register (DTDR.DATA).
+ * @param[in] USARTx USART instance pointer.
+ * @param[in] data   Debug transmit data.
+ */
+static inline void ll_usart_write_debug_tx(USART_TypeDef *USARTx, uint32_t data)
+{
+    WRITE_REG(USARTx->DTDR, data);
+}
+
+/**
+ * @brief Read the debug transmit data register (DTDR.DATA).
+ * @param[in] USARTx USART instance pointer.
+ * @return Debug transmit data.
+ */
+static inline uint32_t ll_usart_read_debug_tx(USART_TypeDef *USARTx)
+{
+    return READ_REG(USARTx->DTDR);
+}
+
+/**
+ * @brief Check the mutual-exclusion busy flag (EXR.BUSY).
+ * @param[in] USARTx USART instance pointer.
+ * @return Non-zero when the mutual-exclusion resource is busy.
+ */
+static inline uint32_t ll_usart_is_mutex_busy(USART_TypeDef *USARTx)
+{
+    return READ_BIT(USARTx->EXR, USART_EXR_BUSY) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the mutual-exclusion owner ID (EXR.ID).
+ * @param[in] USARTx USART instance pointer.
+ * @return Owner ID (0 = HCPU, 1 = LCPU).
+ */
+static inline uint32_t ll_usart_get_mutex_id(USART_TypeDef *USARTx)
+{
+    return READ_BIT(USARTx->EXR, USART_EXR_ID) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the aggregate interrupt/status register (ISR).
+ * @param[in] USARTx USART instance pointer.
+ * @return ISR register value.
+ */
+static inline uint32_t ll_usart_get_isr(USART_TypeDef *USARTx)
+{
+    return READ_REG(USARTx->ISR);
+}
+
 #ifdef __cplusplus
 }
 #endif

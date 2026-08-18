@@ -184,6 +184,15 @@ static inline void ll_tsen_sd_enable(TSEN_TypeDef *tsen)
 	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
 }
 
+/**
+ * @brief Disable the sigma-delta signature mode (ANAU_TSEN_SGN_EN = 0).
+ * @param[in] tsen TSEN instance pointer.
+ */
+static inline void ll_tsen_sd_disable(TSEN_TypeDef *tsen)
+{
+	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
+}
+
 /*==============================================================================
  * Read Data
  *============================================================================*/

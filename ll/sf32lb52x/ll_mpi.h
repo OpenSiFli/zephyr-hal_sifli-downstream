@@ -110,7 +110,8 @@ static inline void ll_mpi_set_status_match_enable(MPI_TypeDef *mpi, uint32_t cs,
  */
 static inline void ll_mpi_set_protocol(MPI_TypeDef *mpi, uint32_t proto)
 {
-	if (proto == LL_MPI_PROTO_OPI) {
+	if (proto == LL_MPI_PROTO_OPI || proto == LL_MPI_PROTO_HYPER) {
+		/* HyperBus also uses the octal (x8) interface. */
 		SET_BIT(mpi->CR, MPI_CR_OPIE);
 	} else {
 		CLEAR_BIT(mpi->CR, MPI_CR_OPIE);
@@ -187,6 +188,26 @@ static inline void ll_mpi_set_row_boundary_size(MPI_TypeDef *mpi, uint32_t size)
 static inline void ll_mpi_enable_dqs(MPI_TypeDef *mpi)
 {
 	SET_BIT(mpi->DCR, MPI_DCR_DQSE);
+}
+
+/**
+ * @brief Enable/disable DQS (data strobe) sampling (DCR.DQSE).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] en  Non-zero to enable DQS sampling, zero to disable it.
+ */
+static inline void ll_mpi_set_dqs(MPI_TypeDef *mpi, uint32_t en)
+{
+	MODIFY_REG(mpi->DCR, MPI_DCR_DQSE, en ? MPI_DCR_DQSE : 0UL);
+}
+
+/**
+ * @brief Enable/disable the Xccela legacy protocol (DCR.XLEGACY).
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] en  Non-zero to enable Xccela legacy mode, zero to disable it.
+ */
+static inline void ll_mpi_set_xlegacy(MPI_TypeDef *mpi, uint32_t en)
+{
+	MODIFY_REG(mpi->DCR, MPI_DCR_XLEGACY, en ? MPI_DCR_XLEGACY : 0UL);
 }
 
 /*==============================================================================
@@ -727,6 +748,204 @@ static inline uint32_t ll_mpi_get_calibration_delay(MPI_TypeDef *mpi)
 static inline void ll_mpi_set_watchdog(MPI_TypeDef *mpi, uint32_t val)
 {
 	WRITE_REG(mpi->WDTR, val);
+}
+
+/**
+ * @brief Set the AHB write alternate byte register (HWABR.ABYTE).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] abyte Alternate byte value.
+ */
+static inline void ll_mpi_set_ahb_write_alt_bytes(MPI_TypeDef *mpi, uint32_t abyte)
+{
+	WRITE_REG(mpi->HWABR, abyte);
+}
+
+/**
+ * @brief Set the CTR starting address (CTRSAR.SA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Starting address (word-aligned; low 10 bits ignored).
+ */
+static inline void ll_mpi_set_ctr_start_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->CTRSAR, addr & MPI_CTRSAR_SA_Msk);
+}
+
+/**
+ * @brief Set the CTR ending address (CTREAR.EA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Ending address (word-aligned; low 10 bits ignored).
+ */
+static inline void ll_mpi_set_ctr_end_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->CTREAR, addr & MPI_CTREAR_EA_Msk);
+}
+
+/**
+ * @brief Set the nonce A (NONCEA).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] nonce Nonce A value.
+ */
+static inline void ll_mpi_set_nonce_a(MPI_TypeDef *mpi, uint32_t nonce)
+{
+	WRITE_REG(mpi->NONCEA, nonce);
+}
+
+/**
+ * @brief Set the nonce B (NONCEB).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] nonce Nonce B value.
+ */
+static inline void ll_mpi_set_nonce_b(MPI_TypeDef *mpi, uint32_t nonce)
+{
+	WRITE_REG(mpi->NONCEB, nonce);
+}
+
+/**
+ * @brief Set the address aliasing starting address (AASAR.SA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Starting address of the aliasing area.
+ */
+static inline void ll_mpi_set_aa_start_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->AASAR, addr & MPI_AASAR_SA_Msk);
+}
+
+/**
+ * @brief Set the address aliasing ending address (AAEAR.EA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Ending address of the aliasing area.
+ */
+static inline void ll_mpi_set_aa_end_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->AAEAR, addr & MPI_AAEAR_EA_Msk);
+}
+
+/**
+ * @brief Set the address aliasing offset address (AAOAR.OA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Offset applied to addresses inside the aliasing area.
+ */
+static inline void ll_mpi_set_aa_offset_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->AAOAR, addr & MPI_AAOAR_OA_Msk);
+}
+
+/**
+ * @brief Set the prefetch starting address (PRSAR.SA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Starting address of the prefetch area.
+ */
+static inline void ll_mpi_set_prefetch_start_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->PRSAR, addr & MPI_PRSAR_SA_Msk);
+}
+
+/**
+ * @brief Set the prefetch ending address (PREAR.EA[31:10]).
+ * @param[in] mpi  MPI instance pointer.
+ * @param[in] addr Ending address of the prefetch area.
+ */
+static inline void ll_mpi_set_prefetch_end_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	WRITE_REG(mpi->PREAR, addr & MPI_PREAR_EA_Msk);
+}
+
+/**
+ * @brief Enable the OPI calibration data output (CALDOR.EN).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_output_enable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CALDOR, MPI_CALDOR_EN);
+}
+
+/**
+ * @brief Disable the OPI calibration data output (CALDOR.EN = 0).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_output_disable(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CALDOR, MPI_CALDOR_EN);
+}
+
+/**
+ * @brief Get the OPI calibration feedback data (CALDOR.DATA).
+ * @param[in] mpi MPI instance pointer.
+ * @return Calibration data.
+ */
+static inline uint32_t ll_mpi_get_calibration_data(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->CALDOR, MPI_CALDOR_DATA);
+}
+
+/**
+ * @brief Set the APM32 rising-edge TCPH (APM32CR.TCPHR).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] tcphr TCPH rising value (4 bits).
+ */
+static inline void ll_mpi_set_apm32_tcphr(MPI_TypeDef *mpi, uint32_t tcphr)
+{
+	MODIFY_REG(mpi->APM32CR, MPI_APM32CR_TCPHR,
+		   MAKE_REG_VAL(tcphr, MPI_APM32CR_TCPHR_Msk, MPI_APM32CR_TCPHR_Pos));
+}
+
+/**
+ * @brief Set the APM32 falling-edge TCPH (APM32CR.TCPHW).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] tcphw TCPH falling value (4 bits).
+ */
+static inline void ll_mpi_set_apm32_tcphw(MPI_TypeDef *mpi, uint32_t tcphw)
+{
+	MODIFY_REG(mpi->APM32CR, MPI_APM32CR_TCPHW,
+		   MAKE_REG_VAL(tcphw, MPI_APM32CR_TCPHW_Msk, MPI_APM32CR_TCPHW_Pos));
+}
+
+/**
+ * @brief Set the OPI output delay of a signal line (OPIDLY_OCR1.SO0..SO7).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] pin   Signal line index, 0..7.
+ * @param[in] delay Output delay (4 bits).
+ */
+static inline void ll_mpi_set_opi_output_delay(MPI_TypeDef *mpi, uint32_t pin, uint32_t delay)
+{
+	uint32_t msk, pos;
+
+	switch (pin) {
+	case 0U: msk = MPI_OPIDLY_OCR1_SO0_Msk; pos = MPI_OPIDLY_OCR1_SO0_Pos; break;
+	case 1U: msk = MPI_OPIDLY_OCR1_SO1_Msk; pos = MPI_OPIDLY_OCR1_SO1_Pos; break;
+	case 2U: msk = MPI_OPIDLY_OCR1_SO2_Msk; pos = MPI_OPIDLY_OCR1_SO2_Pos; break;
+	case 3U: msk = MPI_OPIDLY_OCR1_SO3_Msk; pos = MPI_OPIDLY_OCR1_SO3_Pos; break;
+	case 4U: msk = MPI_OPIDLY_OCR1_SO4_Msk; pos = MPI_OPIDLY_OCR1_SO4_Pos; break;
+	case 5U: msk = MPI_OPIDLY_OCR1_SO5_Msk; pos = MPI_OPIDLY_OCR1_SO5_Pos; break;
+	case 6U: msk = MPI_OPIDLY_OCR1_SO6_Msk; pos = MPI_OPIDLY_OCR1_SO6_Pos; break;
+	case 7U: msk = MPI_OPIDLY_OCR1_SO7_Msk; pos = MPI_OPIDLY_OCR1_SO7_Pos; break;
+	default: return;
+	}
+	MODIFY_REG(mpi->OPIDLY_OCR1, msk, MAKE_REG_VAL(delay, msk, pos));
+}
+
+/**
+ * @brief Set the OPI input delay of a signal line (OPIDLY_ICR1.SI0..SI7).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] pin   Signal line index, 0..7.
+ * @param[in] delay Input delay (4 bits).
+ */
+static inline void ll_mpi_set_opi_input_delay(MPI_TypeDef *mpi, uint32_t pin, uint32_t delay)
+{
+	uint32_t msk, pos;
+
+	switch (pin) {
+	case 0U: msk = MPI_OPIDLY_ICR1_SI0_Msk; pos = MPI_OPIDLY_ICR1_SI0_Pos; break;
+	case 1U: msk = MPI_OPIDLY_ICR1_SI1_Msk; pos = MPI_OPIDLY_ICR1_SI1_Pos; break;
+	case 2U: msk = MPI_OPIDLY_ICR1_SI2_Msk; pos = MPI_OPIDLY_ICR1_SI2_Pos; break;
+	case 3U: msk = MPI_OPIDLY_ICR1_SI3_Msk; pos = MPI_OPIDLY_ICR1_SI3_Pos; break;
+	case 4U: msk = MPI_OPIDLY_ICR1_SI4_Msk; pos = MPI_OPIDLY_ICR1_SI4_Pos; break;
+	case 5U: msk = MPI_OPIDLY_ICR1_SI5_Msk; pos = MPI_OPIDLY_ICR1_SI5_Pos; break;
+	case 6U: msk = MPI_OPIDLY_ICR1_SI6_Msk; pos = MPI_OPIDLY_ICR1_SI6_Pos; break;
+	case 7U: msk = MPI_OPIDLY_ICR1_SI7_Msk; pos = MPI_OPIDLY_ICR1_SI7_Pos; break;
+	default: return;
+	}
+	MODIFY_REG(mpi->OPIDLY_ICR1, msk, MAKE_REG_VAL(delay, msk, pos));
 }
 
 #ifdef __cplusplus

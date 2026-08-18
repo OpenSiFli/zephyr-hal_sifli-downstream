@@ -512,6 +512,39 @@ static inline uint32_t ll_pmuc_is_lxt32_ready(PMUC_TypeDef *PMUCx)
 	return READ_BIT(PMUCx->LXT_CR, PMUC_LXT_CR_RDY);
 }
 
+/**
+ * @brief Configure and enable the LXT32 oscillator (LXT_CR) in one write.
+ * @param[in] PMUCx   PMUC instance pointer.
+ * @param[in] bm      Bias mode value (BM field).
+ * @param[in] amp_bm  Amplifier bias value (AMP_BM field).
+ * @param[in] cap_sel Capacitor select value (CAP_SEL field).
+ * @param[in] rsn     Reset-while-standby enable (1 bit).
+ */
+static inline void ll_pmuc_config_lxt32(PMUC_TypeDef *PMUCx, uint32_t bm,
+					uint32_t amp_bm, uint32_t cap_sel,
+					uint32_t rsn)
+{
+	uint32_t value;
+
+	value = MAKE_REG_VAL(bm, PMUC_LXT_CR_BM_Msk, PMUC_LXT_CR_BM_Pos) |
+		MAKE_REG_VAL(amp_bm, PMUC_LXT_CR_AMP_BM_Msk, PMUC_LXT_CR_AMP_BM_Pos) |
+		MAKE_REG_VAL(cap_sel, PMUC_LXT_CR_CAP_SEL_Msk, PMUC_LXT_CR_CAP_SEL_Pos) |
+		(rsn ? PMUC_LXT_CR_RSN : 0U) | PMUC_LXT_CR_EN;
+	MODIFY_REG(PMUCx->LXT_CR,
+		   PMUC_LXT_CR_EN | PMUC_LXT_CR_RSN | PMUC_LXT_CR_CAP_SEL |
+			   PMUC_LXT_CR_BM_Msk | PMUC_LXT_CR_AMP_BM_Msk,
+		   value);
+}
+
+/**
+ * @brief Disable the LXT32 oscillator clearing both EN and RSN (LXT_CR).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_disable_lxt32_rsn(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->LXT_CR, PMUC_LXT_CR_EN | PMUC_LXT_CR_RSN);
+}
+
 /*==============================================================================
  * BUCK Converter
  *============================================================================*/
@@ -966,6 +999,574 @@ static inline void ll_pmuc_set_wkup_count(PMUC_TypeDef *PMUCx, uint32_t cnt)
 static inline void ll_pmuc_set_pwrkey_count(PMUC_TypeDef *PMUCx, uint32_t cnt)
 {
 	WRITE_REG(PMUCx->PWRKEY_CNT, MAKE_REG_VAL(cnt, PMUC_PWRKEY_CNT_RST_CNT_Msk, PMUC_PWRKEY_CNT_RST_CNT_Pos));
+}
+
+/**
+ * @brief Set the charger precharge current range (CHG_CR2.PRECC_RANGE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] range Precharge current range (2 bits).
+ */
+static inline void ll_pmuc_charger_set_precc_range(PMUC_TypeDef *PMUCx, uint32_t range)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_PRECC_RANGE,
+		   MAKE_REG_VAL(range, PMUC_CHG_CR2_PRECC_RANGE_Msk, PMUC_CHG_CR2_PRECC_RANGE_Pos));
+}
+
+/**
+ * @brief Set the charger precharge current (CHG_CR2.PRECC_ICTRL).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] ictrl Precharge current control (6 bits).
+ */
+static inline void ll_pmuc_charger_set_precc_current(PMUC_TypeDef *PMUCx, uint32_t ictrl)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_PRECC_ICTRL,
+		   MAKE_REG_VAL(ictrl, PMUC_CHG_CR2_PRECC_ICTRL_Msk, PMUC_CHG_CR2_PRECC_ICTRL_Pos));
+}
+
+/**
+ * @brief Set the charger reprog voltage (CHG_CR2.REP_VCTRL).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vctrl Reprogramming voltage control (6 bits).
+ */
+static inline void ll_pmuc_charger_set_reprog_voltage(PMUC_TypeDef *PMUCx, uint32_t vctrl)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_REP_VCTRL,
+		   MAKE_REG_VAL(vctrl, PMUC_CHG_CR2_REP_VCTRL_Msk, PMUC_CHG_CR2_REP_VCTRL_Pos));
+}
+
+/**
+ * @brief Set the charger high voltage (CHG_CR2.HIGH_VCTRL).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vctrl High voltage control (6 bits).
+ */
+static inline void ll_pmuc_charger_set_high_voltage(PMUC_TypeDef *PMUCx, uint32_t vctrl)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_HIGH_VCTRL,
+		   MAKE_REG_VAL(vctrl, PMUC_CHG_CR2_HIGH_VCTRL_Msk, PMUC_CHG_CR2_HIGH_VCTRL_Pos));
+}
+
+/**
+ * @brief Set the charger end-of-charge bias mode (CHG_CR2.BM_EOC).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] bm    EOC bias mode (3 bits).
+ */
+static inline void ll_pmuc_charger_set_bm_eoc(PMUC_TypeDef *PMUCx, uint32_t bm)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_BM_EOC,
+		   MAKE_REG_VAL(bm, PMUC_CHG_CR2_BM_EOC_Msk, PMUC_CHG_CR2_BM_EOC_Pos));
+}
+
+/**
+ * @brief Set the charger VBAT range (CHG_CR2.VBAT_RANGE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] range VBAT range (4 bits).
+ */
+static inline void ll_pmuc_charger_set_vbat_range(PMUC_TypeDef *PMUCx, uint32_t range)
+{
+	MODIFY_REG(PMUCx->CHG_CR2, PMUC_CHG_CR2_VBAT_RANGE,
+		   MAKE_REG_VAL(range, PMUC_CHG_CR2_VBAT_RANGE_Msk, PMUC_CHG_CR2_VBAT_RANGE_Pos));
+}
+
+/**
+ * @brief Force charger control (CHG_CR3.FORCE_CTRL).
+ * @note When FORCE_CTRL is set, the charger settings are controlled by the
+ *       register fields instead of the automatic state machine.
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_charger_force_ctrl_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CHG_CR3, PMUC_CHG_CR3_FORCE_CTRL);
+}
+
+/**
+ * @brief Release charger control to the state machine (CHG_CR3.FORCE_CTRL = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_charger_force_ctrl_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CHG_CR3, PMUC_CHG_CR3_FORCE_CTRL);
+}
+
+/**
+ * @brief Force the charger reset (CHG_CR3.FORCE_RST).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_charger_force_reset_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CHG_CR3, PMUC_CHG_CR3_FORCE_RST);
+}
+
+/**
+ * @brief Release the charger force reset (CHG_CR3.FORCE_RST = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_charger_force_reset_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CHG_CR3, PMUC_CHG_CR3_FORCE_RST);
+}
+
+/**
+ * @brief Set the charger detection delay 1 (CHG_CR3.DLY1).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] dly   Delay value (6 bits).
+ */
+static inline void ll_pmuc_charger_set_dly1(PMUC_TypeDef *PMUCx, uint32_t dly)
+{
+	MODIFY_REG(PMUCx->CHG_CR3, PMUC_CHG_CR3_DLY1,
+		   MAKE_REG_VAL(dly, PMUC_CHG_CR3_DLY1_Msk, PMUC_CHG_CR3_DLY1_Pos));
+}
+
+/**
+ * @brief Set the charger detection delay 2 (CHG_CR3.DLY2).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] dly   Delay value (5 bits).
+ */
+static inline void ll_pmuc_charger_set_dly2(PMUC_TypeDef *PMUCx, uint32_t dly)
+{
+	MODIFY_REG(PMUCx->CHG_CR3, PMUC_CHG_CR3_DLY2,
+		   MAKE_REG_VAL(dly, PMUC_CHG_CR3_DLY2_Msk, PMUC_CHG_CR3_DLY2_Pos));
+}
+
+/**
+ * @brief Configure the charger interrupt enable bits (CHG_CR4.IE_*).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mask  ORed PMUC_CHG_CR4_IE_* masks.
+ */
+static inline void ll_pmuc_charger_config_irq_enable(PMUC_TypeDef *PMUCx, uint32_t mask)
+{
+	MODIFY_REG(PMUCx->CHG_CR4, PMUC_CHG_CR4_IE_VBUS_RDY | PMUC_CHG_CR4_IE_VBAT_HIGH |
+		   PMUC_CHG_CR4_IE_ABOVE_REP | PMUC_CHG_CR4_IE_ABOVE_CC |
+		   PMUC_CHG_CR4_IE_CC_MODE | PMUC_CHG_CR4_IE_CV_MODE |
+		   PMUC_CHG_CR4_IE_EOC_MODE | PMUC_CHG_CR4_IE_EOC,
+		   mask);
+}
+
+/**
+ * @brief Configure the charger interrupt mode bits (CHG_CR4.IM_*).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mask  ORed PMUC_CHG_CR4_IM_* masks (0 = high level, 1 = low level,
+ *                  2 = pos edge, 3 = neg edge).
+ */
+static inline void ll_pmuc_charger_config_irq_mode(PMUC_TypeDef *PMUCx, uint32_t mask)
+{
+	MODIFY_REG(PMUCx->CHG_CR4, PMUC_CHG_CR4_IM_VBUS_RDY | PMUC_CHG_CR4_IM_VBAT_HIGH |
+		   PMUC_CHG_CR4_IM_ABOVE_REP | PMUC_CHG_CR4_IM_ABOVE_CC |
+		   PMUC_CHG_CR4_IM_CC_MODE | PMUC_CHG_CR4_IM_CV_MODE |
+		   PMUC_CHG_CR4_IM_EOC_MODE,
+		   mask);
+}
+
+/**
+ * @brief Get the charger interrupt status (CHG_CR5.IS_*).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return ORed PMUC_CHG_CR5_IS_* flags.
+ */
+static inline uint32_t ll_pmuc_charger_get_irq_status(PMUC_TypeDef *PMUCx)
+{
+	return READ_REG(PMUCx->CHG_CR5) & (PMUC_CHG_CR5_IS_VBUS_RDY | PMUC_CHG_CR5_IS_VBAT_HIGH |
+		PMUC_CHG_CR5_IS_ABOVE_REP | PMUC_CHG_CR5_IS_ABOVE_CC |
+		PMUC_CHG_CR5_IS_CC_MODE | PMUC_CHG_CR5_IS_CV_MODE |
+		PMUC_CHG_CR5_IS_EOC_MODE | PMUC_CHG_CR5_IS_EOC);
+}
+
+/**
+ * @brief Clear the charger interrupt flags (CHG_CR5.IC_*, write 1 to clear).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mask  ORed PMUC_CHG_CR5_IC_* masks.
+ */
+static inline void ll_pmuc_charger_clear_irq(PMUC_TypeDef *PMUCx, uint32_t mask)
+{
+	WRITE_REG(PMUCx->CHG_CR5, mask);
+}
+
+/**
+ * @brief Get the charger status (CHG_SR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return ORed PMUC_CHG_SR_* flags (VBUS_RDY_OUT, VBAT_HIGH_OUT, ... CHG_STATE).
+ */
+static inline uint32_t ll_pmuc_charger_get_status(PMUC_TypeDef *PMUCx)
+{
+	return READ_REG(PMUCx->CHG_SR);
+}
+
+/**
+ * @brief Set the PMU DC test point and macro select (PMU_TR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] tr    DC test point select (3 bits).
+ * @param[in] mr    DC macro select (3 bits).
+ */
+static inline void ll_pmuc_set_dc_test(PMUC_TypeDef *PMUCx, uint32_t tr, uint32_t mr)
+{
+	MODIFY_REG(PMUCx->PMU_TR, PMUC_PMU_TR_PMU_DC_TR | PMUC_PMU_TR_PMU_DC_MR,
+		   MAKE_REG_VAL(tr, PMUC_PMU_TR_PMU_DC_TR_Msk, PMUC_PMU_TR_PMU_DC_TR_Pos) |
+		   MAKE_REG_VAL(mr, PMUC_PMU_TR_PMU_DC_MR_Msk, PMUC_PMU_TR_PMU_DC_MR_Pos));
+}
+
+/**
+ * @brief Enable the HXT48 AGC (HXT_CR2.AGC_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_agc_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_AGC_EN);
+}
+
+/**
+ * @brief Disable the HXT48 AGC (HXT_CR2.AGC_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_agc_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_AGC_EN);
+}
+
+/**
+ * @brief Set the HXT48 AGC threshold (HXT_CR2.AGC_VTH).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vth   AGC threshold (4 bits).
+ */
+static inline void ll_pmuc_hxt48_set_agc_vth(PMUC_TypeDef *PMUCx, uint32_t vth)
+{
+	MODIFY_REG(PMUCx->HXT_CR2, PMUC_HXT_CR2_AGC_VTH,
+		   MAKE_REG_VAL(vth, PMUC_HXT_CR2_AGC_VTH_Msk, PMUC_HXT_CR2_AGC_VTH_Pos));
+}
+
+/**
+ * @brief Set the HXT48 AGC VIN DC (HXT_CR2.AGC_VINDC).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vindc AGC VIN DC (2 bits).
+ */
+static inline void ll_pmuc_hxt48_set_agc_vindc(PMUC_TypeDef *PMUCx, uint32_t vindc)
+{
+	MODIFY_REG(PMUCx->HXT_CR2, PMUC_HXT_CR2_AGC_VINDC,
+		   MAKE_REG_VAL(vindc, PMUC_HXT_CR2_AGC_VINDC_Msk, PMUC_HXT_CR2_AGC_VINDC_Pos));
+}
+
+/**
+ * @brief Set the HXT48 AC buffer select (HXT_CR2.ACBUF_SEL).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] sel   AC buffer select (2 bits).
+ */
+static inline void ll_pmuc_hxt48_set_acbuf_sel(PMUC_TypeDef *PMUCx, uint32_t sel)
+{
+	MODIFY_REG(PMUCx->HXT_CR2, PMUC_HXT_CR2_ACBUF_SEL,
+		   MAKE_REG_VAL(sel, PMUC_HXT_CR2_ACBUF_SEL_Msk, PMUC_HXT_CR2_ACBUF_SEL_Pos));
+}
+
+/**
+ * @brief Enable the HXT48 IDAC (HXT_CR2.IDAC_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_idac_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_IDAC_EN);
+}
+
+/**
+ * @brief Disable the HXT48 IDAC (HXT_CR2.IDAC_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_idac_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_IDAC_EN);
+}
+
+/**
+ * @brief Set the HXT48 IDAC value (HXT_CR2.IDAC).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] idac  IDAC value (10 bits).
+ */
+static inline void ll_pmuc_hxt48_set_idac(PMUC_TypeDef *PMUCx, uint32_t idac)
+{
+	MODIFY_REG(PMUCx->HXT_CR2, PMUC_HXT_CR2_IDAC,
+		   MAKE_REG_VAL(idac, PMUC_HXT_CR2_IDAC_Msk, PMUC_HXT_CR2_IDAC_Pos));
+}
+
+/**
+ * @brief Enable the HXT48 sleep mode (HXT_CR2.SLEEP_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_sleep_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_SLEEP_EN);
+}
+
+/**
+ * @brief Disable the HXT48 sleep mode (HXT_CR2.SLEEP_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_hxt48_sleep_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->HXT_CR2, PMUC_HXT_CR2_SLEEP_EN);
+}
+
+/**
+ * @brief Set the HXT48 buffer DAC strength (HXT_CR3.BUF_DAC_STR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] str   Buffer strength (2 bits).
+ */
+static inline void ll_pmuc_hxt48_set_buf_dac_str(PMUC_TypeDef *PMUCx, uint32_t str)
+{
+	MODIFY_REG(PMUCx->HXT_CR3, PMUC_HXT_CR3_BUF_DAC_STR,
+		   MAKE_REG_VAL(str, PMUC_HXT_CR3_BUF_DAC_STR_Msk, PMUC_HXT_CR3_BUF_DAC_STR_Pos));
+}
+
+/**
+ * @brief Set the HXT48 buffer oscillator strength (HXT_CR3.BUF_OSLO_STR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] str   Buffer strength (2 bits).
+ */
+static inline void ll_pmuc_hxt48_set_buf_oslo_str(PMUC_TypeDef *PMUCx, uint32_t str)
+{
+	MODIFY_REG(PMUCx->HXT_CR3, PMUC_HXT_CR3_BUF_OSLO_STR,
+		   MAKE_REG_VAL(str, PMUC_HXT_CR3_BUF_OSLO_STR_Msk, PMUC_HXT_CR3_BUF_OSLO_STR_Pos));
+}
+
+/**
+ * @brief Set the HXT48 delay (HXT_CR3.DLY).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] dly   Delay value (6 bits).
+ */
+static inline void ll_pmuc_hxt48_set_dly(PMUC_TypeDef *PMUCx, uint32_t dly)
+{
+	MODIFY_REG(PMUCx->HXT_CR3, PMUC_HXT_CR3_DLY,
+		   MAKE_REG_VAL(dly, PMUC_HXT_CR3_DLY_Msk, PMUC_HXT_CR3_DLY_Pos));
+}
+
+/**
+ * @brief Enable the DBL96 doubler (DBL96_CR.EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_EN);
+}
+
+/**
+ * @brief Disable the DBL96 doubler (DBL96_CR.EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_EN);
+}
+
+/**
+ * @brief Enable the DBL96 output (DBL96_CR.OUT_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_out_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_OUT_EN);
+}
+
+/**
+ * @brief Disable the DBL96 output (DBL96_CR.OUT_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_out_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_OUT_EN);
+}
+
+/**
+ * @brief Set the DBL96 to-digital strength (DBL96_CR.TODIG_STR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] str   Strength (2 bits).
+ */
+static inline void ll_pmuc_dbl96_set_todig_str(PMUC_TypeDef *PMUCx, uint32_t str)
+{
+	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_TODIG_STR,
+		   MAKE_REG_VAL(str, PMUC_DBL96_CR_TODIG_STR_Msk, PMUC_DBL96_CR_TODIG_STR_Pos));
+}
+
+/**
+ * @brief Enable the DBL96 loop reset (assert LOOP_RSTB low).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_loop_assert_reset(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_LOOP_RSTB);
+}
+
+/**
+ * @brief Release the DBL96 loop reset (LOOP_RSTB = 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_loop_release_reset(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_LOOP_RSTB);
+}
+
+/**
+ * @brief Set the DBL96 phase enable mask (DBL96_CR.PH_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mask  Phase enable mask (4 bits).
+ */
+static inline void ll_pmuc_dbl96_set_ph_enable(PMUC_TypeDef *PMUCx, uint32_t mask)
+{
+	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_PH_EN,
+		   MAKE_REG_VAL(mask, PMUC_DBL96_CR_PH_EN_Msk, PMUC_DBL96_CR_PH_EN_Pos));
+}
+
+/**
+ * @brief Enable the DBL96 delay (DBL96_CR.DLY_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_dly_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_EN);
+}
+
+/**
+ * @brief Disable the DBL96 delay (DBL96_CR.DLY_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_dly_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_EN);
+}
+
+/**
+ * @brief Set the DBL96 external delay select (DBL96_CR.DLY_SEL_EXT).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] sel   External delay select (11 bits).
+ */
+static inline void ll_pmuc_dbl96_set_dly_sel_ext(PMUC_TypeDef *PMUCx, uint32_t sel)
+{
+	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_SEL_EXT,
+		   MAKE_REG_VAL(sel, PMUC_DBL96_CR_DLY_SEL_EXT_Msk, PMUC_DBL96_CR_DLY_SEL_EXT_Pos));
+}
+
+/**
+ * @brief Enable the DBL96 calibration (DBL96_CALR.CAL_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_cal_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_EN);
+}
+
+/**
+ * @brief Disable the DBL96 calibration (DBL96_CALR.CAL_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_dbl96_cal_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_EN);
+}
+
+/**
+ * @brief Get the DBL96 calibration result (DBL96_CALR.CAL_OP).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Calibration operation result (11 bits).
+ */
+static inline uint32_t ll_pmuc_dbl96_get_cal_result(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_OP);
+}
+
+/**
+ * @brief Check whether the DBL96 calibration is locked (DBL96_CALR.CAL_LOCK).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when locked.
+ */
+static inline uint32_t ll_pmuc_dbl96_is_cal_locked(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_LOCK) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Enable the HPSYS bandgap (CAU_BGR.HPBG_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_hpbg_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_HPBG_EN);
+}
+
+/**
+ * @brief Disable the HPSYS bandgap (CAU_BGR.HPBG_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_hpbg_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_HPBG_EN);
+}
+
+/**
+ * @brief Enable the HPSYS bandgap VDDPSW (CAU_BGR.HPBG_VDDPSW_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_hpbg_vddpsw_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_HPBG_VDDPSW_EN);
+}
+
+/**
+ * @brief Disable the HPSYS bandgap VDDPSW (CAU_BGR.HPBG_VDDPSW_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_hpbg_vddpsw_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_HPBG_VDDPSW_EN);
+}
+
+/**
+ * @brief Enable the LPSYS bandgap (CAU_BGR.LPBG_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_lpbg_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_LPBG_EN);
+}
+
+/**
+ * @brief Disable the LPSYS bandgap (CAU_BGR.LPBG_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_cau_lpbg_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CAU_BGR, PMUC_CAU_BGR_LPBG_EN);
+}
+
+/**
+ * @brief Set the LPSYS bandgap 0.6V reference (CAU_BGR.LPBG_VREF06).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vref  Reference trim (4 bits).
+ */
+static inline void ll_pmuc_cau_set_lpbg_vref06(PMUC_TypeDef *PMUCx, uint32_t vref)
+{
+	MODIFY_REG(PMUCx->CAU_BGR, PMUC_CAU_BGR_LPBG_VREF06,
+		   MAKE_REG_VAL(vref, PMUC_CAU_BGR_LPBG_VREF06_Msk, PMUC_CAU_BGR_LPBG_VREF06_Pos));
+}
+
+/**
+ * @brief Set the LPSYS bandgap 1.2V reference (CAU_BGR.LPBG_VREF12).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vref  Reference trim (4 bits).
+ */
+static inline void ll_pmuc_cau_set_lpbg_vref12(PMUC_TypeDef *PMUCx, uint32_t vref)
+{
+	MODIFY_REG(PMUCx->CAU_BGR, PMUC_CAU_BGR_LPBG_VREF12,
+		   MAKE_REG_VAL(vref, PMUC_CAU_BGR_LPBG_VREF12_Msk, PMUC_CAU_BGR_LPBG_VREF12_Pos));
+}
+
+/**
+ * @brief Set the CAU DC test (CAU_TR).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] tr    DC test point select (3 bits).
+ * @param[in] br    DC test block select (3 bits).
+ * @param[in] mr    DC test macro select (3 bits).
+ */
+static inline void ll_pmuc_cau_set_dc_test(PMUC_TypeDef *PMUCx, uint32_t tr, uint32_t br,
+					   uint32_t mr)
+{
+	MODIFY_REG(PMUCx->CAU_TR, PMUC_CAU_TR_CAU_DC_TR | PMUC_CAU_TR_CAU_DC_BR |
+		   PMUC_CAU_TR_CAU_DC_MR,
+		   MAKE_REG_VAL(tr, PMUC_CAU_TR_CAU_DC_TR_Msk, PMUC_CAU_TR_CAU_DC_TR_Pos) |
+		   MAKE_REG_VAL(br, PMUC_CAU_TR_CAU_DC_BR_Msk, PMUC_CAU_TR_CAU_DC_BR_Pos) |
+		   MAKE_REG_VAL(mr, PMUC_CAU_TR_CAU_DC_MR_Msk, PMUC_CAU_TR_CAU_DC_MR_Pos));
 }
 
 #ifdef __cplusplus

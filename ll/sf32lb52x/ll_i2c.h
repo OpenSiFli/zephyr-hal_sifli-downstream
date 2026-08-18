@@ -760,6 +760,164 @@ static inline void ll_i2c_disable_it_uf(I2C_TypeDef *I2Cx)
     CLEAR_BIT(I2Cx->IER, I2C_IER_UFIE);
 }
 
+/**
+ * @brief Set the bus reset SCL cycle count (RCCR.RSTCYC[3:0]).
+ * @param[in] I2Cx   I2C instance pointer.
+ * @param[in] cycles SCL cycle count during bus reset.
+ */
+static inline void ll_i2c_set_bus_reset_cycles(I2C_TypeDef *I2Cx, uint32_t cycles)
+{
+    MODIFY_REG(I2Cx->RCCR, I2C_RCCR_RSTCYC,
+               MAKE_REG_VAL(cycles, I2C_RCCR_RSTCYC_Msk, I2C_RCCR_RSTCYC_Pos));
+}
+
+/**
+ * @brief Read the SDA pin level (BMR.SDA).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Non-zero when SDA is high.
+ */
+static inline uint32_t ll_i2c_get_sda_level(I2C_TypeDef *I2Cx)
+{
+    return READ_BIT(I2Cx->BMR, I2C_BMR_SDA) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the SCL pin level (BMR.SCL).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Non-zero when SCL is high.
+ */
+static inline uint32_t ll_i2c_get_scl_level(I2C_TypeDef *I2Cx)
+{
+    return READ_BIT(I2Cx->BMR, I2C_BMR_SCL) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Push a byte into the TX FIFO (FIFO.DATA).
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] data Byte to send.
+ */
+static inline void ll_i2c_write_tx_data(I2C_TypeDef *I2Cx, uint8_t data)
+{
+    WRITE_REG(I2Cx->FIFO, data);
+}
+
+/**
+ * @brief Pop a byte from the RX FIFO (FIFO.DATA).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Received byte.
+ */
+static inline uint8_t ll_i2c_read_rx_data(I2C_TypeDef *I2Cx)
+{
+    return (uint8_t)READ_REG(I2Cx->FIFO);
+}
+
+/**
+ * @brief Read the aggregate status register (SR).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return SR register value.
+ */
+static inline uint32_t ll_i2c_get_status(I2C_TypeDef *I2Cx)
+{
+    return READ_REG(I2Cx->SR);
+}
+
+/**
+ * @brief Clear the latched status flags by writing SR.
+ * @param[in] I2Cx  I2C instance pointer.
+ * @param[in] flags Status flags to clear.
+ */
+static inline void ll_i2c_clear_status(I2C_TypeDef *I2Cx, uint32_t flags)
+{
+    WRITE_REG(I2Cx->SR, flags);
+}
+
+/**
+ * @brief Disable all interrupts by clearing the full IER register.
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_all_irqs(I2C_TypeDef *I2Cx)
+{
+    WRITE_REG(I2Cx->IER, 0U);
+}
+
+/**
+ * @brief Write one data byte to DBR without starting a transfer.
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] data Byte to write.
+ */
+static inline void ll_i2c_write_data(I2C_TypeDef *I2Cx, uint8_t data)
+{
+    WRITE_REG(I2Cx->DBR, ((uint32_t)data & I2C_DBR_DATA));
+}
+
+/**
+ * @brief Write a combined START/TB/NACK/STOP command atomically (TCR).
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] tcr  Raw TCR command value.
+ */
+static inline void ll_i2c_write_tcr(I2C_TypeDef *I2Cx, uint32_t tcr)
+{
+    WRITE_REG(I2Cx->TCR, tcr);
+}
+
+/**
+ * @brief Enable master-slave data enable (CR.MSDE).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_enable_msde(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->CR, I2C_CR_MSDE);
+}
+
+/**
+ * @brief Disable master-slave data enable (CR.MSDE = 0).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_msde(I2C_TypeDef *I2Cx)
+{
+    CLEAR_BIT(I2Cx->CR, I2C_CR_MSDE);
+}
+
+/**
+ * @brief Set the speed mode field only (CR.MODE), preserving other CR bits.
+ * @param[in] I2Cx  I2C instance pointer.
+ * @param[in] mode  Raw MODE field value.
+ */
+static inline void ll_i2c_set_speed_mode(I2C_TypeDef *I2Cx, uint32_t mode)
+{
+    MODIFY_REG(I2Cx->CR, I2C_CR_MODE,
+               MAKE_REG_VAL(mode, I2C_CR_MODE_Msk, I2C_CR_MODE_Pos));
+}
+
+/**
+ * @brief Get the speed mode field (CR.MODE).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Raw MODE field value.
+ */
+static inline uint32_t ll_i2c_get_speed_mode(I2C_TypeDef *I2Cx)
+{
+    return GET_REG_VAL2(I2Cx->CR, I2C_CR_MODE);
+}
+
+/**
+ * @brief Request a software reset (CR.RSTREQ).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_request_reset(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->CR, I2C_CR_RSTREQ);
+}
+
+/**
+ * @brief Check whether a software reset is requested (CR.RSTREQ).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Non-zero when RSTREQ is set.
+ */
+static inline uint32_t ll_i2c_is_reset_requested(I2C_TypeDef *I2Cx)
+{
+    return READ_BIT(I2Cx->CR, I2C_CR_RSTREQ);
+}
+
 #ifdef __cplusplus
 }
 #endif
