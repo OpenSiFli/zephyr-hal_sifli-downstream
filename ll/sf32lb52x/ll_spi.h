@@ -785,6 +785,62 @@ static inline uint32_t ll_spi_is_enabled_dma_rx(SPI_TypeDef *SPIx)
     return READ_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_RSRE);
 }
 
+/**
+ * @brief Read the aggregate STATUS register.
+ * @param[in] SPIx SPI instance pointer.
+ * @return STATUS register value.
+ */
+static inline uint32_t ll_spi_get_status(SPI_TypeDef *SPIx)
+{
+    return READ_REG(SPIx->STATUS);
+}
+
+/**
+ * @brief Enable the error/event interrupt (INTE.EBCEI).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_enable_it_ebcei(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->INTE, SPI_INTE_EBCEI);
+}
+
+/**
+ * @brief Disable the error/event interrupt (INTE.EBCEI = 0).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_disable_it_ebcei(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->INTE, SPI_INTE_EBCEI);
+}
+
+/**
+ * @brief Enable the pause interrupt (INTE.PINTE).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_enable_it_pinte(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->INTE, SPI_INTE_PINTE);
+}
+
+/**
+ * @brief Disable the pause interrupt (INTE.PINTE = 0).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_disable_it_pinte(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->INTE, SPI_INTE_PINTE);
+}
+
+/**
+ * @brief Pulse the TX/RX FIFO reset bits (FIFO_CTRL.TSRE/RSRE set then clear).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_pulse_fifo_reset(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_TSRE | SPI_FIFO_CTRL_RSRE);
+    CLEAR_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_TSRE | SPI_FIFO_CTRL_RSRE);
+}
+
 #ifdef __cplusplus
 }
 #endif

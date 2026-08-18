@@ -364,6 +364,70 @@ static inline void ll_dmac_clear_flag_gi(DMAC_TypeDef *DMACx, uint32_t ch)
               (LL_DMAC_CLEAR_GI << ll_dmac_channel_flag_shift(ch)));
 }
 
+/**
+ * @brief Enable transfer-complete interrupt of selected channel (CCR.TCIE).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_enable_it_tc(ll_dmac_channel_t *chx)
+{
+    SET_BIT(chx->CCR, DMAC_CCR1_TCIE);
+}
+
+/**
+ * @brief Disable transfer-complete interrupt of selected channel (CCR.TCIE = 0).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_disable_it_tc(ll_dmac_channel_t *chx)
+{
+    CLEAR_BIT(chx->CCR, DMAC_CCR1_TCIE);
+}
+
+/**
+ * @brief Enable half-transfer interrupt of selected channel (CCR.HTIE).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_enable_it_ht(ll_dmac_channel_t *chx)
+{
+    SET_BIT(chx->CCR, DMAC_CCR1_HTIE);
+}
+
+/**
+ * @brief Disable half-transfer interrupt of selected channel (CCR.HTIE = 0).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_disable_it_ht(ll_dmac_channel_t *chx)
+{
+    CLEAR_BIT(chx->CCR, DMAC_CCR1_HTIE);
+}
+
+/**
+ * @brief Enable transfer-error interrupt of selected channel (CCR.TEIE).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_enable_it_te(ll_dmac_channel_t *chx)
+{
+    SET_BIT(chx->CCR, DMAC_CCR1_TEIE);
+}
+
+/**
+ * @brief Disable transfer-error interrupt of selected channel (CCR.TEIE = 0).
+ * @param[in] chx DMAC channel pointer.
+ */
+static inline void ll_dmac_disable_it_te(ll_dmac_channel_t *chx)
+{
+    CLEAR_BIT(chx->CCR, DMAC_CCR1_TEIE);
+}
+
+/**
+ * @brief Read the pending transfer count (CNDTR.NDT).
+ * @param[in] chx DMAC channel pointer.
+ * @return Remaining transfer unit count.
+ */
+static inline uint32_t ll_dmac_get_ndt(ll_dmac_channel_t *chx)
+{
+    return READ_REG(chx->CNDTR) & DMAC_CNDTR1_NDT;
+}
+
 #ifdef __cplusplus
 }
 #endif

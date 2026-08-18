@@ -785,6 +785,68 @@ ll_gpio_pb_config_irq_trigger(uint32_t pin, const ll_gpio_irq_config_t *cfg)
                                     cfg);
 }
 
+/**
+ * @brief Read the interrupt type register (ITR) of a bank.
+ * @param[in] bank GPIO bank pointer.
+ * @return Interrupt type bit mask (1 = edge-sensitive, 0 = level-sensitive).
+ */
+static inline uint32_t ll_gpio_bank_get_irq_type(ll_gpio_bank_t *bank)
+{
+    return READ_REG(bank->ITR);
+}
+
+/**
+ * @brief Write the interrupt type register (ITR) of a bank.
+ * @param[in] bank     GPIO bank pointer.
+ * @param[in] pin_mask Bit mask of target pins.
+ */
+static inline void ll_gpio_bank_set_irq_type(ll_gpio_bank_t *bank, uint32_t pin_mask)
+{
+    WRITE_REG(bank->ITR, pin_mask);
+}
+
+/**
+ * @brief Read the high-level/rising-edge enable register (IPHR) of a bank.
+ * @param[in] bank GPIO bank pointer.
+ * @return High-level/rising-edge enable bit mask.
+ */
+static inline uint32_t ll_gpio_bank_get_irq_high_polarity(ll_gpio_bank_t *bank)
+{
+    return READ_REG(bank->IPHR);
+}
+
+/**
+ * @brief Write the high-level/rising-edge enable register (IPHR) of a bank.
+ * @param[in] bank     GPIO bank pointer.
+ * @param[in] pin_mask Bit mask of target pins.
+ */
+static inline void ll_gpio_bank_set_irq_high_polarity(ll_gpio_bank_t *bank,
+                                                      uint32_t pin_mask)
+{
+    WRITE_REG(bank->IPHR, pin_mask);
+}
+
+/**
+ * @brief Read the low-level/falling-edge enable register (IPLR) of a bank.
+ * @param[in] bank GPIO bank pointer.
+ * @return Low-level/falling-edge enable bit mask.
+ */
+static inline uint32_t ll_gpio_bank_get_irq_low_polarity(ll_gpio_bank_t *bank)
+{
+    return READ_REG(bank->IPLR);
+}
+
+/**
+ * @brief Write the low-level/falling-edge enable register (IPLR) of a bank.
+ * @param[in] bank     GPIO bank pointer.
+ * @param[in] pin_mask Bit mask of target pins.
+ */
+static inline void ll_gpio_bank_set_irq_low_polarity(ll_gpio_bank_t *bank,
+                                                     uint32_t pin_mask)
+{
+    WRITE_REG(bank->IPLR, pin_mask);
+}
+
 #ifdef __cplusplus
 }
 #endif

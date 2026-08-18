@@ -248,6 +248,238 @@ static inline void ll_extdma_clear_flag_teif(EXTDMA_TypeDef *EXTDMAx)
     WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CTEIF);
 }
 
+/**
+ * @brief Check OFIF flag (compression overflow).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when OFIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_OFIF);
+}
+
+/**
+ * @brief Clear OFIF flag by writing IFCR.COFIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_COFIF);
+}
+
+/**
+ * @brief Enable compression overflow interrupt (CCR.OFIE).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_enable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
+}
+
+/**
+ * @brief Disable compression overflow interrupt (CCR.OFIE = 0).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_disable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    CLEAR_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
+}
+
+/*==============================================================================
+ * Compression (CMPRCR / CMPRSR / CMPRNDTR / CMPRCFG0 / CMPRCFG1 / CMPRQR / CMPRDR)
+ *============================================================================*/
+
+/**
+ * @brief Enable compression (CMPRCR.CMPREN).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_cmpr_enable(EXTDMA_TypeDef *EXTDMAx)
+{
+    SET_BIT(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_CMPREN);
+}
+
+/**
+ * @brief Disable compression (CMPRCR.CMPREN = 0).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_cmpr_disable(EXTDMA_TypeDef *EXTDMAx)
+{
+    CLEAR_BIT(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_CMPREN);
+}
+
+/**
+ * @brief Set the source frame format (CMPRCR.SRCFMT).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] fmt     Source format, one of @ref EXTDMA_CMPRCR_SRCFMT_RGB565,
+ *                    @ref EXTDMA_CMPRCR_SRCFMT_RGB888 or
+ *                    @ref EXTDMA_CMPRCR_SRCFMT_ARGB8888.
+ */
+static inline void ll_extdma_cmpr_set_src_fmt(EXTDMA_TypeDef *EXTDMAx, uint32_t fmt)
+{
+    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCFMT,
+               MAKE_REG_VAL(fmt, EXTDMA_CMPRCR_SRCFMT_Msk, EXTDMA_CMPRCR_SRCFMT_Pos));
+}
+
+/**
+ * @brief Set the starting byte position in the first source word (CMPRCR.SRCPOS).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] pos     Starting byte position (2 bits).
+ */
+static inline void ll_extdma_cmpr_set_src_pos(EXTDMA_TypeDef *EXTDMAx, uint32_t pos)
+{
+    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCPOS,
+               MAKE_REG_VAL(pos, EXTDMA_CMPRCR_SRCPOS_Msk, EXTDMA_CMPRCR_SRCPOS_Pos));
+}
+
+/**
+ * @brief Set the per-line input pixel count (CMPRSR.LINESIZE).
+ * @param[in] EXTDMAx   ExtDMA instance pointer.
+ * @param[in] line_size Column (pixel) count of each line (12 bits).
+ */
+static inline void ll_extdma_cmpr_set_line_size(EXTDMA_TypeDef *EXTDMAx, uint32_t line_size)
+{
+    MODIFY_REG(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_LINESIZE,
+               MAKE_REG_VAL(line_size, EXTDMA_CMPRSR_LINESIZE_Msk,
+                            EXTDMA_CMPRSR_LINESIZE_Pos));
+}
+
+/**
+ * @brief Get the per-line input pixel count (CMPRSR.LINESIZE).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Line size in pixels.
+ */
+static inline uint32_t ll_extdma_cmpr_get_line_size(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_LINESIZE);
+}
+
+/**
+ * @brief Set the per-line output target size (CMPRSR.TGTSIZE).
+ * @param[in] EXTDMAx   ExtDMA instance pointer.
+ * @param[in] tgt_size  Output target size of each line (12 bits).
+ * @note Output data size of each line is tgt_size * 3 * 2 bytes.
+ */
+static inline void ll_extdma_cmpr_set_tgt_size(EXTDMA_TypeDef *EXTDMAx, uint32_t tgt_size)
+{
+    MODIFY_REG(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE,
+               MAKE_REG_VAL(tgt_size, EXTDMA_CMPRSR_TGTSIZE_Msk,
+                            EXTDMA_CMPRSR_TGTSIZE_Pos));
+}
+
+/**
+ * @brief Get the per-line output target size (CMPRSR.TGTSIZE).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Target size value.
+ */
+static inline uint32_t ll_extdma_cmpr_get_tgt_size(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE);
+}
+
+/**
+ * @brief Set the post-compression transfer count (CMPRNDTR.CMPRNDT).
+ * @param[in] EXTDMAx  ExtDMA instance pointer.
+ * @param[in] cmpr_ndt Number of data to transfer after compression (20 bits).
+ * @note Must be written by software before compression. The value should be
+ *       TGTSIZE * 6 * line_number / 4 in compression mode.
+ */
+static inline void ll_extdma_cmpr_set_ndt(EXTDMA_TypeDef *EXTDMAx, uint32_t cmpr_ndt)
+{
+    MODIFY_REG(EXTDMAx->CMPRNDTR, EXTDMA_CMPRNDTR_CMPRNDT,
+               MAKE_REG_VAL(cmpr_ndt, EXTDMA_CMPRNDTR_CMPRNDT_Msk,
+                            EXTDMA_CMPRNDTR_CMPRNDT_Pos));
+}
+
+/**
+ * @brief Get the compressed transfer count (CMPRNDTR.CMPRNDT).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Number of data written after compression.
+ */
+static inline uint32_t ll_extdma_cmpr_get_ndt(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRNDTR, EXTDMA_CMPRNDTR_CMPRNDT);
+}
+
+/**
+ * @brief Set the compression configuration 0 (CMPRCFG0).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] cfg     Raw CMPRCFG0 value.
+ */
+static inline void ll_extdma_cmpr_set_cfg0(EXTDMA_TypeDef *EXTDMAx, uint32_t cfg)
+{
+    WRITE_REG(EXTDMAx->CMPRCFG0, cfg);
+}
+
+/**
+ * @brief Get the compression configuration 0 (CMPRCFG0).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return CMPRCFG0 value.
+ */
+static inline uint32_t ll_extdma_cmpr_get_cfg0(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_REG(EXTDMAx->CMPRCFG0);
+}
+
+/**
+ * @brief Set the compression configuration 1 (CMPRCFG1).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] cfg     Raw CMPRCFG1 value.
+ */
+static inline void ll_extdma_cmpr_set_cfg1(EXTDMA_TypeDef *EXTDMAx, uint32_t cfg)
+{
+    WRITE_REG(EXTDMAx->CMPRCFG1, cfg);
+}
+
+/**
+ * @brief Get the compression configuration 1 (CMPRCFG1).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return CMPRCFG1 value.
+ */
+static inline uint32_t ll_extdma_cmpr_get_cfg1(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_REG(EXTDMAx->CMPRCFG1);
+}
+
+/**
+ * @brief Get the line least dummy word count in one frame (CMPRQR.DUMMY).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Dummy word count.
+ */
+static inline uint32_t ll_extdma_cmpr_get_dummy(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRQR, EXTDMA_CMPRQR_DUMMY);
+}
+
+/**
+ * @brief Get the low-quality block number (CMPRQR.LQB).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Low-quality block count.
+ */
+static inline uint32_t ll_extdma_cmpr_get_lqb(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRQR, EXTDMA_CMPRQR_LQB);
+}
+
+/**
+ * @brief Get the quality sum to low-quality block ratio (CMPRQR.LQR).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return LQR value.
+ */
+static inline uint32_t ll_extdma_cmpr_get_lqr(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRQR, EXTDMA_CMPRQR_LQR);
+}
+
+/**
+ * @brief Get the max used output buffer during compression (CMPRDR.MAXBUF).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Max buffer usage (7 bits).
+ */
+static inline uint32_t ll_extdma_cmpr_get_maxbuf(EXTDMA_TypeDef *EXTDMAx)
+{
+    return GET_REG_VAL2(EXTDMAx->CMPRDR, EXTDMA_CMPRDR_MAXBUF);
+}
+
 #ifdef __cplusplus
 }
 #endif

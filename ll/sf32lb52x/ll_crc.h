@@ -182,6 +182,15 @@ static inline uint32_t ll_crc_is_active_flag_overflow(CRC_TypeDef *CRCx)
     return READ_BIT(CRCx->SR, CRC_SR_OVERFLOW);
 }
 
+/**
+ * @brief Deassert the CRC RESET bit (CR.RESET = 0).
+ * @param[in] CRCx CRC instance pointer.
+ */
+static inline void ll_crc_release_reset(CRC_TypeDef *CRCx)
+{
+    CLEAR_BIT(CRCx->CR, CRC_CR_RESET);
+}
+
 #ifdef __cplusplus
 }
 #endif

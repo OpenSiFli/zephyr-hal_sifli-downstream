@@ -119,6 +119,14 @@ static inline void ll_lptim_enable_timeout(LPTIM_TypeDef *tim)
 	SET_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
 }
 
+/**
+ * @brief Disable timeout mode (reset counter on match)
+ */
+static inline void ll_lptim_disable_timeout(LPTIM_TypeDef *tim)
+{
+	CLEAR_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
+}
+
 /*==============================================================================
  * Compare & Auto-Reload
  *============================================================================*/

@@ -64,6 +64,29 @@ extern "C"
 #define LL_AES_IRQ_DONE      AES_ACC_IRQ_DONE_STAT
 #define LL_AES_IRQ_BUS_ERR   AES_ACC_IRQ_BUS_ERR_STAT
 #define LL_AES_IRQ_SETUP_ERR AES_ACC_IRQ_SETUP_ERR_STAT
+#define LL_AES_IRQ_HASH_DONE     AES_ACC_IRQ_HASH_DONE_STAT
+#define LL_AES_IRQ_HASH_BUS_ERR  AES_ACC_IRQ_HASH_BUS_ERR_STAT
+#define LL_AES_IRQ_HASH_PAD_ERR  AES_ACC_IRQ_HASH_PAD_ERR_STAT
+#define LL_AES_IRQ_DONE_RAW      AES_ACC_IRQ_DONE_RAW_STAT
+#define LL_AES_IRQ_BUS_ERR_RAW   AES_ACC_IRQ_BUS_ERR_RAW_STAT
+#define LL_AES_IRQ_SETUP_ERR_RAW AES_ACC_IRQ_SETUP_ERR_RAW_STAT
+#define LL_AES_IRQ_HASH_DONE_RAW     AES_ACC_IRQ_HASH_DONE_RAW_STAT
+#define LL_AES_IRQ_HASH_BUS_ERR_RAW  AES_ACC_IRQ_HASH_BUS_ERR_RAW_STAT
+#define LL_AES_IRQ_HASH_PAD_ERR_RAW  AES_ACC_IRQ_HASH_PAD_ERR_RAW_STAT
+/** @} */
+
+/** @defgroup LL_AES_HASH_MODE LL AES HASH Mode */
+/** @{ */
+#define LL_AES_HASH_MODE_SHA1   (0x0UL << AES_ACC_HASH_SETTING_HASH_MODE_Pos)
+#define LL_AES_HASH_MODE_SHA224 (0x1UL << AES_ACC_HASH_SETTING_HASH_MODE_Pos)
+#define LL_AES_HASH_MODE_SHA256 (0x2UL << AES_ACC_HASH_SETTING_HASH_MODE_Pos)
+#define LL_AES_HASH_MODE_SM3    (0x3UL << AES_ACC_HASH_SETTING_HASH_MODE_Pos)
+/** @} */
+
+/** @defgroup LL_AES_HASH_ENDIAN LL AES HASH Result Endian */
+/** @{ */
+#define LL_AES_HASH_ENDIAN_LITTLE (0x0UL << AES_ACC_HASH_SETTING_RESULT_ENDIAN_Pos)
+#define LL_AES_HASH_ENDIAN_BIG    (0x1UL << AES_ACC_HASH_SETTING_RESULT_ENDIAN_Pos)
 /** @} */
 
 /**
@@ -180,6 +203,26 @@ static inline void ll_aes_reset(AES_ACC_TypeDef *AESx)
 }
 
 /**
+ * @brief Deassert the AES accelerator reset (COMMAND.AES_ACC_RESET = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_release_reset(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->COMMAND, AES_ACC_COMMAND_AES_ACC_RESET);
+}
+
+/**
+ * @brief Set the AES operation mode (encrypt/decrypt) in AES_SETTING.
+ * @param[in] AESx AES instance pointer.
+ * @param[in] enc  Non-zero for encrypt, zero for decrypt.
+ */
+static inline void ll_aes_set_op_mode(AES_ACC_TypeDef *AESx, uint32_t enc)
+{
+    MODIFY_REG(AESx->AES_SETTING, AES_ACC_AES_SETTING_AES_OP_MODE,
+               enc ? AES_ACC_AES_SETTING_AES_OP_MODE : 0UL);
+}
+
+/**
  * @brief Check BUSY flag.
  * @param[in] AESx AES instance pointer.
  * @return Non-zero when AES is busy.
@@ -261,6 +304,339 @@ static inline void ll_aes_enable_it_setup_err(AES_ACC_TypeDef *AESx)
 static inline void ll_aes_disable_it_setup_err(AES_ACC_TypeDef *AESx)
 {
     CLEAR_BIT(AESx->SETTING, AES_ACC_SETTING_SETUP_ERR_IRQ_MASK);
+}
+
+/*==============================================================================
+ * HASH control
+ *============================================================================*/
+
+/**
+ * @brief Start HASH accelerator (COMMAND.HASH_START, write 1 to trigger).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_start(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->COMMAND, AES_ACC_COMMAND_HASH_START);
+}
+
+/**
+ * @brief Reset HASH accelerator logic (COMMAND.HASH_RESET).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_reset(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->COMMAND, AES_ACC_COMMAND_HASH_RESET);
+}
+
+/**
+ * @brief Deassert the HASH accelerator reset (COMMAND.HASH_RESET = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_release_reset(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->COMMAND, AES_ACC_COMMAND_HASH_RESET);
+}
+
+/**
+ * @brief Enable HASH auto clock gating (COMMAND.AUTO_GATE).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_auto_gate_enable(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->COMMAND, AES_ACC_COMMAND_AUTO_GATE);
+}
+
+/**
+ * @brief Disable HASH auto clock gating (COMMAND.AUTO_GATE = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_auto_gate_disable(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->COMMAND, AES_ACC_COMMAND_AUTO_GATE);
+}
+
+/**
+ * @brief Check HASH busy flag (STATUS.HASH_BUSY).
+ * @param[in] AESx AES instance pointer.
+ * @return Non-zero when HASH is busy.
+ */
+static inline uint32_t ll_aes_is_hash_busy(AES_ACC_TypeDef *AESx)
+{
+    return READ_BIT(AESx->STATUS, AES_ACC_STATUS_HASH_BUSY);
+}
+
+/**
+ * @brief Check flash key valid flag (STATUS.FLASH_KEY_VALID).
+ * @param[in] AESx AES instance pointer.
+ * @return Non-zero when the flash key is valid.
+ */
+static inline uint32_t ll_aes_is_flash_key_valid(AES_ACC_TypeDef *AESx)
+{
+    return READ_BIT(AESx->STATUS, AES_ACC_STATUS_FLASH_KEY_VALID);
+}
+
+/*==============================================================================
+ * HASH interrupt control (SETTING.HASH_*_MASK, 0=mask, 1=unmask)
+ *============================================================================*/
+
+/**
+ * @brief Enable HASH DONE interrupt (SETTING.HASH_DONE_MASK).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_enable_it_done(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_DONE_MASK);
+}
+
+/**
+ * @brief Disable HASH DONE interrupt (SETTING.HASH_DONE_MASK = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_disable_it_done(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_DONE_MASK);
+}
+
+/**
+ * @brief Enable HASH BUS_ERR interrupt (SETTING.HASH_BUS_ERR_MASK).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_enable_it_bus_err(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_BUS_ERR_MASK);
+}
+
+/**
+ * @brief Disable HASH BUS_ERR interrupt (SETTING.HASH_BUS_ERR_MASK = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_disable_it_bus_err(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_BUS_ERR_MASK);
+}
+
+/**
+ * @brief Enable HASH PAD_ERR interrupt (SETTING.HASH_PAD_ERR_MASK).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_enable_it_pad_err(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_PAD_ERR_MASK);
+}
+
+/**
+ * @brief Disable HASH PAD_ERR interrupt (SETTING.HASH_PAD_ERR_MASK = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_disable_it_pad_err(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->SETTING, AES_ACC_SETTING_HASH_PAD_ERR_MASK);
+}
+
+/*==============================================================================
+ * HASH configuration
+ *============================================================================*/
+
+/**
+ * @brief Set HASH mode (HASH_SETTING.HASH_MODE).
+ * @param[in] AESx  AES instance pointer.
+ * @param[in] mode  Hash mode, use @ref LL_AES_HASH_MODE_SHA1 to @ref LL_AES_HASH_MODE_SM3.
+ */
+static inline void ll_aes_hash_set_mode(AES_ACC_TypeDef *AESx, uint32_t mode)
+{
+    MODIFY_REG(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_HASH_MODE,
+               MAKE_REG_VAL(mode, AES_ACC_HASH_SETTING_HASH_MODE_Msk,
+                            AES_ACC_HASH_SETTING_HASH_MODE_Pos));
+}
+
+/**
+ * @brief Enable HASH padding (HASH_SETTING.DO_PADDING).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_padding_enable(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_DO_PADDING);
+}
+
+/**
+ * @brief Disable HASH padding (HASH_SETTING.DO_PADDING = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_padding_disable(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_DO_PADDING);
+}
+
+/**
+ * @brief Enable HASH byte swap (HASH_SETTING.BYTE_SWAP).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_byte_swap_enable(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_BYTE_SWAP);
+}
+
+/**
+ * @brief Disable HASH byte swap (HASH_SETTING.BYTE_SWAP = 0).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_byte_swap_disable(AES_ACC_TypeDef *AESx)
+{
+    CLEAR_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_BYTE_SWAP);
+}
+
+/**
+ * @brief Select HASH default IV source (HASH_SETTING.DFT_IV_SEL).
+ * @param[in] AESx AES instance pointer.
+ * @param[in] sel  IV source: 0 = default per hash mode, 1 = HASH_IV_H* registers.
+ */
+static inline void ll_aes_hash_set_dft_iv_sel(AES_ACC_TypeDef *AESx, uint32_t sel)
+{
+    MODIFY_REG(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_DFT_IV_SEL,
+               MAKE_REG_VAL(sel, AES_ACC_HASH_SETTING_DFT_IV_SEL_Msk,
+                            AES_ACC_HASH_SETTING_DFT_IV_SEL_Pos));
+}
+
+/**
+ * @brief Set HASH result endian (HASH_SETTING.RESULT_ENDIAN).
+ * @param[in] AESx    AES instance pointer.
+ * @param[in] endian  Endian, use @ref LL_AES_HASH_ENDIAN_LITTLE or @ref LL_AES_HASH_ENDIAN_BIG.
+ */
+static inline void ll_aes_hash_set_result_endian(AES_ACC_TypeDef *AESx, uint32_t endian)
+{
+    MODIFY_REG(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_RESULT_ENDIAN,
+               MAKE_REG_VAL(endian, AES_ACC_HASH_SETTING_RESULT_ENDIAN_Msk,
+                            AES_ACC_HASH_SETTING_RESULT_ENDIAN_Pos));
+}
+
+/**
+ * @brief Load HASH IV from HASH_IV_H* registers (HASH_SETTING.HASH_IV_LOAD, w1t).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_iv_load(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_HASH_IV_LOAD);
+}
+
+/**
+ * @brief Load HASH length from HASH_LEN_L/H registers (HASH_SETTING.HASH_LEN_LOAD, w1t).
+ * @param[in] AESx AES instance pointer.
+ */
+static inline void ll_aes_hash_len_load(AES_ACC_TypeDef *AESx)
+{
+    SET_BIT(AESx->HASH_SETTING, AES_ACC_HASH_SETTING_HASH_LEN_LOAD);
+}
+
+/*==============================================================================
+ * HASH data path
+ *============================================================================*/
+
+/**
+ * @brief Set HASH DMA input address (HASH_DMA_IN.ADDR).
+ * @param[in] AESx    AES instance pointer.
+ * @param[in] in_addr Input address.
+ */
+static inline void ll_aes_hash_set_dma_in(AES_ACC_TypeDef *AESx, uint32_t in_addr)
+{
+    WRITE_REG(AESx->HASH_DMA_IN, in_addr);
+}
+
+/**
+ * @brief Set HASH DMA input data byte size (HASH_DMA_DATA.SIZE).
+ * @param[in] AESx AES instance pointer.
+ * @param[in] size Input data byte size.
+ */
+static inline void ll_aes_hash_set_dma_data_size(AES_ACC_TypeDef *AESx, uint32_t size)
+{
+    WRITE_REG(AESx->HASH_DMA_DATA, size);
+}
+
+/**
+ * @brief Set HASH IV words to HASH_IV_H0..HASH_IV_H7.
+ * @param[in] AESx AES instance pointer.
+ * @param[in] iv_words Pointer to 8-word IV buffer.
+ */
+static inline void ll_aes_hash_set_iv_words(AES_ACC_TypeDef *AESx,
+                                            const uint32_t iv_words[8])
+{
+    volatile uint32_t *iv_reg = &AESx->HASH_IV_H0;
+    uint32_t i;
+
+    for (i = 0U; i < 8U; i++)
+    {
+        WRITE_REG(iv_reg[i], iv_words[i]);
+    }
+}
+
+/**
+ * @brief Get one HASH IV word (HASH_IV_Hx).
+ * @param[in] AESx AES instance pointer.
+ * @param[in] idx  IV word index (0..7).
+ * @return IV word value.
+ */
+static inline uint32_t ll_aes_hash_get_iv_word(AES_ACC_TypeDef *AESx, uint32_t idx)
+{
+    volatile uint32_t *iv_reg = &AESx->HASH_IV_H0;
+
+    return (idx < 8U) ? READ_REG(iv_reg[idx]) : 0U;
+}
+
+/**
+ * @brief Read HASH result words from HASH_RESULT_H0..HASH_RESULT_H7.
+ * @param[in]  AESx      AES instance pointer.
+ * @param[out] res_words Pointer to 8-word result buffer.
+ */
+static inline void ll_aes_hash_get_result_words(AES_ACC_TypeDef *AESx,
+                                                uint32_t res_words[8])
+{
+    volatile uint32_t *res_reg = &AESx->HASH_RESULT_H0;
+    uint32_t i;
+
+    for (i = 0U; i < 8U; i++)
+    {
+        res_words[i] = READ_REG(res_reg[i]);
+    }
+}
+
+/**
+ * @brief Get one HASH result word (HASH_RESULT_Hx).
+ * @param[in] AESx AES instance pointer.
+ * @param[in] idx  Result word index (0..7).
+ * @return Result word value.
+ */
+static inline uint32_t ll_aes_hash_get_result_word(AES_ACC_TypeDef *AESx, uint32_t idx)
+{
+    volatile uint32_t *res_reg = &AESx->HASH_RESULT_H0;
+
+    return (idx < 8U) ? READ_REG(res_reg[idx]) : 0U;
+}
+
+/**
+ * @brief Set HASH input length (HASH_LEN_L/H).
+ * @param[in] AESx AES instance pointer.
+ * @param[in] len_l Length low 32 bits.
+ * @param[in] len_h Length high 29 bits.
+ */
+static inline void ll_aes_hash_set_length(AES_ACC_TypeDef *AESx,
+                                          uint32_t len_l, uint32_t len_h)
+{
+    WRITE_REG(AESx->HASH_LEN_L, len_l);
+    MODIFY_REG(AESx->HASH_LEN_H, AES_ACC_HASH_LEN_H_DATA,
+               MAKE_REG_VAL(len_h, AES_ACC_HASH_LEN_H_DATA_Msk,
+                            AES_ACC_HASH_LEN_H_DATA_Pos));
+}
+
+/**
+ * @brief Get HASH result length (HASH_RESULT_LEN_L/H).
+ * @param[in]  AESx       AES instance pointer.
+ * @param[out] len_l      Result length low 32 bits.
+ * @param[out] len_h      Result length high 29 bits.
+ */
+static inline void ll_aes_hash_get_result_length(AES_ACC_TypeDef *AESx,
+                                                 uint32_t *len_l, uint32_t *len_h)
+{
+    *len_l = READ_REG(AESx->HASH_RESULT_LEN_L);
+    *len_h = READ_REG(AESx->HASH_RESULT_LEN_H) & AES_ACC_HASH_RESULT_LEN_H_DATA_Msk;
 }
 
 #ifdef __cplusplus

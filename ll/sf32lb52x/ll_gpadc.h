@@ -569,6 +569,41 @@ static inline void ll_gpadc_clear_stop_request(GPADC_TypeDef *GPADCx)
     CLEAR_BIT(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_ADC_STOP);
 }
 
+/**
+ * @brief Enable GPIO-triggered sampling (ADC_CTRL_REG.GPIO_TRIG_EN).
+ * @param[in] GPADCx GPADC instance pointer.
+ */
+static inline void ll_gpadc_enable_gpio_trigger(GPADC_TypeDef *GPADCx)
+{
+    SET_BIT(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_GPIO_TRIG_EN);
+}
+
+/**
+ * @brief Disable GPIO-triggered sampling (ADC_CTRL_REG.GPIO_TRIG_EN = 0).
+ * @param[in] GPADCx GPADC instance pointer.
+ */
+static inline void ll_gpadc_disable_gpio_trigger(GPADC_TypeDef *GPADCx)
+{
+    CLEAR_BIT(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_GPIO_TRIG_EN);
+}
+
+/**
+ * @brief Configure the ADC analog conversion fields (ADC_CFG_REG1.CMM/SE).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] cmm    CMM value (5 bits).
+ * @param[in] se     Single-ended enable (1 bit).
+ */
+static inline void ll_gpadc_config_analog_cfg1(GPADC_TypeDef *GPADCx,
+                                               uint32_t cmm, uint32_t se)
+{
+    MODIFY_REG(GPADCx->ADC_CFG_REG1,
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM |
+                   GPADC_ADC_CFG_REG1_ANAU_GPADC_SE,
+               MAKE_REG_VAL(cmm, GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM_Msk,
+                            GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM_Pos) |
+               (se ? GPADC_ADC_CFG_REG1_ANAU_GPADC_SE : 0U));
+}
+
 #ifdef __cplusplus
 }
 #endif

@@ -221,6 +221,49 @@ static inline void ll_efuse_disable_interrupt(EFUSEC_TypeDef *efuse)
 	CLEAR_BIT(efuse->CR, EFUSEC_CR_IE);
 }
 
+/**
+ * @brief Set the eFuse analog LDO enable (ANACR.LDO_EN).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] en    1 to enable, 0 to disable.
+ */
+static inline void ll_efuse_set_anacr_ldo_enable(EFUSEC_TypeDef *efuse, uint32_t en)
+{
+	en ? SET_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN) : CLEAR_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN);
+}
+
+/**
+ * @brief Set the eFuse analog LDO reference voltage select (ANACR.LDO_VREF_SEL).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] sel   Reference voltage select (3 bits).
+ */
+static inline void ll_efuse_set_anacr_ldo_vref(EFUSEC_TypeDef *efuse, uint32_t sel)
+{
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_VREF_SEL,
+		   MAKE_REG_VAL(sel, EFUSEC_ANACR_LDO_VREF_SEL_Msk, EFUSEC_ANACR_LDO_VREF_SEL_Pos));
+}
+
+/**
+ * @brief Set the eFuse analog LDO mode (ANACR.LDO_MODE).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] mode  LDO mode.
+ */
+static inline void ll_efuse_set_anacr_ldo_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
+{
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_MODE,
+		   MAKE_REG_VAL(mode, EFUSEC_ANACR_LDO_MODE_Msk, EFUSEC_ANACR_LDO_MODE_Pos));
+}
+
+/**
+ * @brief Set the eFuse analog LDO DC trimming (ANACR.LDO_DC_TR).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] tr    DC trimming value (3 bits).
+ */
+static inline void ll_efuse_set_anacr_ldo_dc_trim(EFUSEC_TypeDef *efuse, uint32_t tr)
+{
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_DC_TR,
+		   MAKE_REG_VAL(tr, EFUSEC_ANACR_LDO_DC_TR_Msk, EFUSEC_ANACR_LDO_DC_TR_Pos));
+}
+
 #ifdef __cplusplus
 }
 #endif
