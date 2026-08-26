@@ -392,27 +392,6 @@ static inline uint32_t ll_rcc_get_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc)
 	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1);
 }
 
-/**
- * @brief Set low-power system clock source
- * @param[in] rcc RCC peripheral pointer
- * @param[in] src Use LL_RCC_SYS_LP_CLKSRC_xxx
- */
-static inline void ll_rcc_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
-{
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_LP_Msk, HPSYS_RCC_CSR_SEL_SYS_LP_Pos));
-}
-
-/**
- * @brief Get low-power system clock source
- * @param[in] rcc RCC peripheral pointer
- * @return Low-power system clock source selection value.
- */
-static inline uint32_t ll_rcc_get_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP);
-}
-
 /*==============================================================================
  * Clock Source Selection
  *============================================================================*/
@@ -736,19 +715,6 @@ static inline void ll_rcc_deepwfi_set_dll_output(HPSYS_RCC_TypeDef *rcc,
 		   (dll2_rstb ? HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB : 0UL));
 }
 
-static inline void ll_rcc_deepwfi_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc,
-								   uint32_t src)
-{
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS_LP,
-		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_LP_Msk,
-				HPSYS_RCC_DWCFGR_SEL_SYS_LP_Pos));
-}
-
-/**
- * @brief Set system clock source during Deep WFI
- * @param[in] rcc RCC peripheral pointer.
- * @param[in] src Use LL_RCC_SYS_CLKSRC_xxx.
- */
 static inline void ll_rcc_deepwfi_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
 	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS,
@@ -802,7 +768,7 @@ static inline void ll_rcc_deepwfi_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t h
 #define LL_RCC_HRC48_FREQ (48000000UL) /**< HRC48 frequency */
 #define LL_RCC_HXT48_FREQ (48000000UL) /**
  * @brief Get current clk_hpsys system clock frequency
- * @note Only valid in normal active mode with CSR.SEL_SYS_LP=0 (system clock
+ * @note Only valid in normal active mode with CSR.SEL_SYS=0 (system clock
  *       selected by CSR.SEL_SYS). It does not reflect Deep WFI (DWCFGR) or
  *       the clk_wdt low-power mode configuration.
  * @param[in] rcc RCC peripheral pointer.
@@ -884,6 +850,48 @@ static inline uint32_t ll_rcc_dbgclkr_dll_field(uint32_t idx, uint32_t dll1_mask
 }
 
 /**
+ * @brief Set the LCDC clock source (CSR.SEL_LCDC).
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] src Clock source value.
+ */
+static inline void ll_rcc_set_lcdc_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+{
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_LCDC,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_LCDC_Msk, HPSYS_RCC_CSR_SEL_LCDC_Pos));
+}
+
+/**
+ * @brief Get the LCDC clock source (CSR.SEL_LCDC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Clock source value.
+ */
+static inline uint32_t ll_rcc_get_lcdc_clock_source(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_LCDC);
+}
+
+/**
+ * @brief Set the MPI3 clock source (CSR.SEL_MPI3).
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] src Clock source value.
+ */
+static inline void ll_rcc_set_mpi3_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+{
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI3,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI3_Msk, HPSYS_RCC_CSR_SEL_MPI3_Pos));
+}
+
+/**
+ * @brief Get the MPI3 clock source (CSR.SEL_MPI3).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Clock source value.
+ */
+static inline uint32_t ll_rcc_get_mpi3_clock_source(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI3);
+}
+
+/**
  * @brief Set the DLL output strength (DBGCLKR.DLLx_OUT_STR[1:0]).
  * @param[in] rcc RCC peripheral pointer.
  * @param[in] idx DLL instance index (LL_RCC_DLL_INDEX_x).
@@ -912,6 +920,22 @@ static inline void ll_rcc_dll_clock_gate_enable(HPSYS_RCC_TypeDef *rcc, uint32_t
 static inline void ll_rcc_dll_clock_gate_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
 	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
+}
+
+/**
+ * @brief Enable the DLL output (DBGCLKR.DLLx_OUT_EN).
+ */
+static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
+}
+
+/**
+ * @brief Disable the DLL output (DBGCLKR.DLLx_OUT_EN = 0).
+ */
+static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
 }
 
 /**
@@ -944,22 +968,6 @@ static inline void ll_rcc_dll_loop_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 static inline void ll_rcc_dll_loop_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
 	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
-}
-
-/**
- * @brief Enable the DLL output (DBGCLKR.DLLx_OUT_EN).
- */
-static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
-}
-
-/**
- * @brief Disable the DLL output (DBGCLKR.DLLx_OUT_EN = 0).
- */
-static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
 }
 
 /**
@@ -997,61 +1005,43 @@ static inline void ll_rcc_dll_dbg_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 }
 
 /**
- * @brief Enable the debug clock (DBGCLKR.CLK_EN).
+ * @brief Enable the debug clock (DBGCLKR.DBGCLK_EN).
  * @param[in] rcc RCC peripheral pointer.
  */
 static inline void ll_rcc_debug_clock_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+	SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_DBGCLK_EN);
 }
 
 /**
- * @brief Disable the debug clock (DBGCLKR.CLK_EN = 0).
+ * @brief Disable the debug clock (DBGCLKR.DBGCLK_EN = 0).
  * @param[in] rcc RCC peripheral pointer.
  */
 static inline void ll_rcc_debug_clock_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+	CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_DBGCLK_EN);
 }
 
 /**
- * @brief Set the debug clock source (DBGCLKR.CLK_SEL[1:0]).
+ * @brief Set the debug clock source (DBGCLKR.DBGCLK_SEL).
  * @param[in] rcc RCC peripheral pointer.
  * @param[in] sel Debug clock source select.
  */
 static inline void ll_rcc_set_debug_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t sel)
 {
-	MODIFY_REG(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL,
-		   MAKE_REG_VAL(sel, HPSYS_RCC_DBGCLKR_CLK_SEL_Msk,
-				HPSYS_RCC_DBGCLKR_CLK_SEL_Pos));
+	MODIFY_REG(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_DBGCLK_SEL,
+		   MAKE_REG_VAL(sel, HPSYS_RCC_DBGCLKR_DBGCLK_SEL_Msk,
+				HPSYS_RCC_DBGCLKR_DBGCLK_SEL_Pos));
 }
 
 /**
- * @brief Get the debug clock source (DBGCLKR.CLK_SEL[1:0]).
+ * @brief Get the debug clock source (DBGCLKR.DBGCLK_SEL).
  * @param[in] rcc RCC peripheral pointer.
  * @return Debug clock source select.
  */
 static inline uint32_t ll_rcc_get_debug_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL);
-}
-
-/**
- * @brief Force hclk_hp and pclk_hp on (DBGR.FORCE_HP).
- * @param[in] rcc RCC peripheral pointer.
- */
-static inline void ll_rcc_dbg_force_hp_enable(HPSYS_RCC_TypeDef *rcc)
-{
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
-}
-
-/**
- * @brief Allow hclk_hp and pclk_hp to gate (DBGR.FORCE_HP = 0).
- * @param[in] rcc RCC peripheral pointer.
- */
-static inline void ll_rcc_dbg_force_hp_disable(HPSYS_RCC_TypeDef *rcc)
-{
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
+	return GET_REG_VAL2(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_DBGCLK_SEL);
 }
 
 /**
@@ -1124,6 +1114,527 @@ static inline void ll_rcc_dbg_sysclk_aon_enable(HPSYS_RCC_TypeDef *rcc)
 static inline void ll_rcc_dbg_sysclk_aon_disable(HPSYS_RCC_TypeDef *rcc)
 {
 	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+}
+
+/*==============================================================================
+ * Reset Status (SR1 / SR2)
+ *============================================================================*/
+
+/**
+ * @brief Check whether PTM1 is held in reset (SR1.PTM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_ptm1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_PTM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2C2 is held in reset (SR1.I2C2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2c2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_I2C2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2C1 is held in reset (SR1.I2C1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2c1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_I2C1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether PDM2 is held in reset (SR1.PDM2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_pdm2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_PDM2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether PDM1 is held in reset (SR1.PDM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_pdm1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_PDM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether SPI2 is held in reset (SR1.SPI2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_spi2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_SPI2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether SPI1 is held in reset (SR1.SPI1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_spi1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_SPI1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether PWM1 is held in reset (SR1.PWM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_pwm1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_PWM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether BTIM2 is held in reset (SR1.BTIM2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_btim2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_BTIM2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether BTIM1 is held in reset (SR1.BTIM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_btim1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_BTIM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether GPTIM2 is held in reset (SR1.GPTIM2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_gptim2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_GPTIM2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether GPTIM1 is held in reset (SR1.GPTIM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_gptim1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_GPTIM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether AES is held in reset (SR1.AES).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_aes_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_AES) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2S2 is held in reset (SR1.I2S2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2s2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_I2S2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2S1 is held in reset (SR1.I2S1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2s1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_I2S1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether LCDC1 is held in reset (SR1.LCDC1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_lcdc1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_LCDC1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether EPIC is held in reset (SR1.EPIC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_epic_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_EPIC) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether EZIP1 is held in reset (SR1.EZIP1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_ezip1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_EZIP1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether USART2 is held in reset (SR1.USART2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_usart2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_USART2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether USART1 is held in reset (SR1.USART1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_usart1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_USART1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether DMAC1 is held in reset (SR1.DMAC1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_dmac1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR1, HPSYS_RCC_SR1_DMAC1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether ACPU is held in reset (SR2.ACPU).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_acpu_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_ACPU) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether HCPU is held in reset (SR2.HCPU).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_hcpu_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_HCPU) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2C4 is held in reset (SR2.I2C4).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2c4_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_I2C4) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether JPEGD is held in reset (SR2.JPEGD).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_jpegd_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_JPEGD) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether TSEN is held in reset (SR2.TSEN).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_tsen_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_TSEN) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether GPADC is held in reset (SR2.GPADC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_gpadc_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_GPADC) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether AUDPRC is held in reset (SR2.AUDPRC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_audprc_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_AUDPRC) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether AUDCODEC is held in reset (SR2.AUDCODEC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_audcodec_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_AUDCODEC) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether CAN2 is held in reset (SR2.CAN2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_can2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_CAN2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether CAN1 is held in reset (SR2.CAN1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_can1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_CAN1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether DCMI is held in reset (SR2.DCMI).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_dcmi_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_DCMI) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether USART3 is held in reset (SR2.USART3).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_usart3_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_USART3) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether ATIM2 is held in reset (SR2.ATIM2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_atim2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_ATIM2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether ATIM1 is held in reset (SR2.ATIM1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_atim1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_ATIM1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether I2C3 is held in reset (SR2.I2C3).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_i2c3_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_I2C3) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether USBC is held in reset (SR2.USBC).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_usbc_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_USBC) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether SDMMC2 is held in reset (SR2.SDMMC2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_sdmmc2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_SDMMC2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether SDMMC1 is held in reset (SR2.SDMMC1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_sdmmc1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_SDMMC1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether MPI3 is held in reset (SR2.MPI3).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_mpi3_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_MPI3) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether MPI2 is held in reset (SR2.MPI2).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_mpi2_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_MPI2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Check whether MPI1 is held in reset (SR2.MPI1).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero while the module is in reset.
+ */
+static inline uint32_t ll_rcc_is_mpi1_in_reset(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->SR2, HPSYS_RCC_SR2_MPI1) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Set the RC10 calibration count mode (RC10CAL1.CON_MODE).
+ * @param[in] rcc  RCC peripheral pointer
+ * @param[in] mode Count mode.
+ */
+static inline void ll_rcc_rc10cal_set_con_mode(HPSYS_RCC_TypeDef *rcc, uint32_t mode)
+{
+	MODIFY_REG(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CON_MODE,
+		   mode ? HPSYS_RCC_RC10CAL1_CON_MODE : 0UL);
+}
+
+/**
+ * @brief Set the RC10 calibration count number (RC10CAL1.CON_NUM).
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] num Count number (10 bits).
+ */
+static inline void ll_rcc_rc10cal_set_con_num(HPSYS_RCC_TypeDef *rcc, uint32_t num)
+{
+	MODIFY_REG(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CON_NUM,
+		   MAKE_REG_VAL(num, HPSYS_RCC_RC10CAL1_CON_NUM_Msk, HPSYS_RCC_RC10CAL1_CON_NUM_Pos));
+}
+
+/**
+ * @brief Set the RC10 calibration select (RC10CAL1.CAL_SEL).
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] sel Calibration source select.
+ */
+static inline void ll_rcc_rc10cal_set_sel(HPSYS_RCC_TypeDef *rcc, uint32_t sel)
+{
+	MODIFY_REG(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CAL_SEL,
+		   MAKE_REG_VAL(sel, HPSYS_RCC_RC10CAL1_CAL_SEL_Msk, HPSYS_RCC_RC10CAL1_CAL_SEL_Pos));
+}
+
+/**
+ * @brief Stop the RC10 calibration (RC10CAL1.CAL_STOP).
+ * @param[in] rcc RCC peripheral pointer
+ */
+static inline void ll_rcc_rc10cal_stop(HPSYS_RCC_TypeDef *rcc)
+{
+	SET_BIT(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CAL_STOP);
+}
+
+/*==============================================================================
+ * RC10 Calibration (RC10CAL1 / RC10CAL2)
+ *============================================================================*/
+
+/**
+ * @brief Start the RC10 calibration (RC10CAL1.CAL_START).
+ * @param[in] rcc RCC peripheral pointer
+ */
+static inline void ll_rcc_rc10cal_start(HPSYS_RCC_TypeDef *rcc)
+{
+	SET_BIT(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CAL_START);
+}
+
+/**
+ * @brief Enable the RC10 automatic calibration (RC10CAL1.CAL_AUTO).
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] en  Non-zero to enable auto calibration.
+ */
+static inline void ll_rcc_rc10cal_auto_enable(HPSYS_RCC_TypeDef *rcc, uint32_t en)
+{
+	MODIFY_REG(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CAL_AUTO,
+		   en ? HPSYS_RCC_RC10CAL1_CAL_AUTO : 0UL);
+}
+
+/**
+ * @brief Set the RC10 calibration length (RC10CAL1.CAL_LENGTH).
+ * @param[in] rcc   RCC peripheral pointer
+ * @param[in] len   Calibration length (16 bits).
+ */
+static inline void ll_rcc_rc10cal_set_length(HPSYS_RCC_TypeDef *rcc, uint32_t len)
+{
+	MODIFY_REG(rcc->RC10CAL1, HPSYS_RCC_RC10CAL1_CAL_LENGTH,
+		   MAKE_REG_VAL(len, HPSYS_RCC_RC10CAL1_CAL_LENGTH_Msk, HPSYS_RCC_RC10CAL1_CAL_LENGTH_Pos));
+}
+
+/**
+ * @brief Check whether the RC10 calibration is done (RC10CAL2.CAL_DONE).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Non-zero when done.
+ */
+static inline uint32_t ll_rcc_rc10cal_is_done(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->RC10CAL2, HPSYS_RCC_RC10CAL2_CAL_DONE) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the RC10 calibration result (RC10CAL2.CAL_RSLT).
+ * @param[in] rcc RCC peripheral pointer
+ * @return Calibration result.
+ */
+static inline uint32_t ll_rcc_rc10cal_get_result(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_REG(rcc->RC10CAL2) & HPSYS_RCC_RC10CAL2_CAL_RSLT;
 }
 
 /**

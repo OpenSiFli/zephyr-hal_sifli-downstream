@@ -20,9 +20,6 @@ extern "C" {
 #define LL_AUDCODEC_IRQ_DAC_CH0_APB_OF  AUDCODEC_IRQ_DAC_CH0_APB_OF
 #define LL_AUDCODEC_IRQ_DAC_CH0_OUT_UF  AUDCODEC_IRQ_DAC_CH0_OUT_UF
 #define LL_AUDCODEC_IRQ_DAC_CH0_STB_OF  AUDCODEC_IRQ_DAC_CH0_STB_OF
-#define LL_AUDCODEC_IRQ_DAC_CH1_APB_OF  AUDCODEC_IRQ_DAC_CH1_APB_OF
-#define LL_AUDCODEC_IRQ_DAC_CH1_OUT_UF  AUDCODEC_IRQ_DAC_CH1_OUT_UF
-#define LL_AUDCODEC_IRQ_DAC_CH1_STB_OF  AUDCODEC_IRQ_DAC_CH1_STB_OF
 #define LL_AUDCODEC_IRQ_ADC_CH0_APB_OF  AUDCODEC_IRQ_ADC_CH0_APB_OF
 #define LL_AUDCODEC_IRQ_ADC_CH0_APB_UF  AUDCODEC_IRQ_ADC_CH0_APB_UF
 #define LL_AUDCODEC_IRQ_ADC_CH0_SAT     AUDCODEC_IRQ_ADC_CH0_SAT
@@ -33,9 +30,6 @@ extern "C" {
 #define LL_AUDCODEC_IRQ_MASK_DAC_CH0_APB_OF  AUDCODEC_IRQ_MSK_DAC_CH0_APB_OF
 #define LL_AUDCODEC_IRQ_MASK_DAC_CH0_OUT_UF  AUDCODEC_IRQ_MSK_DAC_CH0_OUT_UF
 #define LL_AUDCODEC_IRQ_MASK_DAC_CH0_STB_OF  AUDCODEC_IRQ_MSK_DAC_CH0_STB_OF
-#define LL_AUDCODEC_IRQ_MASK_DAC_CH1_APB_OF  AUDCODEC_IRQ_MSK_DAC_CH1_APB_OF
-#define LL_AUDCODEC_IRQ_MASK_DAC_CH1_OUT_UF  AUDCODEC_IRQ_MSK_DAC_CH1_OUT_UF
-#define LL_AUDCODEC_IRQ_MASK_DAC_CH1_STB_OF  AUDCODEC_IRQ_MSK_DAC_CH1_STB_OF
 #define LL_AUDCODEC_IRQ_MASK_ADC_CH0_APB_OF  AUDCODEC_IRQ_MSK_ADC_CH0_APB_OF
 #define LL_AUDCODEC_IRQ_MASK_ADC_CH0_APB_UF  AUDCODEC_IRQ_MSK_ADC_CH0_APB_UF
 #define LL_AUDCODEC_IRQ_MASK_ADC_CH0_SAT     AUDCODEC_IRQ_MSK_ADC_CH0_SAT
@@ -214,7 +208,7 @@ static inline void ll_audcodec_adc_path_clear_reset(AUDCODEC_TypeDef *codec)
 static inline uint32_t ll_audcodec_get_status(AUDCODEC_TypeDef *codec)
 {
 	return READ_REG(codec->APB_STAT) &
-	       (AUDCODEC_APB_STAT_DAC_CH0_FIFO_CNT | AUDCODEC_APB_STAT_DAC_CH1_FIFO_CNT |
+	       (AUDCODEC_APB_STAT_DAC_CH0_FIFO_CNT |
 		AUDCODEC_APB_STAT_ADC_CH0_FIFO_CNT | AUDCODEC_APB_STAT_ADC_CH1_FIFO_CNT);
 }
 
@@ -325,19 +319,6 @@ static inline void ll_audcodec_dac_set_channel_config(AUDCODEC_TypeDef *codec, u
 				AUDCODEC_DAC_CH0_CFG_DITHER_EN |
 				AUDCODEC_DAC_CH0_CFG_CLK_ANA_POL;
 		MODIFY_REG(codec->DAC_CH0_CFG, mask, conf & mask);
-	} else if (ch == 1U) {
-		uint32_t mask = AUDCODEC_DAC_CH1_CFG_ENABLE |
-				AUDCODEC_DAC_CH1_CFG_DOUT_MUTE |
-				AUDCODEC_DAC_CH1_CFG_DEM_MODE |
-				AUDCODEC_DAC_CH1_CFG_DMA_EN |
-				AUDCODEC_DAC_CH1_CFG_ROUGH_VOL |
-				AUDCODEC_DAC_CH1_CFG_FINE_VOL |
-				AUDCODEC_DAC_CH1_CFG_DATA_FORMAT |
-				AUDCODEC_DAC_CH1_CFG_SINC_GAIN |
-				AUDCODEC_DAC_CH1_CFG_DITHER_GAIN |
-				AUDCODEC_DAC_CH1_CFG_DITHER_EN |
-				AUDCODEC_DAC_CH1_CFG_CLK_ANA_POL;
-		MODIFY_REG(codec->DAC_CH1_CFG, mask, conf & mask);
 	}
 }
 
@@ -357,15 +338,6 @@ static inline uint32_t ll_audcodec_dac_get_channel_config(AUDCODEC_TypeDef *code
 			AUDCODEC_DAC_CH0_CFG_FINE_VOL | AUDCODEC_DAC_CH0_CFG_DATA_FORMAT |
 			AUDCODEC_DAC_CH0_CFG_SINC_GAIN | AUDCODEC_DAC_CH0_CFG_DITHER_GAIN |
 			AUDCODEC_DAC_CH0_CFG_DITHER_EN | AUDCODEC_DAC_CH0_CFG_CLK_ANA_POL);
-	}
-	if (ch == 1U) {
-		return READ_REG(codec->DAC_CH1_CFG) &
-		       (AUDCODEC_DAC_CH1_CFG_ENABLE | AUDCODEC_DAC_CH1_CFG_DOUT_MUTE |
-			AUDCODEC_DAC_CH1_CFG_DEM_MODE | AUDCODEC_DAC_CH1_CFG_STB_FIFO_CNT |
-			AUDCODEC_DAC_CH1_CFG_DMA_EN | AUDCODEC_DAC_CH1_CFG_ROUGH_VOL |
-			AUDCODEC_DAC_CH1_CFG_FINE_VOL | AUDCODEC_DAC_CH1_CFG_DATA_FORMAT |
-			AUDCODEC_DAC_CH1_CFG_SINC_GAIN | AUDCODEC_DAC_CH1_CFG_DITHER_GAIN |
-			AUDCODEC_DAC_CH1_CFG_DITHER_EN | AUDCODEC_DAC_CH1_CFG_CLK_ANA_POL);
 	}
 	return 0U;
 }
@@ -387,13 +359,6 @@ static inline void ll_audcodec_dac_set_channel_volume(AUDCODEC_TypeDef *codec, u
 					AUDCODEC_DAC_CH0_CFG_ROUGH_VOL_Pos) |
 			   MAKE_REG_VAL(fine, AUDCODEC_DAC_CH0_CFG_FINE_VOL_Msk,
 					AUDCODEC_DAC_CH0_CFG_FINE_VOL_Pos));
-	} else if (ch == 1U) {
-		MODIFY_REG(codec->DAC_CH1_CFG,
-			   AUDCODEC_DAC_CH1_CFG_ROUGH_VOL | AUDCODEC_DAC_CH1_CFG_FINE_VOL,
-			   MAKE_REG_VAL(rough, AUDCODEC_DAC_CH1_CFG_ROUGH_VOL_Msk,
-					AUDCODEC_DAC_CH1_CFG_ROUGH_VOL_Pos) |
-			   MAKE_REG_VAL(fine, AUDCODEC_DAC_CH1_CFG_FINE_VOL_Msk,
-					AUDCODEC_DAC_CH1_CFG_FINE_VOL_Pos));
 	}
 }
 
@@ -410,10 +375,6 @@ static inline void ll_audcodec_dac_set_channel_fine_volume(AUDCODEC_TypeDef *cod
 		MODIFY_REG(codec->DAC_CH0_CFG, AUDCODEC_DAC_CH0_CFG_FINE_VOL,
 			   MAKE_REG_VAL(fine, AUDCODEC_DAC_CH0_CFG_FINE_VOL_Msk,
 					AUDCODEC_DAC_CH0_CFG_FINE_VOL_Pos));
-	} else if (ch == 1U) {
-		MODIFY_REG(codec->DAC_CH1_CFG, AUDCODEC_DAC_CH1_CFG_FINE_VOL,
-			   MAKE_REG_VAL(fine, AUDCODEC_DAC_CH1_CFG_FINE_VOL_Msk,
-					AUDCODEC_DAC_CH1_CFG_FINE_VOL_Pos));
 	}
 }
 
@@ -429,9 +390,6 @@ static inline void ll_audcodec_dac_set_channel_dma_enable(AUDCODEC_TypeDef *code
 	if (ch == 0U) {
 		MODIFY_REG(codec->DAC_CH0_CFG, AUDCODEC_DAC_CH0_CFG_DMA_EN,
 			   en ? AUDCODEC_DAC_CH0_CFG_DMA_EN : 0UL);
-	} else if (ch == 1U) {
-		MODIFY_REG(codec->DAC_CH1_CFG, AUDCODEC_DAC_CH1_CFG_DMA_EN,
-			   en ? AUDCODEC_DAC_CH1_CFG_DMA_EN : 0UL);
 	}
 }
 
@@ -447,9 +405,6 @@ static inline void ll_audcodec_dac_set_channel_mute(AUDCODEC_TypeDef *codec, uin
 	if (ch == 0U) {
 		MODIFY_REG(codec->DAC_CH0_CFG, AUDCODEC_DAC_CH0_CFG_DOUT_MUTE,
 			   mute ? AUDCODEC_DAC_CH0_CFG_DOUT_MUTE : 0UL);
-	} else if (ch == 1U) {
-		MODIFY_REG(codec->DAC_CH1_CFG, AUDCODEC_DAC_CH1_CFG_DOUT_MUTE,
-			   mute ? AUDCODEC_DAC_CH1_CFG_DOUT_MUTE : 0UL);
 	}
 }
 
@@ -473,12 +428,6 @@ static inline void ll_audcodec_dac_set_channel_enable(AUDCODEC_TypeDef *codec, u
 		} else {
 			CLEAR_BIT(codec->DAC_CH0_CFG, AUDCODEC_DAC_CH0_CFG_ENABLE);
 		}
-	} else if (ch == 1U) {
-		if (en) {
-			SET_BIT(codec->DAC_CH1_CFG, AUDCODEC_DAC_CH1_CFG_ENABLE);
-		} else {
-			CLEAR_BIT(codec->DAC_CH1_CFG, AUDCODEC_DAC_CH1_CFG_ENABLE);
-		}
 	}
 }
 
@@ -492,14 +441,6 @@ static inline uint32_t ll_audcodec_dac_get_channel_config_ext(AUDCODEC_TypeDef *
 			AUDCODEC_DAC_CH0_CFG_EXT_ZERO_ADJUST_EN |
 			AUDCODEC_DAC_CH0_CFG_EXT_RAMP_MODE |
 			AUDCODEC_DAC_CH0_CFG_EXT_RAMP_EN);
-	}
-	if (ch == 1U) {
-		return READ_REG(codec->DAC_CH1_CFG_EXT) &
-		       (AUDCODEC_DAC_CH1_CFG_EXT_RAMP_STAT |
-			AUDCODEC_DAC_CH1_CFG_EXT_RAMP_INTERVAL |
-			AUDCODEC_DAC_CH1_CFG_EXT_ZERO_ADJUST_EN |
-			AUDCODEC_DAC_CH1_CFG_EXT_RAMP_MODE |
-			AUDCODEC_DAC_CH1_CFG_EXT_RAMP_EN);
 	}
 	return 0U;
 }
@@ -520,12 +461,6 @@ static inline void ll_audcodec_dac_set_channel_config_ext(AUDCODEC_TypeDef *code
 				AUDCODEC_DAC_CH0_CFG_EXT_ZERO_ADJUST_EN |
 				AUDCODEC_DAC_CH0_CFG_EXT_RAMP_INTERVAL;
 		MODIFY_REG(codec->DAC_CH0_CFG_EXT, mask, conf & mask);
-	} else if (ch == 1U) {
-		uint32_t mask = AUDCODEC_DAC_CH1_CFG_EXT_RAMP_EN |
-				AUDCODEC_DAC_CH1_CFG_EXT_RAMP_MODE |
-				AUDCODEC_DAC_CH1_CFG_EXT_ZERO_ADJUST_EN |
-				AUDCODEC_DAC_CH1_CFG_EXT_RAMP_INTERVAL;
-		MODIFY_REG(codec->DAC_CH1_CFG_EXT, mask, conf & mask);
 	}
 }
 
@@ -559,8 +494,6 @@ static inline void ll_audcodec_dac_write_entry(AUDCODEC_TypeDef *codec, uint32_t
 {
 	if (ch == 0U) {
 		WRITE_REG(codec->DAC_CH0_ENTRY, data & AUDCODEC_DAC_CH0_ENTRY_DATA);
-	} else if (ch == 1U) {
-		WRITE_REG(codec->DAC_CH1_ENTRY, data & AUDCODEC_DAC_CH1_ENTRY_DATA);
 	}
 }
 
@@ -579,11 +512,6 @@ static inline void ll_audcodec_dac_set_channel_debug(AUDCODEC_TypeDef *codec, ui
 			   AUDCODEC_DAC_CH0_DEBUG_BYPASS | AUDCODEC_DAC_CH0_DEBUG_DATA_OUT,
 			   conf & (AUDCODEC_DAC_CH0_DEBUG_BYPASS |
 				    AUDCODEC_DAC_CH0_DEBUG_DATA_OUT));
-	} else if (ch == 1U) {
-		MODIFY_REG(codec->DAC_CH1_DEBUG,
-			   AUDCODEC_DAC_CH1_DEBUG_BYPASS | AUDCODEC_DAC_CH1_DEBUG_DATA_OUT,
-			   conf & (AUDCODEC_DAC_CH1_DEBUG_BYPASS |
-				    AUDCODEC_DAC_CH1_DEBUG_DATA_OUT));
 	}
 }
 
@@ -598,8 +526,6 @@ static inline void ll_audcodec_dac_set_dc_offset(AUDCODEC_TypeDef *codec, uint32
 {
 	if (ch == 0U) {
 		WRITE_REG(codec->DAC_CH0_DC, dc & AUDCODEC_DAC_CH0_DC_OFFSET_Msk);
-	} else if (ch == 1U) {
-		WRITE_REG(codec->DAC_CH1_DC, dc & AUDCODEC_DAC_CH1_DC_OFFSET_Msk);
 	}
 }
 
@@ -619,6 +545,50 @@ static inline void ll_audcodec_set_dc_test_config(AUDCODEC_TypeDef *codec, uint3
 		   MAKE_REG_VAL(tr, AUDCODEC_COMMON_CFG_DC_TR_Msk, AUDCODEC_COMMON_CFG_DC_TR_Pos) |
 		   MAKE_REG_VAL(br, AUDCODEC_COMMON_CFG_DC_BR_Msk, AUDCODEC_COMMON_CFG_DC_BR_Pos) |
 		   MAKE_REG_VAL(mr, AUDCODEC_COMMON_CFG_DC_MR_Msk, AUDCODEC_COMMON_CFG_DC_MR_Pos));
+}
+
+	
+/** @brief Set BG_CFG0.CMPOUT flag. */
+static inline void ll_audcodec_bg_set_cmpout(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_CMPOUT, en ? AUDCODEC_BG_CFG0_CMPOUT : 0UL);
+}
+
+/** @brief Set BG_CFG0.SEL_VB. */
+static inline void ll_audcodec_bg_set_sel_vb(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_SEL_VB, en ? AUDCODEC_BG_CFG0_SEL_VB : 0UL);
+}
+
+/** @brief Set BG_CFG0.EN_CMP. */
+static inline void ll_audcodec_bg_set_en_cmp(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_EN_CMP, en ? AUDCODEC_BG_CFG0_EN_CMP : 0UL);
+}
+
+/** @brief Set BG_CFG0.BM_FLT. */
+static inline void ll_audcodec_bg_set_bm_flt(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_BM_FLT, en ? AUDCODEC_BG_CFG0_BM_FLT : 0UL);
+}
+
+/** @brief Set BG_CFG0.DET_CLK_DIV. */
+static inline void ll_audcodec_bg_set_det_clk_div(AUDCODEC_TypeDef *codec, uint32_t div)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_DET_CLK_DIV,
+		   MAKE_REG_VAL(div, AUDCODEC_BG_CFG0_DET_CLK_DIV_Msk, AUDCODEC_BG_CFG0_DET_CLK_DIV_Pos));
+}
+
+/** @brief Set BG_CFG0.SMPL_CLK_MODE. */
+static inline void ll_audcodec_bg_set_smpl_clk_mode(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_SMPL_CLK_MODE, en ? AUDCODEC_BG_CFG0_SMPL_CLK_MODE : 0UL);
+}
+
+/** @brief Set BG_CFG0.SMPL_MODE. */
+static inline void ll_audcodec_bg_set_smpl_mode(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->BG_CFG0, AUDCODEC_BG_CFG0_SMPL_MODE, en ? AUDCODEC_BG_CFG0_SMPL_MODE : 0UL);
 }
 
 /**
@@ -937,6 +907,24 @@ static inline void ll_audcodec_pll_set_sdm_update(AUDCODEC_TypeDef *codec, uint3
 		   en ? AUDCODEC_PLL_CFG3_SDM_UPDATE : 0UL);
 }
 
+/** @brief Set PLL_CFG4.RSTB_ADC. */
+static inline void ll_audcodec_pll_set_rstb_adc(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->PLL_CFG4, AUDCODEC_PLL_CFG4_RSTB_ADC, en ? AUDCODEC_PLL_CFG4_RSTB_ADC : 0UL);
+}
+
+/** @brief Set PLL_CFG4.RSTB_DAC. */
+static inline void ll_audcodec_pll_set_rstb_dac(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->PLL_CFG4, AUDCODEC_PLL_CFG4_RSTB_DAC, en ? AUDCODEC_PLL_CFG4_RSTB_DAC : 0UL);
+}
+
+/** @brief Set PLL_CFG4.RSTB_DIG. */
+static inline void ll_audcodec_pll_set_rstb_dig(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->PLL_CFG4, AUDCODEC_PLL_CFG4_RSTB_DIG, en ? AUDCODEC_PLL_CFG4_RSTB_DIG : 0UL);
+}
+
 /**
  * @brief Enable/disable the PLL digital clock output (PLL_CFG4.EN_CLK_DIG).
  * @param[in] codec AUDCODEC instance pointer.
@@ -988,6 +976,13 @@ static inline void ll_audcodec_pll_set_cfg4(AUDCODEC_TypeDef *codec, uint32_t co
 			AUDCODEC_PLL_CFG4_SEL_CLK_DIG | AUDCODEC_PLL_CFG4_CLK_DIG_STR |
 			AUDCODEC_PLL_CFG4_DIVA_CLK_DIG | AUDCODEC_PLL_CFG4_EN_CLK_DIG;
 	MODIFY_REG(codec->PLL_CFG4, mask, conf & mask);
+}
+
+/** @brief Set PLL_CFG4.DIVB_CLK_DIG. */
+static inline void ll_audcodec_pll_set_divb_clk_dig(AUDCODEC_TypeDef *codec, uint32_t div)
+{
+	MODIFY_REG(codec->PLL_CFG4, AUDCODEC_PLL_CFG4_DIVB_CLK_DIG,
+		   MAKE_REG_VAL(div, AUDCODEC_PLL_CFG4_DIVB_CLK_DIG_Msk, AUDCODEC_PLL_CFG4_DIVB_CLK_DIG_Pos));
 }
 
 static inline void ll_audcodec_pll_set_cfg5(AUDCODEC_TypeDef *codec, uint32_t conf)
@@ -1101,6 +1096,48 @@ static inline uint32_t ll_audcodec_pll_get_cal_result(AUDCODEC_TypeDef *codec)
 	       (AUDCODEC_PLL_CAL_RESULT_PLL_CNT | AUDCODEC_PLL_CAL_RESULT_XTAL_CNT);
 }
 
+/** @brief Set PLL_DITHER_CFG.DITHER_EN. */
+static inline void ll_audcodec_pll_set_dither_enable(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->PLL_DITHER_CFG, AUDCODEC_PLL_DITHER_CFG_DITHER_EN,
+		   en ? AUDCODEC_PLL_DITHER_CFG_DITHER_EN : 0UL);
+}
+
+/** @brief Set PLL_DITHER_CFG.UPDATE_CYCLE. */
+static inline void ll_audcodec_pll_set_dither_update_cycle(AUDCODEC_TypeDef *codec, uint32_t val)
+{
+	MODIFY_REG(codec->PLL_DITHER_CFG, AUDCODEC_PLL_DITHER_CFG_UPDATE_CYCLE,
+		   MAKE_REG_VAL(val, AUDCODEC_PLL_DITHER_CFG_UPDATE_CYCLE_Msk, AUDCODEC_PLL_DITHER_CFG_UPDATE_CYCLE_Pos));
+}
+
+/** @brief Set PLL_DITHER_CFG.VAL_SHIFT. */
+static inline void ll_audcodec_pll_set_dither_val_shift(AUDCODEC_TypeDef *codec, uint32_t val)
+{
+	MODIFY_REG(codec->PLL_DITHER_CFG, AUDCODEC_PLL_DITHER_CFG_VAL_SHIFT,
+		   MAKE_REG_VAL(val, AUDCODEC_PLL_DITHER_CFG_VAL_SHIFT_Msk, AUDCODEC_PLL_DITHER_CFG_VAL_SHIFT_Pos));
+}
+
+/** @brief Set PLL_DITHER_CFG.LFSR_SEED. */
+static inline void ll_audcodec_pll_set_dither_lfsr_seed(AUDCODEC_TypeDef *codec, uint32_t val)
+{
+	MODIFY_REG(codec->PLL_DITHER_CFG, AUDCODEC_PLL_DITHER_CFG_LFSR_SEED,
+		   MAKE_REG_VAL(val, AUDCODEC_PLL_DITHER_CFG_LFSR_SEED_Msk, AUDCODEC_PLL_DITHER_CFG_LFSR_SEED_Pos));
+}
+
+/** @brief Set ADC_ANA_CFG.VST_SEL. */
+static inline void ll_audcodec_adc_set_vst_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC_ANA_CFG, AUDCODEC_ADC_ANA_CFG_VST_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC_ANA_CFG_VST_SEL_Msk, AUDCODEC_ADC_ANA_CFG_VST_SEL_Pos));
+}
+
+/** @brief Set ADC_ANA_CFG.VREF_SEL. */
+static inline void ll_audcodec_adc_set_vref_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC_ANA_CFG, AUDCODEC_ADC_ANA_CFG_VREF_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC_ANA_CFG_VREF_SEL_Msk, AUDCODEC_ADC_ANA_CFG_VREF_SEL_Pos));
+}
+
 static inline void ll_audcodec_adc_set_capcode(AUDCODEC_TypeDef *codec, uint32_t capcode)
 {
 	MODIFY_REG(codec->ADC_ANA_CFG, AUDCODEC_ADC_ANA_CFG_CAPCODE,
@@ -1119,15 +1156,10 @@ static inline void ll_audcodec_adc_set_micbias_enable(AUDCODEC_TypeDef *codec, u
 		   en ? AUDCODEC_ADC_ANA_CFG_MICBIAS_EN : 0UL);
 }
 
-/**
- * @brief Enable/disable the micbias chopping (ADC_ANA_CFG.MICBIAS_CHOP_EN).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_adc_set_micbias_chop_enable(AUDCODEC_TypeDef *codec, uint32_t en)
+/** @brief Set ADC_ANA_CFG.PSW_EN. */
+static inline void ll_audcodec_adc_set_psw_enable(AUDCODEC_TypeDef *codec, uint32_t en)
 {
-	MODIFY_REG(codec->ADC_ANA_CFG, AUDCODEC_ADC_ANA_CFG_MICBIAS_CHOP_EN,
-		   en ? AUDCODEC_ADC_ANA_CFG_MICBIAS_CHOP_EN : 0UL);
+	MODIFY_REG(codec->ADC_ANA_CFG, AUDCODEC_ADC_ANA_CFG_PSW_EN, en ? AUDCODEC_ADC_ANA_CFG_PSW_EN : 0UL);
 }
 
 /**
@@ -1143,11 +1175,11 @@ static inline void ll_audcodec_adc1_set_fsp(AUDCODEC_TypeDef *codec, uint32_t fs
 
 static inline void ll_audcodec_adc1_set_config(AUDCODEC_TypeDef *codec, uint32_t conf)
 {
-	uint32_t mask = AUDCODEC_ADC1_CFG1_PERI_BM | AUDCODEC_ADC1_CFG1_CLKOUT_INV |
+	uint32_t mask = AUDCODEC_ADC1_CFG1_CLKOUT_INV |
 			AUDCODEC_ADC1_CFG1_VCMST | AUDCODEC_ADC1_CFG1_FCHOP_SEL |
-			AUDCODEC_ADC1_CFG1_VREF_SEL | AUDCODEC_ADC1_CFG1_BM_INT2 |
-			AUDCODEC_ADC1_CFG1_BM_INT1 | AUDCODEC_ADC1_CFG1_VST_SEL |
-			AUDCODEC_ADC1_CFG1_GC | AUDCODEC_ADC1_CFG1_DACN_EN |
+			AUDCODEC_ADC1_CFG1_BM_INT2 |
+			AUDCODEC_ADC1_CFG1_BM_INT1 |
+			AUDCODEC_ADC1_CFG1_GC |
 			AUDCODEC_ADC1_CFG1_DIFF_EN | AUDCODEC_ADC1_CFG1_FSP;
 	MODIFY_REG(codec->ADC1_CFG1, mask, conf & mask);
 }
@@ -1168,17 +1200,6 @@ static inline void ll_audcodec_adc1_set_diff_enable(AUDCODEC_TypeDef *codec, uin
 }
 
 /**
- * @brief Enable/disable the ADC1 DACN input (ADC1_CFG1.DACN_EN).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_adc1_set_dacn_enable(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->ADC1_CFG1, AUDCODEC_ADC1_CFG1_DACN_EN,
-		   en ? AUDCODEC_ADC1_CFG1_DACN_EN : 0UL);
-}
-
-/**
  * @brief Set the ADC1 gain code (ADC1_CFG1.GC).
  * @param[in] codec AUDCODEC instance pointer.
  * @param[in] gc    Gain code.
@@ -1190,18 +1211,6 @@ static inline void ll_audcodec_adc1_set_gc(AUDCODEC_TypeDef *codec, uint32_t gc)
 }
 
 /**
- * @brief Set the ADC1 VREF selection (ADC1_CFG1.VREF_SEL).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] sel   VREF selection code.
- */
-static inline void ll_audcodec_adc1_set_vref_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
-{
-	MODIFY_REG(codec->ADC1_CFG1, AUDCODEC_ADC1_CFG1_VREF_SEL,
-		   MAKE_REG_VAL(sel, AUDCODEC_ADC1_CFG1_VREF_SEL_Msk,
-				AUDCODEC_ADC1_CFG1_VREF_SEL_Pos));
-}
-
-/**
  * @brief Assert/de-assert the ADC1 VCM startup pulse (ADC1_CFG1.VCMST).
  * @param[in] codec AUDCODEC instance pointer.
  * @param[in] en    Non-zero to assert, zero to release.
@@ -1210,6 +1219,13 @@ static inline void ll_audcodec_adc1_set_vcmst(AUDCODEC_TypeDef *codec, uint32_t 
 {
 	MODIFY_REG(codec->ADC1_CFG1, AUDCODEC_ADC1_CFG1_VCMST,
 		   en ? AUDCODEC_ADC1_CFG1_VCMST : 0UL);
+}
+
+/** @brief Set ADC1_CFG1.RVN_SEL. */
+static inline void ll_audcodec_adc1_set_rvn_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
+{
+	MODIFY_REG(codec->ADC1_CFG1, AUDCODEC_ADC1_CFG1_RVN_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC1_CFG1_RVN_SEL_Msk, AUDCODEC_ADC1_CFG1_RVN_SEL_Pos));
 }
 
 /**
@@ -1262,6 +1278,12 @@ static inline void ll_audcodec_set_adc2_fsp(AUDCODEC_TypeDef *codec, uint32_t fs
 		   MAKE_REG_VAL(fsp, AUDCODEC_ADC2_CFG1_FSP_Msk, AUDCODEC_ADC2_CFG1_FSP_Pos));
 }
 
+/** @brief Set ADC2_CFG1.DIFF_EN. */
+static inline void ll_audcodec_adc2_set_diff_enable(AUDCODEC_TypeDef *codec, uint32_t en)
+{
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_DIFF_EN, en ? AUDCODEC_ADC2_CFG1_DIFF_EN : 0UL);
+}
+
 /**
  * @brief Set the ADC2 gain code (ADC2_CFG1.GC).
  * @param[in] codec Audio codec instance pointer.
@@ -1271,17 +1293,6 @@ static inline void ll_audcodec_set_adc2_gain(AUDCODEC_TypeDef *codec, uint32_t g
 {
 	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_GC,
 		   MAKE_REG_VAL(gc, AUDCODEC_ADC2_CFG1_GC_Msk, AUDCODEC_ADC2_CFG1_GC_Pos));
-}
-
-/**
- * @brief Set the ADC2 start voltage (ADC2_CFG1.VST_SEL).
- * @param[in] codec Audio codec instance pointer.
- * @param[in] sel   Start voltage select (3 bits).
- */
-static inline void ll_audcodec_set_adc2_vst_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
-{
-	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VST_SEL,
-		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_VST_SEL_Msk, AUDCODEC_ADC2_CFG1_VST_SEL_Pos));
 }
 
 /**
@@ -1304,17 +1315,6 @@ static inline void ll_audcodec_set_adc2_bm_int2(AUDCODEC_TypeDef *codec, uint32_
 {
 	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_BM_INT2,
 		   MAKE_REG_VAL(bm, AUDCODEC_ADC2_CFG1_BM_INT2_Msk, AUDCODEC_ADC2_CFG1_BM_INT2_Pos));
-}
-
-/**
- * @brief Set the ADC2 VREF code (ADC2_CFG1.VREF_SEL).
- * @param[in] codec Audio codec instance pointer.
- * @param[in] sel   VREF select (3 bits).
- */
-static inline void ll_audcodec_set_adc2_vref_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
-{
-	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_VREF_SEL,
-		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_VREF_SEL_Msk, AUDCODEC_ADC2_CFG1_VREF_SEL_Pos));
 }
 
 /**
@@ -1364,15 +1364,11 @@ static inline void ll_audcodec_adc2_clkout_inv_disable(AUDCODEC_TypeDef *codec)
 	CLEAR_BIT(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_CLKOUT_INV);
 }
 
-/**
- * @brief Set the ADC2 peripheral circuits bias mode (ADC2_CFG1.PERI_BM).
- * @param[in] codec Audio codec instance pointer.
- * @param[in] bm    Bias mode (2 bits).
- */
-static inline void ll_audcodec_set_adc2_peri_bm(AUDCODEC_TypeDef *codec, uint32_t bm)
+/** @brief Set ADC2_CFG1.RVN_SEL. */
+static inline void ll_audcodec_adc2_set_rvn_sel(AUDCODEC_TypeDef *codec, uint32_t sel)
 {
-	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_PERI_BM,
-		   MAKE_REG_VAL(bm, AUDCODEC_ADC2_CFG1_PERI_BM_Msk, AUDCODEC_ADC2_CFG1_PERI_BM_Pos));
+	MODIFY_REG(codec->ADC2_CFG1, AUDCODEC_ADC2_CFG1_RVN_SEL,
+		   MAKE_REG_VAL(sel, AUDCODEC_ADC2_CFG1_RVN_SEL_Msk, AUDCODEC_ADC2_CFG1_RVN_SEL_Pos));
 }
 
 /**
@@ -1486,73 +1482,6 @@ static inline void ll_audcodec_dac1_set_en_os_dac(AUDCODEC_TypeDef *codec, uint3
 		   en ? AUDCODEC_DAC1_CFG_EN_OS_DAC : 0UL);
 }
 
-static inline void ll_audcodec_dac2_set_config(AUDCODEC_TypeDef *codec, uint32_t conf)
-{
-	uint32_t mask = AUDCODEC_DAC2_CFG_EN_OS_DAC | AUDCODEC_DAC2_CFG_OS_DAC |
-			AUDCODEC_DAC2_CFG_GAIN | AUDCODEC_DAC2_CFG_SR |
-			AUDCODEC_DAC2_CFG_POL_CLK | AUDCODEC_DAC2_CFG_LP_MODE |
-			AUDCODEC_DAC2_CFG_SEL_VCM | AUDCODEC_DAC2_CFG_BM |
-			AUDCODEC_DAC2_CFG_EN_CHOP | AUDCODEC_DAC2_CFG_EN_AMP |
-			AUDCODEC_DAC2_CFG_EN_VCM | AUDCODEC_DAC2_CFG_EN_DAC |
-			AUDCODEC_DAC2_CFG_SEL_VSTART;
-	MODIFY_REG(codec->DAC2_CFG, mask, conf & mask);
-}
-
-/**
- * @brief Enable/disable the DAC2 (DAC2_CFG.EN_DAC).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_dac2_set_en_dac(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->DAC2_CFG, AUDCODEC_DAC2_CFG_EN_DAC,
-		   en ? AUDCODEC_DAC2_CFG_EN_DAC : 0UL);
-}
-
-/**
- * @brief Enable/disable the DAC2 VCM (DAC2_CFG.EN_VCM).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_dac2_set_en_vcm(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->DAC2_CFG, AUDCODEC_DAC2_CFG_EN_VCM,
-		   en ? AUDCODEC_DAC2_CFG_EN_VCM : 0UL);
-}
-
-/**
- * @brief Enable/disable the DAC2 amplifier (DAC2_CFG.EN_AMP).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_dac2_set_en_amp(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->DAC2_CFG, AUDCODEC_DAC2_CFG_EN_AMP,
-		   en ? AUDCODEC_DAC2_CFG_EN_AMP : 0UL);
-}
-
-/**
- * @brief Enable/disable the DAC2 soft-reset (DAC2_CFG.SR).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to assert, zero to release.
- */
-static inline void ll_audcodec_dac2_set_sr(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->DAC2_CFG, AUDCODEC_DAC2_CFG_SR,
-		   en ? AUDCODEC_DAC2_CFG_SR : 0UL);
-}
-
-/**
- * @brief Enable/disable the DAC2 oversampling clock (DAC2_CFG.EN_OS_DAC).
- * @param[in] codec AUDCODEC instance pointer.
- * @param[in] en    Non-zero to enable, zero to disable.
- */
-static inline void ll_audcodec_dac2_set_en_os_dac(AUDCODEC_TypeDef *codec, uint32_t en)
-{
-	MODIFY_REG(codec->DAC2_CFG, AUDCODEC_DAC2_CFG_EN_OS_DAC,
-		   en ? AUDCODEC_DAC2_CFG_EN_OS_DAC : 0UL);
-}
-
 static inline void ll_audcodec_set_reserved_in0(AUDCODEC_TypeDef *codec, uint32_t value)
 {
 	uint32_t mask = AUDCODEC_RESERVED_IN0_CTRL0 | AUDCODEC_RESERVED_IN0_CTRL1 |
@@ -1571,7 +1500,6 @@ static inline uint32_t ll_audcodec_get_reserved_out(AUDCODEC_TypeDef *codec)
 	return READ_REG(codec->RESERVED_OUT) &
 	       (AUDCODEC_RESERVED_OUT_STAT0 | AUDCODEC_RESERVED_OUT_STAT1);
 }
-
 #ifdef __cplusplus
 }
 #endif

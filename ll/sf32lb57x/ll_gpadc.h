@@ -232,6 +232,29 @@ static inline uint32_t ll_gpadc_is_enabled_ldoref(GPADC_TypeDef *GPADCx)
 }
 
 /**
+ * @brief Set the VBAT ratio select (ADC_CFG_REG2.VBAT_RATIO_SEL).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] sel    Ratio select value.
+ */
+static inline void ll_gpadc_set_vbat_ratio_sel(GPADC_TypeDef *GPADCx, uint32_t sel)
+{
+    MODIFY_REG(GPADCx->ADC_CFG_REG2, GPADC_ADC_CFG_REG2_VBAT_RATIO_SEL,
+               MAKE_REG_VAL(sel, GPADC_ADC_CFG_REG2_VBAT_RATIO_SEL_Msk,
+                            GPADC_ADC_CFG_REG2_VBAT_RATIO_SEL_Pos));
+}
+
+/**
+ * @brief Enable the GPADC analog LDO switch (ADC_CFG_REG2.ANAU_GPADC_LDO_SW_EN).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] en     Non-zero to enable.
+ */
+static inline void ll_gpadc_set_analog_ldo_switch_enable(GPADC_TypeDef *GPADCx, uint32_t en)
+{
+    MODIFY_REG(GPADCx->ADC_CFG_REG2, GPADC_ADC_CFG_REG2_ANAU_GPADC_LDO_SW_EN,
+               en ? GPADC_ADC_CFG_REG2_ANAU_GPADC_LDO_SW_EN : 0UL);
+}
+
+/**
  * @brief Configure one slot register.
  * @param[in] GPADCx GPADC instance pointer.
  * @param[in] slot_index Slot index, valid range 0..7.
@@ -259,7 +282,6 @@ static inline void ll_gpadc_config_slot(GPADC_TypeDef *GPADCx,
                                 GPADC_ADC_SLOT0_REG_PCHNL_SEL_Pos) |
                    ((cfg->slot_enable != 0U) ? GPADC_ADC_SLOT0_REG_SLOT_EN : 0U));
 }
-
 
 /**
  * @brief Read ADC_RDATA0 register.
@@ -349,6 +371,66 @@ static inline uint32_t ll_gpadc_read_rdata3(GPADC_TypeDef *GPADCx)
 }
 
 /**
+ * @brief Read the slot 8/9 raw data pair (ADC_RDATA4).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Combined slot 8/9 data.
+ */
+static inline uint32_t ll_gpadc_read_rdata4(GPADC_TypeDef *GPADCx)
+{
+    return READ_REG(GPADCx->ADC_RDATA4);
+}
+
+/**
+ * @brief Read the slot 9 raw data (ADC_RDATA4.SLOT9_RDATA).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Slot 9 raw data.
+ */
+static inline uint32_t ll_gpadc_get_slot9_data(GPADC_TypeDef *GPADCx)
+{
+    return GET_REG_VAL2(GPADCx->ADC_RDATA4, GPADC_ADC_RDATA4_SLOT9_RDATA);
+}
+
+/**
+ * @brief Read the slot 8 raw data (ADC_RDATA4.SLOT8_RDATA).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Slot 8 raw data.
+ */
+static inline uint32_t ll_gpadc_get_slot8_data(GPADC_TypeDef *GPADCx)
+{
+    return GET_REG_VAL2(GPADCx->ADC_RDATA4, GPADC_ADC_RDATA4_SLOT8_RDATA);
+}
+
+/**
+ * @brief Read the slot 10/11 raw data pair (ADC_RDATA5).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Combined slot 10/11 data.
+ */
+static inline uint32_t ll_gpadc_read_rdata5(GPADC_TypeDef *GPADCx)
+{
+    return READ_REG(GPADCx->ADC_RDATA5);
+}
+
+/**
+ * @brief Read the slot 11 raw data (ADC_RDATA5.SLOT11_RDATA).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Slot 11 raw data.
+ */
+static inline uint32_t ll_gpadc_get_slot11_data(GPADC_TypeDef *GPADCx)
+{
+    return GET_REG_VAL2(GPADCx->ADC_RDATA5, GPADC_ADC_RDATA5_SLOT11_RDATA);
+}
+
+/**
+ * @brief Read the slot 10 raw data (ADC_RDATA5.SLOT10_RDATA).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @return Slot 10 raw data.
+ */
+static inline uint32_t ll_gpadc_get_slot10_data(GPADC_TypeDef *GPADCx)
+{
+    return GET_REG_VAL2(GPADCx->ADC_RDATA5, GPADC_ADC_RDATA5_SLOT10_RDATA);
+}
+
+/**
  * @brief Read DMA raw data field from ADC_DMA_RDATA.
  * @param[in] GPADCx GPADC instance pointer.
  * @return DMA_RDATA_RAW[28:16] field value.
@@ -370,6 +452,62 @@ static inline uint32_t ll_gpadc_read_dma_data(GPADC_TypeDef *GPADCx)
            GPADC_ADC_DMA_RDATA_DMA_RDATA_Pos;
 }
 
+/**
+ * @brief Set hardware control enable (ADC_CTRL_REG.HW_CTRL_EN).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] en     Non-zero to enable hardware control.
+ */
+static inline void ll_gpadc_set_hw_ctrl_enable(GPADC_TypeDef *GPADCx, uint32_t en)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_HW_CTRL_EN,
+               en ? GPADC_ADC_CTRL_REG_HW_CTRL_EN : 0UL);
+}
+
+/**
+ * @brief Set the unsigned result mode (ADC_CTRL_REG.UNSIGNED_RSLT).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] en     Non-zero for unsigned results.
+ */
+static inline void ll_gpadc_set_unsigned_result(GPADC_TypeDef *GPADCx, uint32_t en)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_UNSIGNED_RSLT,
+               en ? GPADC_ADC_CTRL_REG_UNSIGNED_RSLT : 0UL);
+}
+
+/**
+ * @brief Set the ADC resolution (ADC_CTRL_REG.RESOLUTION).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] res    Resolution field value.
+ */
+static inline void ll_gpadc_set_resolution(GPADC_TypeDef *GPADCx, uint32_t res)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_RESOLUTION,
+               MAKE_REG_VAL(res, GPADC_ADC_CTRL_REG_RESOLUTION_Msk,
+                            GPADC_ADC_CTRL_REG_RESOLUTION_Pos));
+}
+
+/**
+ * @brief Enable the digital filter (ADC_CTRL_REG.FILTER_EN).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] en     Non-zero to enable.
+ */
+static inline void ll_gpadc_set_filter_enable(GPADC_TypeDef *GPADCx, uint32_t en)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_FILTER_EN,
+               en ? GPADC_ADC_CTRL_REG_FILTER_EN : 0UL);
+}
+
+/**
+ * @brief Set the digital filter oversampling ratio (ADC_CTRL_REG.FILTER_OSR).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] osr    Filter OSR field value.
+ */
+static inline void ll_gpadc_set_filter_osr(GPADC_TypeDef *GPADCx, uint32_t osr)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_FILTER_OSR,
+               MAKE_REG_VAL(osr, GPADC_ADC_CTRL_REG_FILTER_OSR_Msk,
+                            GPADC_ADC_CTRL_REG_FILTER_OSR_Pos));
+}
 
 /**
  * @brief Configure conversion clock related fields.
@@ -534,6 +672,17 @@ static inline void ll_gpadc_config_mode(GPADC_TypeDef *GPADCx,
                cfg->op_mode |
                    ((cfg->init_time << GPADC_ADC_CTRL_REG_INIT_TIME_Pos) &
                     GPADC_ADC_CTRL_REG_INIT_TIME));
+}
+
+/**
+ * @brief Assert the ADC reset (ADC_CTRL_REG.ADC_RST).
+ * @param[in] GPADCx GPADC instance pointer.
+ * @param[in] en     Non-zero to assert reset.
+ */
+static inline void ll_gpadc_set_adc_reset(GPADC_TypeDef *GPADCx, uint32_t en)
+{
+    MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_ADC_RST,
+               en ? GPADC_ADC_CTRL_REG_ADC_RST : 0UL);
 }
 
 /**

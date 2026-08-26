@@ -112,6 +112,13 @@ static inline uint32_t ll_wdt_get_timeout2(WDT_TypeDef *wdt)
 	return READ_REG(wdt->WDT_CVR1) & WDT_WDT_CVR1_COUNT_VALUE_1;
 }
 
+/** @brief Set the pre-interrupt count (WDT_CR.PREINT_COUNT). */
+static inline void ll_wdt_set_preint_count(WDT_TypeDef *wdt, uint32_t cnt)
+{
+	MODIFY_REG(wdt->WDT_CR, WDT_WDT_CR_PREINT_COUNT,
+		   MAKE_REG_VAL(cnt, WDT_WDT_CR_PREINT_COUNT_Msk, WDT_WDT_CR_PREINT_COUNT_Pos));
+}
+
 /**
  * @brief Set the WDT response mode (WDT_CR.response_mode).
  * @param[in] wdt  WDT instance pointer.
@@ -190,6 +197,12 @@ static inline void ll_wdt_clear_interrupt(WDT_TypeDef *wdt)
 	WRITE_REG(wdt->WDT_ICR, WDT_WDT_ICR_INT_CLR);
 }
 
+/** @brief Get the current watchdog count (WDT_SR.WDT_CNT). */
+static inline uint32_t ll_wdt_get_count(WDT_TypeDef *wdt)
+{
+	return GET_REG_VAL2(wdt->WDT_SR, WDT_WDT_SR_WDT_CNT);
+}
+
 /**
  * @brief Check whether the WDT is running (WDT_SR.wdt_active).
  * @param[in] wdt WDT instance pointer.
@@ -198,6 +211,12 @@ static inline void ll_wdt_clear_interrupt(WDT_TypeDef *wdt)
 static inline uint32_t ll_wdt_is_active(WDT_TypeDef *wdt)
 {
 	return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_WDT_ACTIVE) ? 1UL : 0UL;
+}
+
+/** @brief Check whether the pre-interrupt is asserted (WDT_SR.PREINT_ASSERT). */
+static inline uint32_t ll_wdt_is_preint_asserted(WDT_TypeDef *wdt)
+{
+	return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_PREINT_ASSERT) ? 1UL : 0UL;
 }
 
 /**

@@ -1112,6 +1112,130 @@ static inline uint32_t ll_i2c_get_dma_count(I2C_TypeDef *I2Cx)
 }
 
 /**
+ * @brief Set the auto-transfer slave address (ATR.SLVA).
+ * @param[in] I2Cx  I2C instance pointer.
+ * @param[in] addr7 7-bit slave address.
+ */
+static inline void ll_i2c_set_auto_transfer_slave_addr(I2C_TypeDef *I2Cx, uint32_t addr7)
+{
+    MODIFY_REG(I2Cx->ATR, I2C_ATR_SLVA,
+               ((addr7 << I2C_ATR_SLVA_Pos) & I2C_ATR_SLVA));
+}
+
+/**
+ * @brief Set the auto-transfer read/write direction (ATR.RWN).
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] rw   0 for write, non-zero for read.
+ */
+static inline void ll_i2c_set_auto_transfer_dir(I2C_TypeDef *I2Cx, uint32_t rw)
+{
+    MODIFY_REG(I2Cx->ATR, I2C_ATR_RWN, rw ? I2C_ATR_RWN : 0UL);
+}
+
+/**
+ * @brief Set the auto-transfer register address (ATR.REGA).
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] addr Register address value (8 bits).
+ */
+static inline void ll_i2c_set_auto_transfer_reg_addr(I2C_TypeDef *I2Cx, uint32_t addr)
+{
+    MODIFY_REG(I2Cx->ATR, I2C_ATR_REGA,
+               ((addr << I2C_ATR_REGA_Pos) & I2C_ATR_REGA));
+}
+
+/**
+ * @brief Trigger the auto transfer (ATR.TRIG).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_trigger_auto_transfer(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->ATR, I2C_ATR_TRIG);
+}
+
+/**
+ * @brief Enable the auto-transfer stop condition (ATR.STOP).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_enable_auto_transfer_stop(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->ATR, I2C_ATR_STOP);
+}
+
+/**
+ * @brief Disable the auto-transfer stop condition (ATR.STOP).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_auto_transfer_stop(I2C_TypeDef *I2Cx)
+{
+    CLEAR_BIT(I2Cx->ATR, I2C_ATR_STOP);
+}
+
+/**
+ * @brief Enable the auto-transfer slave mode (ATR.SLV).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_enable_auto_transfer_slave(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->ATR, I2C_ATR_SLV);
+}
+
+/**
+ * @brief Disable the auto-transfer slave mode (ATR.SLV).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_auto_transfer_slave(I2C_TypeDef *I2Cx)
+{
+    CLEAR_BIT(I2Cx->ATR, I2C_ATR_SLV);
+}
+
+/**
+ * @brief Enable the auto-transfer register mode (ATR.REG).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_enable_auto_transfer_reg(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->ATR, I2C_ATR_REG);
+}
+
+/**
+ * @brief Disable the auto-transfer register mode (ATR.REG).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_auto_transfer_reg(I2C_TypeDef *I2Cx)
+{
+    CLEAR_BIT(I2Cx->ATR, I2C_ATR_REG);
+}
+
+/**
+ * @brief Enable the auto-transfer DMA mode (ATR.DMA).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_enable_auto_transfer_dma(I2C_TypeDef *I2Cx)
+{
+    SET_BIT(I2Cx->ATR, I2C_ATR_DMA);
+}
+
+/**
+ * @brief Disable the auto-transfer DMA mode (ATR.DMA).
+ * @param[in] I2Cx I2C instance pointer.
+ */
+static inline void ll_i2c_disable_auto_transfer_dma(I2C_TypeDef *I2Cx)
+{
+    CLEAR_BIT(I2Cx->ATR, I2C_ATR_DMA);
+}
+
+/**
+ * @brief Set the auto-transfer data count (ATR.NDT).
+ * @param[in] I2Cx I2C instance pointer.
+ * @param[in] cnt  Data count value (9 bits).
+ */
+static inline void ll_i2c_set_auto_transfer_count(I2C_TypeDef *I2Cx, uint32_t cnt)
+{
+    MODIFY_REG(I2Cx->ATR, I2C_ATR_NDT,
+               ((cnt << I2C_ATR_NDT_Pos) & I2C_ATR_NDT));
+}
+
+/**
  * @brief Push a byte into the TX FIFO (FIFO.DATA).
  * @param[in] I2Cx I2C instance pointer.
  * @param[in] data Byte to send.
@@ -1129,6 +1253,16 @@ static inline void ll_i2c_write_tx_data(I2C_TypeDef *I2Cx, uint8_t data)
 static inline uint8_t ll_i2c_read_rx_data(I2C_TypeDef *I2Cx)
 {
     return (uint8_t)READ_REG(I2Cx->FIFO);
+}
+
+/**
+ * @brief Read the debug data port (DBG.DATA).
+ * @param[in] I2Cx I2C instance pointer.
+ * @return Debug data.
+ */
+static inline uint32_t ll_i2c_read_debug_data(I2C_TypeDef *I2Cx)
+{
+    return READ_REG(I2Cx->DBG);
 }
 
 #ifdef __cplusplus

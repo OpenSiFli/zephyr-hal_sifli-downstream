@@ -857,55 +857,8 @@ static inline void ll_usart_set_rts_bit(USART_TypeDef *USARTx, uint32_t bits)
                MAKE_REG_VAL(bits, USART_MISCR_RTSBIT_Msk, USART_MISCR_RTSBIT_Pos));
 }
 
-/**
- * @brief Read the debug receive data register (DRDR.DATA).
- * @param[in] USARTx USART instance pointer.
- * @return Debug receive data.
- */
-static inline uint32_t ll_usart_read_debug_rx(USART_TypeDef *USARTx)
-{
-    return READ_REG(USARTx->DRDR);
-}
-
-/**
- * @brief Write the debug transmit data register (DTDR.DATA).
- * @param[in] USARTx USART instance pointer.
- * @param[in] data   Debug transmit data.
- */
-static inline void ll_usart_write_debug_tx(USART_TypeDef *USARTx, uint32_t data)
-{
-    WRITE_REG(USARTx->DTDR, data);
-}
-
-/**
- * @brief Read the debug transmit data register (DTDR.DATA).
- * @param[in] USARTx USART instance pointer.
- * @return Debug transmit data.
- */
-static inline uint32_t ll_usart_read_debug_tx(USART_TypeDef *USARTx)
-{
-    return READ_REG(USARTx->DTDR);
-}
-
-/**
- * @brief Get the mutual-exclusion owner ID (EXR.ID).
- * @param[in] USARTx USART instance pointer.
- * @return Owner ID (0 = HCPU, 1 = LCPU).
- */
-static inline uint32_t ll_usart_get_mutex_id(USART_TypeDef *USARTx)
-{
-    return READ_BIT(USARTx->EXR, USART_EXR_ID) ? 1UL : 0UL;
-}
-
-/**
- * @brief Check the mutual-exclusion busy flag (EXR.BUSY).
- * @param[in] USARTx USART instance pointer.
- * @return Non-zero when the mutual-exclusion resource is busy.
- */
-static inline uint32_t ll_usart_is_mutex_busy(USART_TypeDef *USARTx)
-{
-    return READ_BIT(USARTx->EXR, USART_EXR_BUSY) ? 1UL : 0UL;
-}
+/* SF32LB57x has no DRDR/DTDR/EXR registers (52x/56x only); the debug
+ * receive/transmit and mutual-exclusion APIs are not available. */
 
 #ifdef __cplusplus
 }

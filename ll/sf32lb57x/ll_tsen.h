@@ -193,6 +193,59 @@ static inline void ll_tsen_power_down(TSEN_TypeDef *tsen)
 	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_PU);
 }
 
+/** @brief Set the hardware sampling reset interval (HW_SAMP_CTRL.RSTB_INTVL). */
+static inline void ll_tsen_set_hw_samp_rstb_intvl(TSEN_TypeDef *tsen, uint32_t intvl)
+{
+	MODIFY_REG(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_RSTB_INTVL,
+		   MAKE_REG_VAL(intvl, TSEN_TSEN_HW_SAMP_CTRL_RSTB_INTVL_Msk, TSEN_TSEN_HW_SAMP_CTRL_RSTB_INTVL_Pos));
+}
+
+/** @brief Set the hardware sampling reset width (HW_SAMP_CTRL.RSTB_WIDTH). */
+static inline void ll_tsen_set_hw_samp_rstb_width(TSEN_TypeDef *tsen, uint32_t width)
+{
+	MODIFY_REG(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_RSTB_WIDTH,
+		   MAKE_REG_VAL(width, TSEN_TSEN_HW_SAMP_CTRL_RSTB_WIDTH_Msk, TSEN_TSEN_HW_SAMP_CTRL_RSTB_WIDTH_Pos));
+}
+
+/** @brief Set the hardware sampling power-up interval (HW_SAMP_CTRL.PU_INTVL). */
+static inline void ll_tsen_set_hw_samp_pu_intvl(TSEN_TypeDef *tsen, uint32_t intvl)
+{
+	MODIFY_REG(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_PU_INTVL,
+		   MAKE_REG_VAL(intvl, TSEN_TSEN_HW_SAMP_CTRL_PU_INTVL_Msk, TSEN_TSEN_HW_SAMP_CTRL_PU_INTVL_Pos));
+}
+
+/** @brief Trigger the hardware sampling (HW_SAMP_CTRL.HW_SAMP_TRIG). */
+static inline void ll_tsen_trigger_hw_samp(TSEN_TypeDef *tsen)
+{
+	SET_BIT(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_HW_SAMP_TRIG);
+}
+
+/** @brief Enable the hardware sampling (HW_SAMP_CTRL.HW_SAMP_EN). */
+static inline void ll_tsen_enable_hw_samp(TSEN_TypeDef *tsen)
+{
+	SET_BIT(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_HW_SAMP_EN);
+}
+
+/** @brief Disable the hardware sampling (HW_SAMP_CTRL.HW_SAMP_EN). */
+static inline void ll_tsen_disable_hw_samp(TSEN_TypeDef *tsen)
+{
+	CLEAR_BIT(tsen->TSEN_HW_SAMP_CTRL, TSEN_TSEN_HW_SAMP_CTRL_HW_SAMP_EN);
+}
+
+/** @brief Set the TSEN interrupt threshold high (IRQ_THD.TSEN_THD_H). */
+static inline void ll_tsen_set_thd_h(TSEN_TypeDef *tsen, uint32_t thd)
+{
+	MODIFY_REG(tsen->TSEN_IRQ_THD, TSEN_TSEN_IRQ_THD_TSEN_THD_H,
+		   MAKE_REG_VAL(thd, TSEN_TSEN_IRQ_THD_TSEN_THD_H_Msk, TSEN_TSEN_IRQ_THD_TSEN_THD_H_Pos));
+}
+
+/** @brief Set the TSEN interrupt threshold low (IRQ_THD.TSEN_THD_L). */
+static inline void ll_tsen_set_thd_l(TSEN_TypeDef *tsen, uint32_t thd)
+{
+	MODIFY_REG(tsen->TSEN_IRQ_THD, TSEN_TSEN_IRQ_THD_TSEN_THD_L,
+		   MAKE_REG_VAL(thd, TSEN_TSEN_IRQ_THD_TSEN_THD_L_Msk, TSEN_TSEN_IRQ_THD_TSEN_THD_L_Pos));
+}
+
 /*==============================================================================
  * Read Data
  *============================================================================*/
@@ -205,6 +258,19 @@ static inline void ll_tsen_power_down(TSEN_TypeDef *tsen)
 static inline uint16_t ll_tsen_read_data(TSEN_TypeDef *tsen)
 {
 	return (uint16_t)(READ_REG(tsen->TSEN_RDATA) & TSEN_TSEN_RDATA_TSEN_RDATA);
+}
+
+/** @brief Check whether the TSEN is busy (IRQ.TSEN_BUSY). */
+static inline uint32_t ll_tsen_is_busy(TSEN_TypeDef *tsen)
+{
+	return READ_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_BUSY) ? 1UL : 0UL;
+}
+
+/** @brief Set the PTC interrupt mask (IRQ.TSEN_PTC_IMR). */
+static inline void ll_tsen_set_ptc_imr(TSEN_TypeDef *tsen, uint32_t mask)
+{
+	MODIFY_REG(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_PTC_IMR,
+		   MAKE_REG_VAL(mask, TSEN_TSEN_IRQ_TSEN_PTC_IMR_Msk, TSEN_TSEN_IRQ_TSEN_PTC_IMR_Pos));
 }
 
 /**
@@ -260,7 +326,9 @@ static inline void ll_tsen_disable_interrupt(TSEN_TypeDef *tsen)
 static inline void ll_tsen_clear_interrupt(TSEN_TypeDef *tsen)
 {
 	/* ICR is rw1c: SET_BIT preserves the IMR mask bit in the same register. */
-	SET_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_ICR);
+	SET_BIT(tsen->TSEN_IRQ,
+		TSEN_TSEN_IRQ_TSEN_ICR_0 | TSEN_TSEN_IRQ_TSEN_ICR_1 |
+			TSEN_TSEN_IRQ_TSEN_ICR_2);
 }
 
 #ifdef __cplusplus

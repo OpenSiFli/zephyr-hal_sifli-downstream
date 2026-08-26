@@ -52,19 +52,7 @@ static inline void ll_aon_pm_force_sleep_clear(HPSYS_AON_TypeDef *AONx)
  * @brief Force the LCPU into sleep (PMR.FORCE_LCPU, debug only).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
-static inline void ll_aon_pm_force_lcpu_set(HPSYS_AON_TypeDef *AONx)
-{
-	SET_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
-}
-
-/**
- * @brief Clear the force-LCPU request (PMR.FORCE_LCPU).
- * @param[in] AONx HPSYS_AON instance pointer.
- */
-static inline void ll_aon_pm_force_lcpu_clear(HPSYS_AON_TypeDef *AONx)
-{
-	CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
-}
+/* SF32LB57x removed PMR.FORCE_LCPU; the force-LCPU API is not available. */
 
 /**< Standby mode */
 /** @} */
@@ -91,59 +79,7 @@ static inline uint32_t ll_aon_pm_get_mode(HPSYS_AON_TypeDef *AONx)
 }
 
 /*==============================================================================
- * Wakeup Pin Mode (CR1 / CR2 / CR3)
- *============================================================================*/
-
-/** @defgroup LL_AON_PIN_MODE LL AON Wakeup Pin Mode */
-/** @{ */
-#define LL_AON_PIN_MODE_HIGH_LEVEL            0x0U /**< High level */
-#define LL_AON_PIN_MODE_LOW_LEVEL             0x1U /**< Low level */
-#define LL_AON_PIN_MODE_POS_EDGE              0x2U /**< Rising edge */
-#define LL_AON_PIN_MODE_NEG_EDGE              0x3U /**< Falling edge */
-#define LL_AON_PIN_MODE_BOTH_EDGE_HIGH_ACTIVE 0x4U /**< Either edge, high-active */
-#define LL_AON_PIN_MODE_BOTH_EDGE_LOW_ACTIVE  0x5U /**< Either edge, low-active */
-/** @} */
-
-/**
- * @brief Get the PINx_MODE register for a wakeup pin index.
- * @param AONx HPSYS_AON instance pointer.
- * @param pin  Wakeup pin index (0..20, PA24..PA44).
- * @return Pointer to the PINx_MODE register, or NULL for an invalid pin.
- */
-static inline volatile uint32_t *ll_aon_cr_reg(HPSYS_AON_TypeDef *AONx, uint32_t pin)
-{
-	if (pin <= 7U) {
-		return &AONx->CR1;
-	} else if (pin <= 15U) {
-		return &AONx->CR2;
-	} else if (pin <= 20U) {
-		return &AONx->CR3;
-	}
-
-	return NULL;
-}
-
-/**
- * @brief Set the wakeup mode of a wakeup pin (CRx.PINx_MODE).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] pin  Wakeup pin index (0..20, PA24..PA44).
- * @param[in] mode Wakeup mode, see @ref LL_AON_PIN_MODE_*.
- */
-static inline void ll_aon_cfg_set_pin_mode(HPSYS_AON_TypeDef *AONx, uint32_t pin, uint32_t mode)
-{
-	volatile uint32_t *reg = ll_aon_cr_reg(AONx, pin);
-	uint32_t pos;
-
-	if (reg == NULL) {
-		return;
-	}
-
-	pos = (pin % 8U) * 3U;
-	MODIFY_REG(*reg, 0x7UL << pos, (mode & 0x7UL) << pos);
-}
-
-/*==============================================================================
- * PINOUT Select & Global Timer Enable (CR1)
+ * PINOUT Select & Global Timer Enable (CR)
  *============================================================================*/
 
 /** @defgroup LL_AON_PINOUT LL AON PINOUT Select */
@@ -151,46 +87,46 @@ static inline void ll_aon_cfg_set_pin_mode(HPSYS_AON_TypeDef *AONx, uint32_t pin
 #define LL_AON_PINOUT_DISABLED (0x0U) /**< No output routed to PBR */
 #define LL_AON_PINOUT_LPTIM1   (0x2U) /**< LPTIM1 PWM output (SEL1: inverted) */
 #define LL_AON_PINOUT_LPTIM2   (0x3U) /**
- * @brief Enable the global timer (CR1.GTIM_EN).
+ * @brief Enable the global timer (CR.GTIM_EN).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
 static inline void ll_aon_cfg_gtim_enable(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
+	SET_BIT(AONx->CR, HPSYS_AON_CR_GTIM_EN);
 }
 
 /**
- * @brief Disable the global timer (CR1.GTIM_EN).
+ * @brief Disable the global timer (CR.GTIM_EN).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
 static inline void ll_aon_cfg_gtim_disable(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
+	CLEAR_BIT(AONx->CR, HPSYS_AON_CR_GTIM_EN);
 }
 
 /**
- * @brief Select the inverted output routed to PBR (CR1.PINOUT_SEL1).
+ * @brief Select the inverted output routed to PBR (CR.PINOUT_SEL1).
  * @param[in] AONx HPSYS_AON instance pointer.
  * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
  */
 static inline void ll_aon_cfg_set_pinout_sel1(HPSYS_AON_TypeDef *AONx, uint32_t sel)
 {
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL1,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL1_Msk, HPSYS_AON_CR1_PINOUT_SEL1_Pos));
+	MODIFY_REG(AONx->CR, HPSYS_AON_CR_PINOUT_SEL1,
+		   MAKE_REG_VAL(sel, HPSYS_AON_CR_PINOUT_SEL1_Msk, HPSYS_AON_CR_PINOUT_SEL1_Pos));
 }
 
 /**< LPTIM2 PWM output (SEL1: inverted) */
 /** @} */
 
 /**
- * @brief Select the output routed to PBR (CR1.PINOUT_SEL0).
+ * @brief Select the output routed to PBR (CR.PINOUT_SEL0).
  * @param[in] AONx HPSYS_AON instance pointer.
  * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
  */
 static inline void ll_aon_cfg_set_pinout_sel0(HPSYS_AON_TypeDef *AONx, uint32_t sel)
 {
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL0,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL0_Msk, HPSYS_AON_CR1_PINOUT_SEL0_Pos));
+	MODIFY_REG(AONx->CR, HPSYS_AON_CR_PINOUT_SEL0,
+		   MAKE_REG_VAL(sel, HPSYS_AON_CR_PINOUT_SEL0_Msk, HPSYS_AON_CR_PINOUT_SEL0_Pos));
 }
 
 /*==============================================================================
@@ -362,34 +298,14 @@ static inline void ll_aon_ram_pd_clear(HPSYS_AON_TypeDef *AONx, uint32_t ram_mas
 #define LL_AON_WKUP_RTC       HPSYS_AON_WER_RTC       /**< RTC */
 #define LL_AON_WKUP_GPIO1     HPSYS_AON_WER_GPIO1     /**< IO(PA) */
 #define LL_AON_WKUP_LPTIM1    HPSYS_AON_WER_LPTIM1    /**< LPTIM1 */
-#define LL_AON_WKUP_PMUC      HPSYS_AON_WER_PMUC      /**< PMUC */
+#define LL_AON_WKUP_LPTIM1OUT HPSYS_AON_WER_LPTIM1OUT /**< LPTIM1 output */
+#define LL_AON_WKUP_IWDT      HPSYS_AON_WER_IWDT      /**< IWDT */
+#define LL_AON_WKUP_CHG       HPSYS_AON_WER_CHG       /**< Charger */
 #define LL_AON_WKUP_LP2HP_REQ HPSYS_AON_WER_LP2HP_REQ /**< LPSYS request */
 #define LL_AON_WKUP_LP2HP_IRQ HPSYS_AON_WER_LP2HP_IRQ /**< MAILBOX2 */
-#define LL_AON_WKUP_PIN0      HPSYS_AON_WER_PIN0
-#define LL_AON_WKUP_PIN1      HPSYS_AON_WER_PIN1
-#define LL_AON_WKUP_PIN2      HPSYS_AON_WER_PIN2
-#define LL_AON_WKUP_PIN3      HPSYS_AON_WER_PIN3
-#define LL_AON_WKUP_PIN4      HPSYS_AON_WER_PIN4
-#define LL_AON_WKUP_PIN5      HPSYS_AON_WER_PIN5
-#define LL_AON_WKUP_PIN6      HPSYS_AON_WER_PIN6
-#define LL_AON_WKUP_PIN7      HPSYS_AON_WER_PIN7
-#define LL_AON_WKUP_PIN8      HPSYS_AON_WER_PIN8
-#define LL_AON_WKUP_PIN9      HPSYS_AON_WER_PIN9
-#define LL_AON_WKUP_PIN10     HPSYS_AON_WER_PIN10
-#define LL_AON_WKUP_PIN11     HPSYS_AON_WER_PIN11
-#define LL_AON_WKUP_PIN12     HPSYS_AON_WER_PIN12
-#define LL_AON_WKUP_PIN13     HPSYS_AON_WER_PIN13
-#define LL_AON_WKUP_PIN14     HPSYS_AON_WER_PIN14
-#define LL_AON_WKUP_PIN15     HPSYS_AON_WER_PIN15
-#define LL_AON_WKUP_PIN16     HPSYS_AON_WER_PIN16
-#define LL_AON_WKUP_PIN17     HPSYS_AON_WER_PIN17
-#define LL_AON_WKUP_PIN18     HPSYS_AON_WER_PIN18
-#define LL_AON_WKUP_PIN19     HPSYS_AON_WER_PIN19
-#define LL_AON_WKUP_PIN20     HPSYS_AON_WER_PIN20
+#define LL_AON_WKUP_LP2HP_WDT HPSYS_AON_WER_LP2HP_WDT /**< LPSYS WDT */
 #define LL_AON_WKUP_PIN_ALL   HPSYS_AON_WSR_PIN_ALL  /**< All wakeup pins */
-#define LL_AON_WKUP_AON       HPSYS_AON_WCR_AON
-
-/**< AON wakeup IRQ (clear only) */
+#define LL_AON_WKUP_AON       HPSYS_AON_WCR_AON      /**< AON wakeup IRQ (clear only) */
 /** @} */
 
 /**
@@ -529,19 +445,7 @@ static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
  * @brief Force IO(PA) into retention mode (ANACR.PA_ISO).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
-static inline void ll_aon_anacr_pa_iso_set(HPSYS_AON_TypeDef *AONx)
-{
-	SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
-}
-
-/**
- * @brief Release IO(PA) retention (ANACR.PA_ISO).
- * @param[in] AONx HPSYS_AON instance pointer.
- */
-static inline void ll_aon_anacr_pa_iso_clear(HPSYS_AON_TypeDef *AONx)
-{
-	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
-}
+/* SF32LB57x removed ANACR.PA_ISO; the IO retention API is not available. */
 
 /*==============================================================================
  * Global Timer (GTIMR)

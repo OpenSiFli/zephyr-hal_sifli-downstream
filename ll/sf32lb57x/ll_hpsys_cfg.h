@@ -21,99 +21,6 @@ extern "C"
  * @brief Header-only low-level HPSYS_CFG shared definitions for SF32LB52x.
  */
 
-/** @defgroup LL_HPSYS_CFG_PINR LL HPSYS_CFG PINR Field Values */
-/** @{ */
-/**
- * @brief Floating/disconnected value for HPSYS_CFG *_PINR fields.
- */
-#define LL_CFG_PINR_FLOAT 0x3FU
-/** @} */
-
-/**
- * @brief USARTx PINR routing configuration.
- */
-typedef struct
-{
-    uint32_t txd_pa; /**< TXD PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t rxd_pa; /**< RXD PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t rts_pa; /**< RTS PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t cts_pa; /**< CTS PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_usart_pinr_config_t;
-
-/**
- * @brief I2Cx PINR routing configuration.
- */
-typedef struct
-{
-    uint32_t scl_pa; /**< SCL PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t sda_pa; /**< SDA PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_i2c_pinr_config_t;
-
-/**
- * @brief GPTIMx + ETR PINR routing configuration.
- */
-typedef struct
-{
-    uint32_t ch1_pa; /**< CH1 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch2_pa; /**< CH2 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch3_pa; /**< CH3 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch4_pa; /**< CH4 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t etr_pa; /**< ETR PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_gptim_pinr_config_t;
-
-/**
- * @brief LPTIMx PINR routing configuration.
- */
-typedef struct
-{
-    uint32_t in_pa;  /**< IN PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t out_pa; /**< OUT PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t etr_pa; /**< ETR PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_lptim_pinr_config_t;
-
-/**
- * @brief ATIM1 PINR1 routing configuration.
- */
-typedef struct
-{
-    uint32_t ch1_pa; /**< CH1 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch2_pa; /**< CH2 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch3_pa; /**< CH3 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch4_pa; /**< CH4 PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_atim1_pinr1_config_t;
-
-/**
- * @brief ATIM1 PINR2 routing configuration.
- */
-typedef struct
-{
-    uint32_t ch1n_pa; /**< CH1N PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch2n_pa; /**< CH2N PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t ch3n_pa; /**< CH3N PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_atim1_pinr2_config_t;
-
-/**
- * @brief ATIM1 PINR3 routing configuration.
- */
-typedef struct
-{
-    uint32_t bk_pa;  /**< BK PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t bk2_pa; /**< BK2 PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t etr_pa; /**< ETR PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_atim1_pinr3_config_t;
-
-/**
- * @brief PTA PINR routing configuration.
- */
-typedef struct
-{
-    uint32_t bt_active_pa;    /**< BT_ACTIVE PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t bt_collision_pa; /**< BT_COLLISION PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t bt_priority_pa;  /**< BT_PRIORITY PA index or @ref LL_CFG_PINR_FLOAT. */
-    uint32_t wlan_active_pa;  /**< WLAN_ACTIVE PA index or @ref LL_CFG_PINR_FLOAT. */
-} ll_cfg_pta_pinr_config_t;
-
-
 /**
  * @brief Get the boot mode (BMR.BOOT_MODE).
  * @param[in] CFGx HPSYS_CFG instance pointer.
@@ -206,27 +113,20 @@ static inline void ll_cfg_set_fkey_mode(HPSYS_CFG_TypeDef *CFGx, uint32_t mode)
                MAKE_REG_VAL(mode, HPSYS_CFG_SCR_FKEY_MODE_Msk, HPSYS_CFG_SCR_FKEY_MODE_Pos));
 }
 
+/**
+ * @brief Set the LDO voltage select shortcut (SYSCR.LDO_VSEL).
+ * @param[in] CFGx  HPSYS_CFG instance pointer.
+ * @param[in] vsel  LDO voltage select (1 bit).
+ */
+static inline void ll_cfg_set_ldo_vsel(HPSYS_CFG_TypeDef *CFGx, uint32_t vsel)
+{
+    MODIFY_REG(CFGx->SYSCR, HPSYS_CFG_SYSCR_LDO_VSEL,
+               MAKE_REG_VAL(vsel, HPSYS_CFG_SYSCR_LDO_VSEL_Msk, HPSYS_CFG_SYSCR_LDO_VSEL_Pos));
+}
+
 /*==============================================================================
  * System Reset Control (SYSCR)
  *============================================================================*/
-
-/**
- * @brief Route WDT1 timeout to SoC reset (SYSCR.WDT1_REBOOT).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_wdt1_reboot_set(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_WDT1_REBOOT);
-}
-
-/**
- * @brief Disable WDT1 SoC reset routing (SYSCR.WDT1_REBOOT).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_wdt1_reboot_clear(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_WDT1_REBOOT);
-}
 
 /**
  * @brief Get the RTC time shadow register (RTC_TR).
@@ -255,583 +155,6 @@ static inline uint32_t ll_cfg_get_rtc_date(HPSYS_CFG_TypeDef *CFGx)
             HPSYS_CFG_RTC_DR_WD | HPSYS_CFG_RTC_DR_MT |
             HPSYS_CFG_RTC_DR_MU | HPSYS_CFG_RTC_DR_DT |
             HPSYS_CFG_RTC_DR_DU);
-}
-
-/**
- * @brief Set the ULP SRAM retention mode (ULPMCR.RAM_RM).
- * @param[in] CFGx   HPSYS_CFG instance pointer.
- * @param[in] rm     SRAM retention mode (2 bits).
- */
-static inline void ll_cfg_set_ulp_ram_rm(HPSYS_CFG_TypeDef *CFGx, uint32_t rm)
-{
-    MODIFY_REG(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_RAM_RM,
-               MAKE_REG_VAL(rm, HPSYS_CFG_ULPMCR_RAM_RM_Msk, HPSYS_CFG_ULPMCR_RAM_RM_Pos));
-}
-
-static inline uint32_t ll_cfg_get_sys_reserved(HPSYS_CFG_TypeDef *CFGx)
-{
-    return READ_REG(CFGx->SYS_RSVD) &
-           (HPSYS_CFG_SYS_RSVD_RESERVE0 | HPSYS_CFG_SYS_RSVD_RESERVE1 |
-            HPSYS_CFG_SYS_RSVD_RESERVE2 | HPSYS_CFG_SYS_RSVD_RESERVE3);
-}
-
-static inline void ll_cfg_set_sys_reserved(HPSYS_CFG_TypeDef *CFGx, uint32_t value)
-{
-    uint32_t mask = HPSYS_CFG_SYS_RSVD_RESERVE0 |
-                    HPSYS_CFG_SYS_RSVD_RESERVE1 |
-                    HPSYS_CFG_SYS_RSVD_RESERVE2;
-
-    MODIFY_REG(CFGx->SYS_RSVD, mask, value & mask);
-}
-
-/**
- * @brief Configure one per-field PINR value by register offset and field index.
- * @param[in] CFGx        HPSYS_CFG instance pointer.
- * @param[in] pinr_offset PINR register byte offset from the HPSYS_CFG base
- *                        (e.g. 0x48 for I2C1_PINR).
- * @param[in] pinr_field  PINR field index (0..3), one 8-bit slot per field.
- * @param[in] pad         PAD index (6 bits) to route into the field.
- * @note Used by the pinctrl driver for dynamic per-field PINR updates.
- */
-static inline void ll_cfg_set_pinr_field(HPSYS_CFG_TypeDef *CFGx,
-                                         uint32_t pinr_offset,
-                                         uint32_t pinr_field,
-                                         uint32_t pad)
-{
-    __IO uint32_t *pinr_reg;
-    uint32_t pinr_msk;
-
-    pinr_reg = (__IO uint32_t *)((uint8_t *)CFGx + pinr_offset);
-    pinr_msk = 0xFFU << (8U * (pinr_field & 0x3U));
-    MODIFY_REG(*pinr_reg, pinr_msk, (pad & 0x3FU) << (8U * (pinr_field & 0x3U)));
-}
-
-/**
- * @brief Configure I2C1 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to I2C1 PINR configuration.
- */
-static inline void ll_cfg_config_i2c1_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->scl_pa, HPSYS_CFG_I2C1_PINR_SCL_PIN_Msk,
-                         HPSYS_CFG_I2C1_PINR_SCL_PIN_Pos) |
-            MAKE_REG_VAL(cfg->sda_pa, HPSYS_CFG_I2C1_PINR_SDA_PIN_Msk,
-                         HPSYS_CFG_I2C1_PINR_SDA_PIN_Pos);
-
-    MODIFY_REG(CFGx->I2C1_PINR,
-               HPSYS_CFG_I2C1_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C1_PINR_SDA_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure I2C2 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to I2C2 PINR configuration.
- */
-static inline void ll_cfg_config_i2c2_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->scl_pa, HPSYS_CFG_I2C2_PINR_SCL_PIN_Msk,
-                         HPSYS_CFG_I2C2_PINR_SCL_PIN_Pos) |
-            MAKE_REG_VAL(cfg->sda_pa, HPSYS_CFG_I2C2_PINR_SDA_PIN_Msk,
-                         HPSYS_CFG_I2C2_PINR_SDA_PIN_Pos);
-
-    MODIFY_REG(CFGx->I2C2_PINR,
-               HPSYS_CFG_I2C2_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C2_PINR_SDA_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure I2C3 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to I2C3 PINR configuration.
- */
-static inline void ll_cfg_config_i2c3_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->scl_pa, HPSYS_CFG_I2C3_PINR_SCL_PIN_Msk,
-                         HPSYS_CFG_I2C3_PINR_SCL_PIN_Pos) |
-            MAKE_REG_VAL(cfg->sda_pa, HPSYS_CFG_I2C3_PINR_SDA_PIN_Msk,
-                         HPSYS_CFG_I2C3_PINR_SDA_PIN_Pos);
-
-    MODIFY_REG(CFGx->I2C3_PINR,
-               HPSYS_CFG_I2C3_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C3_PINR_SDA_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure I2C4 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to I2C4 PINR configuration.
- */
-static inline void ll_cfg_config_i2c4_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->scl_pa, HPSYS_CFG_I2C4_PINR_SCL_PIN_Msk,
-                         HPSYS_CFG_I2C4_PINR_SCL_PIN_Pos) |
-            MAKE_REG_VAL(cfg->sda_pa, HPSYS_CFG_I2C4_PINR_SDA_PIN_Msk,
-                         HPSYS_CFG_I2C4_PINR_SDA_PIN_Pos);
-
-    MODIFY_REG(CFGx->I2C4_PINR,
-               HPSYS_CFG_I2C4_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C4_PINR_SDA_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure USART1 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to USART1 PINR configuration.
- */
-static inline void
-ll_cfg_config_usart1_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_usart_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->txd_pa, HPSYS_CFG_USART1_PINR_TXD_PIN_Msk,
-                         HPSYS_CFG_USART1_PINR_TXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rxd_pa, HPSYS_CFG_USART1_PINR_RXD_PIN_Msk,
-                         HPSYS_CFG_USART1_PINR_RXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rts_pa, HPSYS_CFG_USART1_PINR_RTS_PIN_Msk,
-                         HPSYS_CFG_USART1_PINR_RTS_PIN_Pos) |
-            MAKE_REG_VAL(cfg->cts_pa, HPSYS_CFG_USART1_PINR_CTS_PIN_Msk,
-                         HPSYS_CFG_USART1_PINR_CTS_PIN_Pos);
-
-    MODIFY_REG(CFGx->USART1_PINR,
-               HPSYS_CFG_USART1_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_CTS_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure USART2 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to USART2 PINR configuration.
- */
-static inline void
-ll_cfg_config_usart2_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_usart_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->txd_pa, HPSYS_CFG_USART2_PINR_TXD_PIN_Msk,
-                         HPSYS_CFG_USART2_PINR_TXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rxd_pa, HPSYS_CFG_USART2_PINR_RXD_PIN_Msk,
-                         HPSYS_CFG_USART2_PINR_RXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rts_pa, HPSYS_CFG_USART2_PINR_RTS_PIN_Msk,
-                         HPSYS_CFG_USART2_PINR_RTS_PIN_Pos) |
-            MAKE_REG_VAL(cfg->cts_pa, HPSYS_CFG_USART2_PINR_CTS_PIN_Msk,
-                         HPSYS_CFG_USART2_PINR_CTS_PIN_Pos);
-
-    MODIFY_REG(CFGx->USART2_PINR,
-               HPSYS_CFG_USART2_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_CTS_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure USART3 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to USART3 PINR configuration.
- */
-static inline void
-ll_cfg_config_usart3_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_usart_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->txd_pa, HPSYS_CFG_USART3_PINR_TXD_PIN_Msk,
-                         HPSYS_CFG_USART3_PINR_TXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rxd_pa, HPSYS_CFG_USART3_PINR_RXD_PIN_Msk,
-                         HPSYS_CFG_USART3_PINR_RXD_PIN_Pos) |
-            MAKE_REG_VAL(cfg->rts_pa, HPSYS_CFG_USART3_PINR_RTS_PIN_Msk,
-                         HPSYS_CFG_USART3_PINR_RTS_PIN_Pos) |
-            MAKE_REG_VAL(cfg->cts_pa, HPSYS_CFG_USART3_PINR_CTS_PIN_Msk,
-                         HPSYS_CFG_USART3_PINR_CTS_PIN_Pos);
-
-    MODIFY_REG(CFGx->USART3_PINR,
-               HPSYS_CFG_USART3_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_CTS_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure GPTIM1 PINR register and ETR1 field.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to GPTIM1 PINR configuration.
- */
-static inline void
-ll_cfg_config_gptim1_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_gptim_pinr_config_t *cfg)
-{
-    uint32_t gptim_value;
-    uint32_t etr_value;
-
-    gptim_value = MAKE_REG_VAL(cfg->ch1_pa, HPSYS_CFG_GPTIM1_PINR_CH1_PIN_Msk,
-                               HPSYS_CFG_GPTIM1_PINR_CH1_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch2_pa, HPSYS_CFG_GPTIM1_PINR_CH2_PIN_Msk,
-                               HPSYS_CFG_GPTIM1_PINR_CH2_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch3_pa, HPSYS_CFG_GPTIM1_PINR_CH3_PIN_Msk,
-                               HPSYS_CFG_GPTIM1_PINR_CH3_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch4_pa, HPSYS_CFG_GPTIM1_PINR_CH4_PIN_Msk,
-                               HPSYS_CFG_GPTIM1_PINR_CH4_PIN_Pos);
-    etr_value = MAKE_REG_VAL(cfg->etr_pa, HPSYS_CFG_ETR_PINR_ETR1_PIN_Msk,
-                             HPSYS_CFG_ETR_PINR_ETR1_PIN_Pos);
-
-    MODIFY_REG(CFGx->GPTIM1_PINR,
-               HPSYS_CFG_GPTIM1_PINR_CH1_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH2_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH3_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH4_PIN_Msk,
-               gptim_value);
-    MODIFY_REG(CFGx->ETR_PINR, HPSYS_CFG_ETR_PINR_ETR1_PIN_Msk, etr_value);
-}
-
-/**
- * @brief Configure GPTIM2 PINR register and ETR2 field.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to GPTIM2 PINR configuration.
- */
-static inline void
-ll_cfg_config_gptim2_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_gptim_pinr_config_t *cfg)
-{
-    uint32_t gptim_value;
-    uint32_t etr_value;
-
-    gptim_value = MAKE_REG_VAL(cfg->ch1_pa, HPSYS_CFG_GPTIM2_PINR_CH1_PIN_Msk,
-                               HPSYS_CFG_GPTIM2_PINR_CH1_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch2_pa, HPSYS_CFG_GPTIM2_PINR_CH2_PIN_Msk,
-                               HPSYS_CFG_GPTIM2_PINR_CH2_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch3_pa, HPSYS_CFG_GPTIM2_PINR_CH3_PIN_Msk,
-                               HPSYS_CFG_GPTIM2_PINR_CH3_PIN_Pos) |
-                  MAKE_REG_VAL(cfg->ch4_pa, HPSYS_CFG_GPTIM2_PINR_CH4_PIN_Msk,
-                               HPSYS_CFG_GPTIM2_PINR_CH4_PIN_Pos);
-    etr_value = MAKE_REG_VAL(cfg->etr_pa, HPSYS_CFG_ETR_PINR_ETR2_PIN_Msk,
-                             HPSYS_CFG_ETR_PINR_ETR2_PIN_Pos);
-
-    MODIFY_REG(CFGx->GPTIM2_PINR,
-               HPSYS_CFG_GPTIM2_PINR_CH1_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH2_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH3_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH4_PIN_Msk,
-               gptim_value);
-    MODIFY_REG(CFGx->ETR_PINR, HPSYS_CFG_ETR_PINR_ETR2_PIN_Msk, etr_value);
-}
-
-/**
- * @brief Configure LPTIM1 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to LPTIM1 PINR configuration.
- */
-static inline void
-ll_cfg_config_lptim1_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_lptim_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->in_pa, HPSYS_CFG_LPTIM1_PINR_IN_PIN_Msk,
-                         HPSYS_CFG_LPTIM1_PINR_IN_PIN_Pos) |
-            MAKE_REG_VAL(cfg->out_pa, HPSYS_CFG_LPTIM1_PINR_OUT_PIN_Msk,
-                         HPSYS_CFG_LPTIM1_PINR_OUT_PIN_Pos) |
-            MAKE_REG_VAL(cfg->etr_pa, HPSYS_CFG_LPTIM1_PINR_ETR_PIN_Msk,
-                         HPSYS_CFG_LPTIM1_PINR_ETR_PIN_Pos);
-
-    MODIFY_REG(CFGx->LPTIM1_PINR,
-               HPSYS_CFG_LPTIM1_PINR_IN_PIN_Msk |
-                   HPSYS_CFG_LPTIM1_PINR_OUT_PIN_Msk |
-                   HPSYS_CFG_LPTIM1_PINR_ETR_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure LPTIM2 PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to LPTIM2 PINR configuration.
- */
-static inline void
-ll_cfg_config_lptim2_pinr(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_lptim_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->in_pa, HPSYS_CFG_LPTIM2_PINR_IN_PIN_Msk,
-                         HPSYS_CFG_LPTIM2_PINR_IN_PIN_Pos) |
-            MAKE_REG_VAL(cfg->out_pa, HPSYS_CFG_LPTIM2_PINR_OUT_PIN_Msk,
-                         HPSYS_CFG_LPTIM2_PINR_OUT_PIN_Pos) |
-            MAKE_REG_VAL(cfg->etr_pa, HPSYS_CFG_LPTIM2_PINR_ETR_PIN_Msk,
-                         HPSYS_CFG_LPTIM2_PINR_ETR_PIN_Pos);
-
-    MODIFY_REG(CFGx->LPTIM2_PINR,
-               HPSYS_CFG_LPTIM2_PINR_IN_PIN_Msk |
-                   HPSYS_CFG_LPTIM2_PINR_OUT_PIN_Msk |
-                   HPSYS_CFG_LPTIM2_PINR_ETR_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure ATIM1 PINR1 register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to ATIM1 PINR1 configuration.
- */
-static inline void
-ll_cfg_config_atim1_pinr1(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_atim1_pinr1_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->ch1_pa, HPSYS_CFG_ATIM1_PINR1_CH1_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR1_CH1_PIN_Pos) |
-            MAKE_REG_VAL(cfg->ch2_pa, HPSYS_CFG_ATIM1_PINR1_CH2_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR1_CH2_PIN_Pos) |
-            MAKE_REG_VAL(cfg->ch3_pa, HPSYS_CFG_ATIM1_PINR1_CH3_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR1_CH3_PIN_Pos) |
-            MAKE_REG_VAL(cfg->ch4_pa, HPSYS_CFG_ATIM1_PINR1_CH4_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR1_CH4_PIN_Pos);
-
-    MODIFY_REG(CFGx->ATIM1_PINR1,
-               HPSYS_CFG_ATIM1_PINR1_CH1_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH2_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH3_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH4_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure ATIM1 PINR2 register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to ATIM1 PINR2 configuration.
- */
-static inline void
-ll_cfg_config_atim1_pinr2(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_atim1_pinr2_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->ch1n_pa, HPSYS_CFG_ATIM1_PINR2_CH1N_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR2_CH1N_PIN_Pos) |
-            MAKE_REG_VAL(cfg->ch2n_pa, HPSYS_CFG_ATIM1_PINR2_CH2N_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR2_CH2N_PIN_Pos) |
-            MAKE_REG_VAL(cfg->ch3n_pa, HPSYS_CFG_ATIM1_PINR2_CH3N_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR2_CH3N_PIN_Pos);
-
-    MODIFY_REG(CFGx->ATIM1_PINR2,
-               HPSYS_CFG_ATIM1_PINR2_CH1N_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR2_CH2N_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR2_CH3N_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure ATIM1 PINR3 register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to ATIM1 PINR3 configuration.
- */
-static inline void
-ll_cfg_config_atim1_pinr3(HPSYS_CFG_TypeDef *CFGx,
-                          const ll_cfg_atim1_pinr3_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->bk_pa, HPSYS_CFG_ATIM1_PINR3_BK_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR3_BK_PIN_Pos) |
-            MAKE_REG_VAL(cfg->bk2_pa, HPSYS_CFG_ATIM1_PINR3_BK2_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR3_BK2_PIN_Pos) |
-            MAKE_REG_VAL(cfg->etr_pa, HPSYS_CFG_ATIM1_PINR3_ETR_PIN_Msk,
-                         HPSYS_CFG_ATIM1_PINR3_ETR_PIN_Pos);
-
-    MODIFY_REG(CFGx->ATIM1_PINR3,
-               HPSYS_CFG_ATIM1_PINR3_BK_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR3_BK2_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR3_ETR_PIN_Msk,
-               value);
-}
-
-/**
- * @brief Configure PTA PINR register.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] cfg Pointer to PTA PINR configuration.
- */
-static inline void ll_cfg_config_pta_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                          const ll_cfg_pta_pinr_config_t *cfg)
-{
-    uint32_t value;
-
-    value = MAKE_REG_VAL(cfg->bt_active_pa, HPSYS_CFG_PTA_PINR_BT_ACTIVE_Msk,
-                         HPSYS_CFG_PTA_PINR_BT_ACTIVE_Pos) |
-            MAKE_REG_VAL(cfg->bt_collision_pa,
-                         HPSYS_CFG_PTA_PINR_BT_COLLISION_Msk,
-                         HPSYS_CFG_PTA_PINR_BT_COLLISION_Pos) |
-            MAKE_REG_VAL(cfg->bt_priority_pa,
-                         HPSYS_CFG_PTA_PINR_BT_PRIORITY_Msk,
-                         HPSYS_CFG_PTA_PINR_BT_PRIORITY_Pos) |
-            MAKE_REG_VAL(cfg->wlan_active_pa,
-                         HPSYS_CFG_PTA_PINR_WLAN_ACTIVE_Msk,
-                         HPSYS_CFG_PTA_PINR_WLAN_ACTIVE_Pos);
-
-    MODIFY_REG(CFGx->PTA_PINR,
-               HPSYS_CFG_PTA_PINR_BT_ACTIVE_Msk |
-                   HPSYS_CFG_PTA_PINR_BT_COLLISION_Msk |
-                   HPSYS_CFG_PTA_PINR_BT_PRIORITY_Msk |
-                   HPSYS_CFG_PTA_PINR_WLAN_ACTIVE_Msk,
-               value);
-}
-
-/*==============================================================================
- * ANAU Bandgap (ANAU_CR)
- *============================================================================*/
-
-/**
- * @brief Enable the ANAU bandgap (ANAU_CR.EN_BG).
- * @note Required before TSEN/GPADC analog measurement (see reference manual
- *       8.2.3.3); shared with GPADC, recommended to keep enabled.
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_anau_bandgap_enable(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
-}
-
-/**
- * @brief Disable the ANAU bandgap (ANAU_CR.EN_BG).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_anau_bandgap_disable(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
-}
-
-/*==============================================================================
- * CAU2 HPBG (High-Performance Bandgap)
- *============================================================================*/
-
-/**
- * @brief Enable the CAU2 HPBG rail (CAU2_CR.HPBG_EN + CAU2_CR.HPBG_VDDPSW_EN).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_hpbg_enable(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->CAU2_CR,
-            HPSYS_CFG_CAU2_CR_HPBG_EN | HPSYS_CFG_CAU2_CR_HPBG_VDDPSW_EN);
-}
-
-/**
- * @brief Disable the CAU2 HPBG rail (CAU2_CR.HPBG_EN + CAU2_CR.HPBG_VDDPSW_EN).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_hpbg_disable(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->CAU2_CR,
-              HPSYS_CFG_CAU2_CR_HPBG_EN | HPSYS_CFG_CAU2_CR_HPBG_VDDPSW_EN);
-}
-
-/* Missing bit definitions (not in regs/hpsys_cfg.h) defined here as LL-local;
- * removed once the regs header is updated upstream. */
-#define HPSYS_CFG_ULPMCR_FORCE_ON_Pos  (31U)
-#define HPSYS_CFG_ULPMCR_FORCE_ON_Msk  (0x1UL << HPSYS_CFG_ULPMCR_FORCE_ON_Pos)
-#define HPSYS_CFG_ULPMCR_FORCE_ON      HPSYS_CFG_ULPMCR_FORCE_ON_Msk
-
-#define HPSYS_CFG_DBGR_SEL_L_Pos       (0U)
-#define HPSYS_CFG_DBGR_SEL_L_Msk       (0x0FUL << HPSYS_CFG_DBGR_SEL_L_Pos)
-#define HPSYS_CFG_DBGR_SEL_L           HPSYS_CFG_DBGR_SEL_L_Msk
-#define HPSYS_CFG_DBGR_SEL_H_Pos       (4U)
-#define HPSYS_CFG_DBGR_SEL_H_Msk       (0x0FUL << HPSYS_CFG_DBGR_SEL_H_Pos)
-#define HPSYS_CFG_DBGR_SEL_H           HPSYS_CFG_DBGR_SEL_H_Msk
-#define HPSYS_CFG_DBGR_BITEN_L_Pos     (8U)
-#define HPSYS_CFG_DBGR_BITEN_L_Msk     (0xFFUL << HPSYS_CFG_DBGR_BITEN_L_Pos)
-#define HPSYS_CFG_DBGR_BITEN_L         HPSYS_CFG_DBGR_BITEN_L_Msk
-#define HPSYS_CFG_DBGR_BITEN_H_Pos     (16U)
-#define HPSYS_CFG_DBGR_BITEN_H_Msk     (0xFFUL << HPSYS_CFG_DBGR_BITEN_H_Pos)
-#define HPSYS_CFG_DBGR_BITEN_H         HPSYS_CFG_DBGR_BITEN_H_Msk
-#define HPSYS_CFG_DBGR_CLK_SEL_Pos     (24U)
-#define HPSYS_CFG_DBGR_CLK_SEL_Msk     (0x7UL << HPSYS_CFG_DBGR_CLK_SEL_Pos)
-#define HPSYS_CFG_DBGR_CLK_SEL         HPSYS_CFG_DBGR_CLK_SEL_Msk
-#define HPSYS_CFG_DBGR_CLK_EN_Pos      (27U)
-#define HPSYS_CFG_DBGR_CLK_EN_Msk      (0x1UL << HPSYS_CFG_DBGR_CLK_EN_Pos)
-#define HPSYS_CFG_DBGR_CLK_EN          HPSYS_CFG_DBGR_CLK_EN_Msk
-
-/**
- * @brief Set the LDO voltage select shortcut (SYSCR.LDO_VSEL).
- * @param[in] CFGx  HPSYS_CFG instance pointer.
- * @param[in] vsel  LDO voltage select (1 bit).
- */
-static inline void ll_cfg_set_ldo_vsel(HPSYS_CFG_TypeDef *CFGx, uint32_t vsel)
-{
-    MODIFY_REG(CFGx->SYSCR, HPSYS_CFG_SYSCR_LDO_VSEL,
-               MAKE_REG_VAL(vsel, HPSYS_CFG_SYSCR_LDO_VSEL_Msk, HPSYS_CFG_SYSCR_LDO_VSEL_Pos));
-}
-
-/**
- * @brief Route AHB space to SDMMC1 (SYSCR.SDNAND = 1).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_sdnand_enable(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_SDNAND);
-}
-
-/**
- * @brief Route AHB space to MPI2 (SYSCR.SDNAND = 0).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_sdnand_disable(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->SYSCR, HPSYS_CFG_SYSCR_SDNAND);
-}
-
-/**
- * @brief Force the ULP memory on (ULPMCR.FORCE_ON).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_ulp_force_on(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_FORCE_ON);
-}
-
-/**
- * @brief Release the ULP memory force-on (ULPMCR.FORCE_ON = 0).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_ulp_force_off(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_FORCE_ON);
-}
-
-/**
- * @brief Disable the ULP ROM (ULPMCR.ROM_DIS).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_ulp_rom_disable(HPSYS_CFG_TypeDef *CFGx)
-{
-    SET_BIT(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_ROM_DIS);
-}
-
-/**
- * @brief Enable the ULP ROM (ULPMCR.ROM_DIS = 0).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_ulp_rom_enable(HPSYS_CFG_TypeDef *CFGx)
-{
-    CLEAR_BIT(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_ROM_DIS);
 }
 
 /**
@@ -915,6 +238,17 @@ static inline void ll_cfg_ulp_ram_rm_disable(HPSYS_CFG_TypeDef *CFGx)
 }
 
 /**
+ * @brief Set the ULP SRAM retention mode (ULPMCR.RAM_RM).
+ * @param[in] CFGx   HPSYS_CFG instance pointer.
+ * @param[in] rm     SRAM retention mode (2 bits).
+ */
+static inline void ll_cfg_set_ulp_ram_rm(HPSYS_CFG_TypeDef *CFGx, uint32_t rm)
+{
+    MODIFY_REG(CFGx->ULPMCR, HPSYS_CFG_ULPMCR_RAM_RM,
+               MAKE_REG_VAL(rm, HPSYS_CFG_ULPMCR_RAM_RM_Msk, HPSYS_CFG_ULPMCR_RAM_RM_Pos));
+}
+
+/**
  * @brief Swap the upper/lower byte of debug data (DBGR.SWAP).
  * @param[in] CFGx HPSYS_CFG instance pointer.
  * @param[in] swap 1 = swap, 0 = no swap.
@@ -972,76 +306,21 @@ static inline void ll_cfg_dbg_hp2lp_nmi_clear(HPSYS_CFG_TypeDef *CFGx)
 }
 
 /**
- * @brief Enable the debug clock (DBGR.CLK_EN).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_dbg_clk_enable(HPSYS_CFG_TypeDef *CFGx)
+     * @brief Disable the ROM access (MDBGR.DIS_ROM).
+     * @param[in] CFGx HPSYS_CFG instance pointer.
+     */
+static inline void ll_cfg_disable_rom(HPSYS_CFG_TypeDef *CFGx)
 {
-    SET_BIT(CFGx->DBGR, HPSYS_CFG_DBGR_CLK_EN);
+        SET_BIT(CFGx->MDBGR, HPSYS_CFG_MDBGR_DIS_ROM);
 }
 
 /**
- * @brief Disable the debug clock (DBGR.CLK_EN = 0).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- */
-static inline void ll_cfg_dbg_clk_disable(HPSYS_CFG_TypeDef *CFGx)
+     * @brief Enable the ROM access (MDBGR.DIS_ROM).
+     * @param[in] CFGx HPSYS_CFG instance pointer.
+     */
+static inline void ll_cfg_enable_rom(HPSYS_CFG_TypeDef *CFGx)
 {
-    CLEAR_BIT(CFGx->DBGR, HPSYS_CFG_DBGR_CLK_EN);
-}
-
-/**
- * @brief Set the debug clock select (DBGR.CLK_SEL).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] sel  Debug clock select (3 bits).
- */
-static inline void ll_cfg_set_dbg_clk_sel(HPSYS_CFG_TypeDef *CFGx, uint32_t sel)
-{
-    MODIFY_REG(CFGx->DBGR, HPSYS_CFG_DBGR_CLK_SEL,
-               MAKE_REG_VAL(sel, HPSYS_CFG_DBGR_CLK_SEL_Msk, HPSYS_CFG_DBGR_CLK_SEL_Pos));
-}
-
-/**
- * @brief Set the debug data higher byte bit enable (DBGR.BITEN_H).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] mask Bit enable mask for the higher byte (8 bits).
- */
-static inline void ll_cfg_set_dbg_bitten_h(HPSYS_CFG_TypeDef *CFGx, uint32_t mask)
-{
-    MODIFY_REG(CFGx->DBGR, HPSYS_CFG_DBGR_BITEN_H,
-               MAKE_REG_VAL(mask, HPSYS_CFG_DBGR_BITEN_H_Msk, HPSYS_CFG_DBGR_BITEN_H_Pos));
-}
-
-/**
- * @brief Set the debug data lower byte bit enable (DBGR.BITEN_L).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] mask Bit enable mask for the lower byte (8 bits).
- */
-static inline void ll_cfg_set_dbg_bitten_l(HPSYS_CFG_TypeDef *CFGx, uint32_t mask)
-{
-    MODIFY_REG(CFGx->DBGR, HPSYS_CFG_DBGR_BITEN_L,
-               MAKE_REG_VAL(mask, HPSYS_CFG_DBGR_BITEN_L_Msk, HPSYS_CFG_DBGR_BITEN_L_Pos));
-}
-
-/**
- * @brief Set the debug data higher byte select (DBGR.SEL_H).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] sel  Higher byte select (4 bits).
- */
-static inline void ll_cfg_set_dbg_sel_h(HPSYS_CFG_TypeDef *CFGx, uint32_t sel)
-{
-    MODIFY_REG(CFGx->DBGR, HPSYS_CFG_DBGR_SEL_H,
-               MAKE_REG_VAL(sel, HPSYS_CFG_DBGR_SEL_H_Msk, HPSYS_CFG_DBGR_SEL_H_Pos));
-}
-
-/**
- * @brief Set the debug data lower byte select (DBGR.SEL_L).
- * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] sel  Lower byte select (4 bits).
- */
-static inline void ll_cfg_set_dbg_sel_l(HPSYS_CFG_TypeDef *CFGx, uint32_t sel)
-{
-    MODIFY_REG(CFGx->DBGR, HPSYS_CFG_DBGR_SEL_L,
-               MAKE_REG_VAL(sel, HPSYS_CFG_DBGR_SEL_L_Msk, HPSYS_CFG_DBGR_SEL_L_Pos));
+        CLEAR_BIT(CFGx->MDBGR, HPSYS_CFG_MDBGR_DIS_ROM);
 }
 
 /**
@@ -1187,27 +466,27 @@ static inline uint32_t ll_cfg_get_bist_result(HPSYS_CFG_TypeDef *CFGx)
 }
 
 /**
- * @brief Set a ROM compare register by index (ROMCR0..ROMCR2).
+ * @brief Set a ROM compare register by index (ROMCR0..ROMCR1).
  * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] idx  ROM index, 0..2.
+ * @param[in] idx  ROM index, 0..1.
  * @param[in] val  Compare value.
  */
 static inline void ll_cfg_set_rom_compare(HPSYS_CFG_TypeDef *CFGx, uint32_t idx, uint32_t val)
 {
-    if (idx < 3U) {
+    if (idx < 2U) {
         (&CFGx->ROMCR0)[idx] = val;
     }
 }
 
 /**
- * @brief Get a ROM compare register by index (ROMCR0..ROMCR2).
+ * @brief Get a ROM compare register by index (ROMCR0..ROMCR1).
  * @param[in] CFGx HPSYS_CFG instance pointer.
- * @param[in] idx  ROM index, 0..2.
+ * @param[in] idx  ROM index, 0..1.
  * @return Compare value, or 0 if idx is out of range.
  */
 static inline uint32_t ll_cfg_get_rom_compare(HPSYS_CFG_TypeDef *CFGx, uint32_t idx)
 {
-    return (idx < 3U) ? (&CFGx->ROMCR0)[idx] : 0UL;
+    return (idx < 2U) ? (&CFGx->ROMCR0)[idx] : 0UL;
 }
 
 /**
@@ -1363,6 +642,22 @@ static inline void ll_cfg_usb_disable(HPSYS_CFG_TypeDef *CFGx)
     CLEAR_BIT(CFGx->USBCR, HPSYS_CFG_USBCR_USB_EN);
 }
 
+static inline uint32_t ll_cfg_get_sys_reserved(HPSYS_CFG_TypeDef *CFGx)
+{
+    return READ_REG(CFGx->SYS_RSVD) &
+           (HPSYS_CFG_SYS_RSVD_RESERVE0 | HPSYS_CFG_SYS_RSVD_RESERVE1 |
+            HPSYS_CFG_SYS_RSVD_RESERVE2 | HPSYS_CFG_SYS_RSVD_RESERVE3);
+}
+
+static inline void ll_cfg_set_sys_reserved(HPSYS_CFG_TypeDef *CFGx, uint32_t value)
+{
+    uint32_t mask = HPSYS_CFG_SYS_RSVD_RESERVE0 |
+                    HPSYS_CFG_SYS_RSVD_RESERVE1 |
+                    HPSYS_CFG_SYS_RSVD_RESERVE2;
+
+    MODIFY_REG(CFGx->SYS_RSVD, mask, value & mask);
+}
+
 /**
  * @brief Set the ANAU DC test mode (ANAU_CR.DC_MR).
  * @param[in] CFGx HPSYS_CFG instance pointer.
@@ -1419,6 +714,39 @@ static inline void ll_cfg_vbat_mon_enable(HPSYS_CFG_TypeDef *CFGx)
 static inline void ll_cfg_vbat_mon_disable(HPSYS_CFG_TypeDef *CFGx)
 {
     CLEAR_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_VBAT_MON);
+}
+
+/**
+ * @brief Configure one per-field PINR value by register offset and field index.
+ * @param[in] CFGx        HPSYS_CFG instance pointer.
+ * @param[in] pinr_offset PINR register byte offset from the HPSYS_CFG base
+ *                        (e.g. 0x48 for I2C1_PINR).
+ * @param[in] pinr_field  PINR field index (0..3), one 8-bit slot per field.
+ * @param[in] pad         PAD index (6 bits) to route into the field.
+ * @note Used by the pinctrl driver for dynamic per-field PINR updates.
+ */
+/*==============================================================================
+ * ANAU Bandgap (ANAU_CR)
+ *============================================================================*/
+
+/**
+ * @brief Enable the ANAU bandgap (ANAU_CR.EN_BG).
+ * @note Required before TSEN/GPADC analog measurement (see reference manual
+ *       8.2.3.3); shared with GPADC, recommended to keep enabled.
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_anau_bandgap_enable(HPSYS_CFG_TypeDef *CFGx)
+{
+    SET_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
+}
+
+/**
+ * @brief Disable the ANAU bandgap (ANAU_CR.EN_BG).
+ * @param[in] CFGx HPSYS_CFG instance pointer.
+ */
+static inline void ll_cfg_anau_bandgap_disable(HPSYS_CFG_TypeDef *CFGx)
+{
+    CLEAR_BIT(CFGx->ANAU_CR, HPSYS_CFG_ANAU_CR_EN_BG);
 }
 
 static inline uint32_t ll_cfg_get_anau_reserved(HPSYS_CFG_TypeDef *CFGx)

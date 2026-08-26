@@ -23,16 +23,13 @@ extern "C" {
 /** @defgroup LL_PMUC_LPCLK LL PMUC Low-Power Clock Select */
 /** @{ */
 #define LL_PMUC_LPCLK_LRC10 0x00000000U
-#define LL_PMUC_LPCLK_LRC32 PMUC_CR_SEL_LPCLK
+/* SF32LB57x removed CR.SEL_LPCLK; LRC32 select API is not available. */
 /** @} */
 
 /** @defgroup LL_PMUC_WKUP LL PMUC Wakeup Source Mask */
 /** @{ */
 #define LL_PMUC_WKUP_RTC    PMUC_WER_RTC
-#define LL_PMUC_WKUP_WDT1   PMUC_WER_WDT1
-#define LL_PMUC_WKUP_WDT2   PMUC_WER_WDT2
-#define LL_PMUC_WKUP_PIN0   PMUC_WER_PIN0
-#define LL_PMUC_WKUP_PIN1   PMUC_WER_PIN1
+#define LL_PMUC_WKUP_WDT1   PMUC_WER_IWDT
 #define LL_PMUC_WKUP_LOWBAT PMUC_WER_LOWBAT
 #define LL_PMUC_WKUP_CHG    PMUC_WER_CHG
 /** @} */
@@ -75,18 +72,8 @@ extern "C" {
 /** @defgroup LL_PMUC_MASK LL PMUC Internal Masks */
 /** @{ */
 #define LL_PMUC_WER_MASK                                                                           \
-	(PMUC_WER_RTC | PMUC_WER_WDT1 | PMUC_WER_WDT2 | PMUC_WER_PIN0 | PMUC_WER_PIN1 |            \
-	 PMUC_WER_LOWBAT | PMUC_WER_CHG)
+	(PMUC_WER_RTC | PMUC_WER_IWDT | PMUC_WER_LOWBAT | PMUC_WER_CHG | PMUC_WER_PWRKEY)
 /** @} */
-
-/**
- * @brief PMUC wakeup pin configuration.
- */
-typedef struct {
-	uint32_t pin_sel; /**< Wakeup pin source select value for PA24..PA44. */
-	uint32_t mode;    /**< Trigger mode, use @ref LL_PMUC_PIN_MODE_HIGH_LEVEL to @ref
-			     LL_PMUC_PIN_MODE_BOTH_EDGE_LOW_ACTIVE. */
-} ll_pmuc_wakeup_pin_config_t;
 
 /**
  * @brief PMUC VRET configuration.
@@ -98,57 +85,31 @@ typedef struct {
 } ll_pmuc_vret_config_t;
 
 /**
- * @brief Configure wakeup PIN1 select and trigger mode.
+ * @brief Set CR.LPSYSRST.
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] cfg Pointer to wakeup pin configuration.
  */
-static inline void ll_pmuc_config_wakeup_pin1(PMUC_TypeDef *PMUCx,
-					      const ll_pmuc_wakeup_pin_config_t *cfg)
+static inline void ll_pmuc_set_lpsysrst(PMUC_TypeDef *PMUCx)
 {
-	MODIFY_REG(PMUCx->CR, PMUC_CR_PIN1_SEL | PMUC_CR_PIN1_MODE,
-		   ((cfg->pin_sel << PMUC_CR_PIN1_SEL_Pos) & PMUC_CR_PIN1_SEL) |
-			   ((cfg->mode << PMUC_CR_PIN1_MODE_Pos) & PMUC_CR_PIN1_MODE));
+	SET_BIT(PMUCx->CR, PMUC_CR_LPSYSRST);
 }
 
 /**
- * @brief Configure wakeup PIN0 select and trigger mode.
+ * @brief Clear CR.LPSYSRST.
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] cfg Pointer to wakeup pin configuration.
  */
-static inline void ll_pmuc_config_wakeup_pin0(PMUC_TypeDef *PMUCx,
-					      const ll_pmuc_wakeup_pin_config_t *cfg)
+static inline void ll_pmuc_clear_lpsysrst(PMUC_TypeDef *PMUCx)
 {
-	MODIFY_REG(PMUCx->CR, PMUC_CR_PIN0_SEL | PMUC_CR_PIN0_MODE,
-		   ((cfg->pin_sel << PMUC_CR_PIN0_SEL_Pos) & PMUC_CR_PIN0_SEL) |
-			   ((cfg->mode << PMUC_CR_PIN0_MODE_Pos) & PMUC_CR_PIN0_MODE));
+	CLEAR_BIT(PMUCx->CR, PMUC_CR_LPSYSRST);
 }
 
 /**
- * @brief Enable pin retention during hibernate.
+ * @brief Get CR.LPSYSRST.
  * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when set.
  */
-static inline void ll_pmuc_enable_pin_retention_in_hibernate(PMUC_TypeDef *PMUCx)
+static inline uint32_t ll_pmuc_is_lpsysrst_set(PMUC_TypeDef *PMUCx)
 {
-	SET_BIT(PMUCx->CR, PMUC_CR_PIN_RET);
-}
-
-/**
- * @brief Disable pin retention during hibernate.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_disable_pin_retention_in_hibernate(PMUC_TypeDef *PMUCx)
-{
-	CLEAR_BIT(PMUCx->CR, PMUC_CR_PIN_RET);
-}
-
-/**
- * @brief Check whether pin retention in hibernate is enabled.
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when PIN_RET is set.
- */
-static inline uint32_t ll_pmuc_is_pin_retention_in_hibernate_enabled(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->CR, PMUC_CR_PIN_RET);
+	return READ_BIT(PMUCx->CR, PMUC_CR_LPSYSRST);
 }
 
 /**
@@ -208,22 +169,66 @@ static inline uint32_t ll_pmuc_is_hibernate_flag_set(PMUC_TypeDef *PMUCx)
 }
 
 /**
- * @brief Select PMUC low-power clock source.
+ * @brief Set CR.SEL_RTC.
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] sel Clock select value, use @ref LL_PMUC_LPCLK_LRC10 or @ref
- * LL_PMUC_LPCLK_LRC32.
  */
-static inline void ll_pmuc_select_lpclk(PMUC_TypeDef *PMUCx, uint32_t sel)
+static inline void ll_pmuc_set_sel_rtc(PMUC_TypeDef *PMUCx)
 {
-	MODIFY_REG(PMUCx->CR, PMUC_CR_SEL_LPCLK, (sel & PMUC_CR_SEL_LPCLK));
+	SET_BIT(PMUCx->CR, PMUC_CR_SEL_RTC);
+}
+
+/**
+ * @brief Clear CR.SEL_RTC.
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_clear_sel_rtc(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CR, PMUC_CR_SEL_RTC);
+}
+
+/**
+ * @brief Get CR.SEL_RTC.
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when set.
+ */
+static inline uint32_t ll_pmuc_is_sel_rtc_set(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->CR, PMUC_CR_SEL_RTC);
+}
+
+/**
+ * @brief Set CR.SEL_WDT.
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_set_sel_wdt(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->CR, PMUC_CR_SEL_WDT);
+}
+
+/**
+ * @brief Clear CR.SEL_WDT.
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_clear_sel_wdt(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->CR, PMUC_CR_SEL_WDT);
+}
+
+/**
+ * @brief Get CR.SEL_WDT.
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when set.
+ */
+static inline uint32_t ll_pmuc_is_sel_wdt_set(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->CR, PMUC_CR_SEL_WDT);
 }
 
 /**
  * @brief Enable PMUC wakeup sources.
  * @param[in] PMUCx PMUC instance pointer.
  * @param[in] src_mask Wakeup source mask, use @ref LL_PMUC_WKUP_RTC,
- * @ref LL_PMUC_WKUP_WDT1, @ref LL_PMUC_WKUP_WDT2, @ref LL_PMUC_WKUP_PIN0,
- * @ref LL_PMUC_WKUP_PIN1, @ref LL_PMUC_WKUP_LOWBAT, @ref LL_PMUC_WKUP_CHG.
+ * @ref LL_PMUC_WKUP_WDT1, @ref LL_PMUC_WKUP_LOWBAT, @ref LL_PMUC_WKUP_CHG.
  */
 static inline void ll_pmuc_enable_wakeup_source(PMUC_TypeDef *PMUCx, uint32_t src_mask)
 {
@@ -234,8 +239,7 @@ static inline void ll_pmuc_enable_wakeup_source(PMUC_TypeDef *PMUCx, uint32_t sr
  * @brief Disable PMUC wakeup sources.
  * @param[in] PMUCx PMUC instance pointer.
  * @param[in] src_mask Wakeup source mask, use @ref LL_PMUC_WKUP_RTC,
- * @ref LL_PMUC_WKUP_WDT1, @ref LL_PMUC_WKUP_WDT2, @ref LL_PMUC_WKUP_PIN0,
- * @ref LL_PMUC_WKUP_PIN1, @ref LL_PMUC_WKUP_LOWBAT, @ref LL_PMUC_WKUP_CHG.
+ * @ref LL_PMUC_WKUP_WDT1, @ref LL_PMUC_WKUP_LOWBAT, @ref LL_PMUC_WKUP_CHG.
  */
 static inline void ll_pmuc_disable_wakeup_source(PMUC_TypeDef *PMUCx, uint32_t src_mask)
 {
@@ -263,13 +267,13 @@ static inline uint32_t ll_pmuc_get_wakeup_status(PMUC_TypeDef *PMUCx)
 }
 
 /**
- * @brief Check CHG status flag.
+ * @brief Check PWRKEY status flag.
  * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.CHG is set.
+ * @return Non-zero when WSR.PWRKEY is set.
  */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_chg(PMUC_TypeDef *PMUCx)
+static inline uint32_t ll_pmuc_is_active_flag_wsr_pwrkey(PMUC_TypeDef *PMUCx)
 {
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_CHG);
+	return READ_BIT(PMUCx->WSR, PMUC_WSR_PWRKEY);
 }
 
 /**
@@ -283,13 +287,13 @@ static inline uint32_t ll_pmuc_is_active_flag_wsr_lowbat(PMUC_TypeDef *PMUCx)
 }
 
 /**
- * @brief Check PWRKEY status flag.
+ * @brief Check CHG status flag.
  * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.PWRKEY is set.
+ * @return Non-zero when WSR.CHG is set.
  */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_pwrkey(PMUC_TypeDef *PMUCx)
+static inline uint32_t ll_pmuc_is_active_flag_wsr_chg(PMUC_TypeDef *PMUCx)
 {
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_PWRKEY);
+	return READ_BIT(PMUCx->WSR, PMUC_WSR_CHG);
 }
 
 /**
@@ -303,46 +307,6 @@ static inline uint32_t ll_pmuc_is_active_flag_wsr_iwdt(PMUC_TypeDef *PMUCx)
 }
 
 /**
- * @brief Check PIN1 wakeup status flag.
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.PIN1 is set.
- */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_pin1(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_PIN1);
-}
-
-/**
- * @brief Check PIN0 wakeup status flag.
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.PIN0 is set.
- */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_pin0(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_PIN0);
-}
-
-/**
- * @brief Check WDT2 status flag.
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.WDT2 is set.
- */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_wdt2(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_WDT2);
-}
-
-/**
- * @brief Check WDT1 status flag.
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when WSR.WDT1 is set.
- */
-static inline uint32_t ll_pmuc_is_active_flag_wsr_wdt1(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->WSR, PMUC_WSR_WDT1);
-}
-
-/**
  * @brief Check RTC wakeup status flag.
  * @param[in] PMUCx PMUC instance pointer.
  * @return Non-zero when WSR.RTC is set.
@@ -350,24 +314,6 @@ static inline uint32_t ll_pmuc_is_active_flag_wsr_wdt1(PMUC_TypeDef *PMUCx)
 static inline uint32_t ll_pmuc_is_active_flag_wsr_rtc(PMUC_TypeDef *PMUCx)
 {
 	return READ_BIT(PMUCx->WSR, PMUC_WSR_RTC);
-}
-
-/**
- * @brief Clear AON wakeup IRQ status flag.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_clear_flag_wcr_aon_irq(PMUC_TypeDef *PMUCx)
-{
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_AON);
-}
-
-/**
- * @brief Clear LOWBAT status flag.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_clear_flag_wcr_lowbat(PMUC_TypeDef *PMUCx)
-{
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_LOWBAT);
 }
 
 /**
@@ -380,39 +326,12 @@ static inline void ll_pmuc_clear_flag_wcr_pwrkey(PMUC_TypeDef *PMUCx)
 }
 
 /**
- * @brief Clear PIN1 wakeup status flag.
+ * @brief Clear IWDT reset flag.
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_clear_flag_wcr_pin1(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_clear_flag_wcr_iwdtrst(PMUC_TypeDef *PMUCx)
 {
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_PIN1);
-}
-
-/**
- * @brief Clear PIN0 wakeup status flag.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_clear_flag_wcr_pin0(PMUC_TypeDef *PMUCx)
-{
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_PIN0);
-}
-
-/**
- * @brief Clear WDT2 status flag.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_clear_flag_wcr_wdt2(PMUC_TypeDef *PMUCx)
-{
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_WDT2);
-}
-
-/**
- * @brief Clear WDT1 status flag.
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_clear_flag_wcr_wdt1(PMUC_TypeDef *PMUCx)
-{
-	WRITE_REG(PMUCx->WCR, PMUC_WCR_WDT1);
+	WRITE_REG(PMUCx->WCR, PMUC_WCR_IWDTRST);
 }
 
 /**
@@ -692,6 +611,19 @@ static inline void ll_pmuc_set_hpsys_vout(PMUC_TypeDef *PMUCx, uint32_t vout)
 #define LL_PMUC_SWR_SOURCE_HPSYS_LDO  1U
 /** LPSYS_SWR PSW[1:0]: use the LPSYS_LDO supply. */
 #define LL_PMUC_SWR_SOURCE_LPSYS_LDO  1U
+
+
+/**
+ * @brief Set the VRTC reserved field (VRTC_CR.RESERVE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] value Reserved field value (7 bits).
+ */
+static inline void ll_pmuc_vrtc_set_reserve(PMUC_TypeDef *PMUCx, uint32_t value)
+{
+	MODIFY_REG(PMUCx->VRTC_CR, PMUC_VRTC_CR_RESERVE,
+		   MAKE_REG_VAL(value, PMUC_VRTC_CR_RESERVE_Msk, PMUC_VRTC_CR_RESERVE_Pos));
+}
+
 static inline void ll_pmuc_vrtc_set_trim_config(PMUC_TypeDef *PMUCx, uint32_t value)
 {
 	const uint32_t mask = PMUC_VRTC_CR_BOR_VT_TRIM | PMUC_VRTC_CR_VRTC_TRIM;
@@ -729,6 +661,46 @@ static inline void ll_pmuc_vret_set_control(PMUC_TypeDef *PMUCx, uint32_t value)
 	const uint32_t mask = PMUC_VRET_CR_BM | PMUC_VRET_CR_EN;
 
 	MODIFY_REG(PMUCx->VRET_CR, mask, value & mask);
+}
+
+/**
+ * @brief Set the LRC10 LDO trim (LRC10_CR.LDO_TRIM).
+ * @param[in] PMUCx  PMUC instance pointer.
+ * @param[in] trim   LDO trim code.
+ */
+static inline void ll_pmuc_lrc10_set_ldo_trim(PMUC_TypeDef *PMUCx, uint32_t trim)
+{
+	MODIFY_REG(PMUCx->LRC10_CR, PMUC_LRC10_CR_LDO_TRIM,
+		   MAKE_REG_VAL(trim, PMUC_LRC10_CR_LDO_TRIM_Msk, PMUC_LRC10_CR_LDO_TRIM_Pos));
+}
+
+/**
+ * @brief Set the LRC10 LDO output (LRC10_CR.LDO_VBIT).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vbit LDO output code.
+ */
+static inline void ll_pmuc_lrc10_set_ldo_vbit(PMUC_TypeDef *PMUCx, uint32_t vbit)
+{
+	MODIFY_REG(PMUCx->LRC10_CR, PMUC_LRC10_CR_LDO_VBIT,
+		   MAKE_REG_VAL(vbit, PMUC_LRC10_CR_LDO_VBIT_Msk, PMUC_LRC10_CR_LDO_VBIT_Pos));
+}
+
+/**
+ * @brief Enable the LRC10 LDO (LRC10_CR.LDO_EN).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_lrc10_ldo_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->LRC10_CR, PMUC_LRC10_CR_LDO_EN);
+}
+
+/**
+ * @brief Disable the LRC10 LDO (LRC10_CR.LDO_EN = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_lrc10_ldo_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->LRC10_CR, PMUC_LRC10_CR_LDO_EN);
 }
 
 static inline void ll_pmuc_lrc10_set_config(PMUC_TypeDef *PMUCx, uint32_t value)
@@ -771,12 +743,118 @@ static inline void ll_pmuc_aon_bg_set_trim(PMUC_TypeDef *PMUCx, uint32_t trim, u
 		   val);
 }
 
-static inline void ll_pmuc_aon_ldo_set_por_threshold(PMUC_TypeDef *PMUCx, uint32_t threshold)
+/**
+ * @brief Check the AON VBUS ready flag (AON_LDO.VBUS_RDY).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when ready.
+ */
+static inline uint32_t ll_pmuc_aon_ldo_is_vbus_ready(PMUC_TypeDef *PMUCx)
 {
-	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_POR_TH,
-		   MAKE_REG_VAL(threshold, PMUC_AON_LDO_VBAT_POR_TH_Msk,
-				PMUC_AON_LDO_VBAT_POR_TH_Pos));
+	return READ_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBUS_RDY) ? 1UL : 0UL;
 }
+
+/**
+ * @brief Set the AON VBUS threshold N (AON_LDO.VBUS_SET_VTHN).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vthn  Threshold code.
+ */
+static inline void ll_pmuc_aon_ldo_set_vbus_vthn(PMUC_TypeDef *PMUCx, uint32_t vthn)
+{
+	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBUS_SET_VTHN,
+		   MAKE_REG_VAL(vthn, PMUC_AON_LDO_VBUS_SET_VTHN_Msk, PMUC_AON_LDO_VBUS_SET_VTHN_Pos));
+}
+
+/**
+ * @brief Set the AON VBUS threshold P (AON_LDO.VBUS_SET_VTHP).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vthp  Threshold code.
+ */
+static inline void ll_pmuc_aon_ldo_set_vbus_vthp(PMUC_TypeDef *PMUCx, uint32_t vthp)
+{
+	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBUS_SET_VTHP,
+		   MAKE_REG_VAL(vthp, PMUC_AON_LDO_VBUS_SET_VTHP_Msk, PMUC_AON_LDO_VBUS_SET_VTHP_Pos));
+}
+
+/**
+ * @brief Check the AON VBAT LDO ready flag (AON_LDO.VBAT_RDY).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when ready.
+ */
+static inline uint32_t ll_pmuc_aon_ldo_is_vbat_ready(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_RDY) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Set the AON VBAT threshold N (AON_LDO.VBAT_SET_VTHN).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vthn  Threshold code.
+ */
+static inline void ll_pmuc_aon_ldo_set_vbat_vthn(PMUC_TypeDef *PMUCx, uint32_t vthn)
+{
+	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_SET_VTHN,
+		   MAKE_REG_VAL(vthn, PMUC_AON_LDO_VBAT_SET_VTHN_Msk, PMUC_AON_LDO_VBAT_SET_VTHN_Pos));
+}
+
+/**
+ * @brief Set the AON VBAT threshold P (AON_LDO.VBAT_SET_VTHP).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] vthp  Threshold code.
+ */
+static inline void ll_pmuc_aon_ldo_set_vbat_vthp(PMUC_TypeDef *PMUCx, uint32_t vthp)
+{
+	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_SET_VTHP,
+		   MAKE_REG_VAL(vthp, PMUC_AON_LDO_VBAT_SET_VTHP_Msk, PMUC_AON_LDO_VBAT_SET_VTHP_Pos));
+}
+
+/**
+ * @brief Set the AON VBAT LDO switch-mode (AON_LDO.VBAT_LDO_SWMODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Switch-mode code.
+ */
+static inline void ll_pmuc_aon_ldo_set_vbat_swmode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_LDO_SWMODE,
+		   MAKE_REG_VAL(mode, PMUC_AON_LDO_VBAT_LDO_SWMODE_Msk, PMUC_AON_LDO_VBAT_LDO_SWMODE_Pos));
+}
+
+/**
+ * @brief Enable the AON VBAT LDO switch-mode control (AON_LDO.VBAT_LDO_EN_SWMODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_aon_ldo_vbat_swmode_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_LDO_EN_SWMODE);
+}
+
+/**
+ * @brief Disable the AON VBAT LDO switch-mode control (AON_LDO.VBAT_LDO_EN_SWMODE = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_aon_ldo_vbat_swmode_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_LDO_EN_SWMODE);
+}
+
+/**
+ * @brief Enable the AON VBAT LDO soft-start (AON_LDO.VBAT_LDO_EN_SS).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_aon_ldo_vbat_ss_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_LDO_EN_SS);
+}
+
+/**
+ * @brief Disable the AON VBAT LDO soft-start (AON_LDO.VBAT_LDO_EN_SS = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_aon_ldo_vbat_ss_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->AON_LDO, PMUC_AON_LDO_VBAT_LDO_EN_SS);
+}
+
+/* SF32LB57x removed AON_LDO.VBAT_POR_TH; the POR-threshold API is not available. */
 
 static inline void ll_pmuc_aon_ldo_set_vout(PMUC_TypeDef *PMUCx, uint32_t vout)
 {
@@ -799,16 +877,109 @@ static inline void ll_pmuc_buck_set_analog_config(PMUC_TypeDef *PMUCx, uint32_t 
 	MODIFY_REG(PMUCx->BUCK_CR1, mask, value & mask);
 }
 
+/**
+ * @brief Enable BUCK BYPASS_UVLO bypass (BUCK_CR1.BYPASS_UVLO).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_uvlo_set(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_UVLO);
+}
+
+/**
+ * @brief Disable BUCK BYPASS_UVLO bypass (BUCK_CR1.BYPASS_UVLO = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_uvlo_clear(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_UVLO);
+}
+
+/**
+ * @brief Enable BUCK BYPASS_OCP bypass (BUCK_CR1.BYPASS_OCP).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_ocp_set(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_OCP);
+}
+
+/**
+ * @brief Disable BUCK BYPASS_OCP bypass (BUCK_CR1.BYPASS_OCP = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_ocp_clear(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_OCP);
+}
+
+/**
+ * @brief Enable BUCK BYPASS_PG bypass (BUCK_CR1.BYPASS_PG).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_pg_set(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_PG);
+}
+
+/**
+ * @brief Disable BUCK BYPASS_PG bypass (BUCK_CR1.BYPASS_PG = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_bypass_pg_clear(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->BUCK_CR1, PMUC_BUCK_CR1_BYPASS_PG);
+}
+
 static inline void ll_pmuc_buck_set_transition_config(PMUC_TypeDef *PMUCx, uint32_t value)
 {
 	const uint32_t mask = PMUC_BUCK_CR2_TDIS | PMUC_BUCK_CR2_FORCE_RDY |
-			      PMUC_BUCK_CR2_BYPASS_UVLO | PMUC_BUCK_CR2_BYPASS_OCP |
-			      PMUC_BUCK_CR2_BYPASS_PG | PMUC_BUCK_CR2_L2M_CNT |
+			      PMUC_BUCK_CR2_L2M_CNT |
 			      PMUC_BUCK_CR2_L2H_CNT | PMUC_BUCK_CR2_M2H_CNT |
 			      PMUC_BUCK_CR2_L2M_EN | PMUC_BUCK_CR2_M2L_EN |
 			      PMUC_BUCK_CR2_H2L_EN | PMUC_BUCK_CR2_H2M_EN;
 
 	MODIFY_REG(PMUCx->BUCK_CR2, mask, value & mask);
+}
+
+/**
+ * @brief Set the BUCK power-switch driver bias mode (BUCK_CR3.PSWDRV_BM).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] bm    Driver bias mode.
+ */
+static inline void ll_pmuc_buck_set_pswdrv_bm(PMUC_TypeDef *PMUCx, uint32_t bm)
+{
+	MODIFY_REG(PMUCx->BUCK_CR3, PMUC_BUCK_CR3_PSWDRV_BM,
+		   MAKE_REG_VAL(bm, PMUC_BUCK_CR3_PSWDRV_BM_Msk, PMUC_BUCK_CR3_PSWDRV_BM_Pos));
+}
+
+/**
+ * @brief Set the BUCK OCP bias mode (BUCK_CR3.OCP_BM).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] bm    OCP bias mode.
+ */
+static inline void ll_pmuc_buck_set_ocp_bm(PMUC_TypeDef *PMUCx, uint32_t bm)
+{
+	MODIFY_REG(PMUCx->BUCK_CR3, PMUC_BUCK_CR3_OCP_BM,
+		   MAKE_REG_VAL(bm, PMUC_BUCK_CR3_OCP_BM_Msk, PMUC_BUCK_CR3_OCP_BM_Pos));
+}
+
+/**
+ * @brief Enable BUCK reference tracking (BUCK_CR3.EN_REFTRK).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_ref_tracking_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->BUCK_CR3, PMUC_BUCK_CR3_EN_REFTRK);
+}
+
+/**
+ * @brief Disable BUCK reference tracking (BUCK_CR3.EN_REFTRK = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_buck_ref_tracking_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->BUCK_CR3, PMUC_BUCK_CR3_EN_REFTRK);
 }
 
 /**
@@ -1171,13 +1342,77 @@ static inline void ll_pmuc_swr_lpsys_set_power_source(PMUC_TypeDef *PMUCx, uint3
 
 static inline void ll_pmuc_peri_ldo_set_control(PMUC_TypeDef *PMUCx, uint32_t value)
 {
-	const uint32_t mask = PMUC_PERI_LDO_VDD33_LDO3_PD |
+	const uint32_t mask = PMUC_PERI_LDO_VDD33_LDO3_PD_VOUT |
 			      PMUC_PERI_LDO_EN_VDD33_LDO3 |
-			      PMUC_PERI_LDO_VDD33_LDO2_PD |
-			      PMUC_PERI_LDO_EN_VDD33_LDO2 | PMUC_PERI_LDO_LDO18_PD |
+			      PMUC_PERI_LDO_VDD33_LDO2_PD_VOUT |
+			      PMUC_PERI_LDO_EN_VDD33_LDO2 | PMUC_PERI_LDO_LDO18_PD_VOUT |
 			      PMUC_PERI_LDO_EN_LDO18;
 
 	MODIFY_REG(PMUCx->PERI_LDO, mask, value & mask);
+}
+
+/**
+ * @brief Enable the PERI VDD33 LDO3 soft-start (PERI_LDO.VDD33_LDO3_EN_SS).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_vdd33_ldo3_ss_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_VDD33_LDO3_EN_SS);
+}
+
+/**
+ * @brief Disable the PERI VDD33 LDO3 soft-start (PERI_LDO.VDD33_LDO3_EN_SS = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_vdd33_ldo3_ss_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_VDD33_LDO3_EN_SS);
+}
+
+/**
+ * @brief Enable the PERI VDD33 LDO2 soft-start (PERI_LDO.VDD33_LDO2_EN_SS).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_vdd33_ldo2_ss_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_VDD33_LDO2_EN_SS);
+}
+
+/**
+ * @brief Disable the PERI VDD33 LDO2 soft-start (PERI_LDO.VDD33_LDO2_EN_SS = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_vdd33_ldo2_ss_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_VDD33_LDO2_EN_SS);
+}
+
+/**
+ * @brief Check the PERI LDO18 ready flag (PERI_LDO.LDO18_RDY).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when ready.
+ */
+static inline uint32_t ll_pmuc_peri_ldo_is_ldo18_ready(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_LDO18_RDY) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Enable the PERI LDO18 soft-start (PERI_LDO.LDO18_EN_SS).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_ldo18_ss_enable(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_LDO18_EN_SS);
+}
+
+/**
+ * @brief Disable the PERI LDO18 soft-start (PERI_LDO.LDO18_EN_SS = 0).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_peri_ldo_ldo18_ss_disable(PMUC_TypeDef *PMUCx)
+{
+	CLEAR_BIT(PMUCx->PERI_LDO, PMUC_PERI_LDO_LDO18_EN_SS);
 }
 
 /**
@@ -1461,14 +1696,14 @@ static inline void ll_pmuc_hxt48_set_buf_dac_str(PMUC_TypeDef *PMUCx, uint32_t s
 
 static inline void ll_pmuc_hrc48_set_config(PMUC_TypeDef *PMUCx, uint32_t value)
 {
-	const uint32_t mask = PMUC_HRC_CR_DLY | PMUC_HRC_CR_CLKLP_STR |
-			      PMUC_HRC_CR_CLKLP_SEL | PMUC_HRC_CR_CLKLP_EN |
-			      PMUC_HRC_CR_CLKHP_STR | PMUC_HRC_CR_CLKHP_SEL |
-			      PMUC_HRC_CR_CLKHP_EN | PMUC_HRC_CR_CLK96M_EN |
-			      PMUC_HRC_CR_TEMP_TRIM | PMUC_HRC_CR_LDO_VREF |
-			      PMUC_HRC_CR_EN;
+	const uint32_t mask = PMUC_HRC_CR1_DLY | PMUC_HRC_CR1_CLKLP_STR |
+			      PMUC_HRC_CR1_CLKLP_SEL | PMUC_HRC_CR1_CLKLP_EN |
+			      PMUC_HRC_CR1_CLKHP_STR | PMUC_HRC_CR1_CLKHP_SEL |
+			      PMUC_HRC_CR1_CLKHP_EN | PMUC_HRC_CR1_CLK96M_EN |
+			      PMUC_HRC_CR1_TEMP_TRIM | PMUC_HRC_CR1_LDO_VREF |
+			      PMUC_HRC_CR1_EN;
 
-	MODIFY_REG(PMUCx->HRC_CR, mask, value & mask);
+	MODIFY_REG(PMUCx->HRC_CR1, mask, value & mask);
 }
 
 /*==============================================================================
@@ -1482,166 +1717,124 @@ static inline void ll_pmuc_hrc48_set_config(PMUC_TypeDef *PMUCx, uint32_t value)
  */
 static inline void ll_pmuc_hrc48_set_trim(PMUC_TypeDef *PMUCx, uint32_t trim)
 {
-	MODIFY_REG(PMUCx->HRC_CR, PMUC_HRC_CR_FREQ_TRIM,
-		   MAKE_REG_VAL(trim, PMUC_HRC_CR_FREQ_TRIM_Msk, PMUC_HRC_CR_FREQ_TRIM_Pos));
+	MODIFY_REG(PMUCx->HRC_CR1, PMUC_HRC_CR1_FREQ_TRIM,
+		   MAKE_REG_VAL(trim, PMUC_HRC_CR1_FREQ_TRIM_Msk, PMUC_HRC_CR1_FREQ_TRIM_Pos));
 }
 
 /**
- * @brief Set the DBL96 external delay select (DBL96_CR.DLY_SEL_EXT).
+ * @brief Set the HRC48 SS FD-sel (HRC_CR2.SS_FD_SEL).
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] sel   External delay select (11 bits).
+ * @param[in] sel   FD select code.
  */
-static inline void ll_pmuc_dbl96_set_dly_sel_ext(PMUC_TypeDef *PMUCx, uint32_t sel)
+static inline void ll_pmuc_hrc48_set_ss_fd_sel(PMUC_TypeDef *PMUCx, uint32_t sel)
 {
-	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_SEL_EXT,
-		   MAKE_REG_VAL(sel, PMUC_DBL96_CR_DLY_SEL_EXT_Msk, PMUC_DBL96_CR_DLY_SEL_EXT_Pos));
-}
-
-static inline void ll_pmuc_dbl96_set_control(PMUC_TypeDef *PMUCx, uint32_t value)
-{
-	const uint32_t mask = PMUC_DBL96_CR_DLY_SEL_EXT_EN |
-			      PMUC_DBL96_CR_DLY_EXT_EN | PMUC_DBL96_CR_TOOSLO_EN |
-			      PMUC_DBL96_CR_TORF_EN | PMUC_DBL96_CR_TODIG_EN;
-
-	MODIFY_REG(PMUCx->DBL96_CR, mask, value & mask);
+	MODIFY_REG(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_FD_SEL,
+		   MAKE_REG_VAL(sel, PMUC_HRC_CR2_SS_FD_SEL_Msk, PMUC_HRC_CR2_SS_FD_SEL_Pos));
 }
 
 /**
- * @brief Enable the DBL96 delay (DBL96_CR.DLY_EN).
+ * @brief Enable the HRC48 SS FD-sel force (HRC_CR2.SS_FD_SEL_FRC_EN).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_dly_enable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_ss_fd_force_enable(PMUC_TypeDef *PMUCx)
 {
-	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_EN);
+	SET_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_FD_SEL_FRC_EN);
 }
 
 /**
- * @brief Disable the DBL96 delay (DBL96_CR.DLY_EN = 0).
+ * @brief Disable the HRC48 SS FD-sel force (HRC_CR2.SS_FD_SEL_FRC_EN = 0).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_dly_disable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_ss_fd_force_disable(PMUC_TypeDef *PMUCx)
 {
-	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_DLY_EN);
+	CLEAR_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_FD_SEL_FRC_EN);
 }
 
 /**
- * @brief Set the DBL96 phase enable mask (DBL96_CR.PH_EN).
+ * @brief Enable the HRC48 SS average-0 (HRC_CR2.SS_AVG0_EN).
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] mask  Phase enable mask (4 bits).
  */
-static inline void ll_pmuc_dbl96_set_ph_enable(PMUC_TypeDef *PMUCx, uint32_t mask)
+static inline void ll_pmuc_hrc48_ss_avg0_enable(PMUC_TypeDef *PMUCx)
 {
-	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_PH_EN,
-		   MAKE_REG_VAL(mask, PMUC_DBL96_CR_PH_EN_Msk, PMUC_DBL96_CR_PH_EN_Pos));
+	SET_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_AVG0_EN);
 }
 
 /**
- * @brief Enable the DBL96 loop reset (assert LOOP_RSTB low).
+ * @brief Disable the HRC48 SS average-0 (HRC_CR2.SS_AVG0_EN = 0).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_loop_assert_reset(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_ss_avg0_disable(PMUC_TypeDef *PMUCx)
 {
-	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_LOOP_RSTB);
+	CLEAR_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_AVG0_EN);
 }
 
 /**
- * @brief Release the DBL96 loop reset (LOOP_RSTB = 1).
+ * @brief Set the HRC48 SS N-select (HRC_CR2.SS_NSEL).
  * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] nsel  N-select code.
  */
-static inline void ll_pmuc_dbl96_loop_release_reset(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_set_ss_nsel(PMUC_TypeDef *PMUCx, uint32_t nsel)
 {
-	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_LOOP_RSTB);
+	MODIFY_REG(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_NSEL,
+		   MAKE_REG_VAL(nsel, PMUC_HRC_CR2_SS_NSEL_Msk, PMUC_HRC_CR2_SS_NSEL_Pos));
 }
 
 /**
- * @brief Set the DBL96 to-digital strength (DBL96_CR.TODIG_STR).
+ * @brief Set the HRC48 SS clock select (HRC_CR2.SS_CLK_SEL).
  * @param[in] PMUCx PMUC instance pointer.
- * @param[in] str   Strength (2 bits).
+ * @param[in] sel   Clock select code.
  */
-static inline void ll_pmuc_dbl96_set_todig_str(PMUC_TypeDef *PMUCx, uint32_t str)
+static inline void ll_pmuc_hrc48_set_ss_clk_sel(PMUC_TypeDef *PMUCx, uint32_t sel)
 {
-	MODIFY_REG(PMUCx->DBL96_CR, PMUC_DBL96_CR_TODIG_STR,
-		   MAKE_REG_VAL(str, PMUC_DBL96_CR_TODIG_STR_Msk, PMUC_DBL96_CR_TODIG_STR_Pos));
+	MODIFY_REG(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_CLK_SEL,
+		   MAKE_REG_VAL(sel, PMUC_HRC_CR2_SS_CLK_SEL_Msk, PMUC_HRC_CR2_SS_CLK_SEL_Pos));
 }
 
 /**
- * @brief Enable the DBL96 output (DBL96_CR.OUT_EN).
+ * @brief Enable the HRC48 spread-spectrum (HRC_CR2.SS_EN).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_out_enable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_ss_enable(PMUC_TypeDef *PMUCx)
 {
-	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_OUT_EN);
+	SET_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_EN);
 }
 
 /**
- * @brief Disable the DBL96 output (DBL96_CR.OUT_EN = 0).
+ * @brief Disable the HRC48 spread-spectrum (HRC_CR2.SS_EN = 0).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_out_disable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_ss_disable(PMUC_TypeDef *PMUCx)
 {
-	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_OUT_EN);
+	CLEAR_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_SS_EN);
 }
 
 /**
- * @brief Enable the DBL96 doubler (DBL96_CR.EN).
+ * @brief Set the HRC48 IDWN select (HRC_CR2.IDWN_SEL).
  * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] sel   IDWN select code.
  */
-static inline void ll_pmuc_dbl96_enable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_set_idwn_sel(PMUC_TypeDef *PMUCx, uint32_t sel)
 {
-	SET_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_EN);
+	MODIFY_REG(PMUCx->HRC_CR2, PMUC_HRC_CR2_IDWN_SEL,
+		   MAKE_REG_VAL(sel, PMUC_HRC_CR2_IDWN_SEL_Msk, PMUC_HRC_CR2_IDWN_SEL_Pos));
 }
 
 /**
- * @brief Disable the DBL96 doubler (DBL96_CR.EN = 0).
+ * @brief Enable the HRC48 clock doubler (HRC_CR2.CLKX2_EN).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_disable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_clkx2_enable(PMUC_TypeDef *PMUCx)
 {
-	CLEAR_BIT(PMUCx->DBL96_CR, PMUC_DBL96_CR_EN);
+	SET_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_CLKX2_EN);
 }
 
 /**
- * @brief Check whether the DBL96 calibration is locked (DBL96_CALR.CAL_LOCK).
- * @param[in] PMUCx PMUC instance pointer.
- * @return Non-zero when locked.
- */
-static inline uint32_t ll_pmuc_dbl96_is_cal_locked(PMUC_TypeDef *PMUCx)
-{
-	return READ_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_LOCK) ? 1UL : 0UL;
-}
-
-/**
- * @brief Get the DBL96 calibration result (DBL96_CALR.CAL_OP).
- * @param[in] PMUCx PMUC instance pointer.
- * @return Calibration operation result (11 bits).
- */
-static inline uint32_t ll_pmuc_dbl96_get_cal_result(PMUC_TypeDef *PMUCx)
-{
-	return GET_REG_VAL2(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_OP);
-}
-
-static inline void ll_pmuc_dbl96_set_cal_close_ext(PMUC_TypeDef *PMUCx, uint32_t en)
-{
-	MODIFY_REG(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_CLOSE_EXT_EN,
-		   en ? PMUC_DBL96_CALR_CAL_CLOSE_EXT_EN : 0UL);
-}
-
-/**
- * @brief Enable the DBL96 calibration (DBL96_CALR.CAL_EN).
+ * @brief Disable the HRC48 clock doubler (HRC_CR2.CLKX2_EN = 0).
  * @param[in] PMUCx PMUC instance pointer.
  */
-static inline void ll_pmuc_dbl96_cal_enable(PMUC_TypeDef *PMUCx)
+static inline void ll_pmuc_hrc48_clkx2_disable(PMUC_TypeDef *PMUCx)
 {
-	SET_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_EN);
-}
-
-/**
- * @brief Disable the DBL96 calibration (DBL96_CALR.CAL_EN = 0).
- * @param[in] PMUCx PMUC instance pointer.
- */
-static inline void ll_pmuc_dbl96_cal_disable(PMUC_TypeDef *PMUCx)
-{
-	CLEAR_BIT(PMUCx->DBL96_CALR, PMUC_DBL96_CALR_CAL_EN);
+	CLEAR_BIT(PMUCx->HRC_CR2, PMUC_HRC_CR2_CLKX2_EN);
 }
 
 /**
@@ -1739,7 +1932,7 @@ static inline void ll_pmuc_cau_set_dc_test(PMUC_TypeDef *PMUCx, uint32_t tr, uin
 
 static inline uint32_t ll_pmuc_get_cau_reserved(PMUC_TypeDef *PMUCx)
 {
-	const uint32_t mask = PMUC_CAU_RSVD_RESERVE2 | PMUC_CAU_RSVD_RESERVE1 |
+const uint32_t mask = PMUC_CAU_RSVD_RESERVE1 |
 			      PMUC_CAU_RSVD_RESERVE0;
 
 	return READ_REG(PMUCx->CAU_RSVD) & mask;
@@ -1750,23 +1943,6 @@ static inline void ll_pmuc_set_cau_reserved(PMUC_TypeDef *PMUCx, uint32_t value)
 	const uint32_t mask = PMUC_CAU_RSVD_RESERVE1 | PMUC_CAU_RSVD_RESERVE0;
 
 	MODIFY_REG(PMUCx->CAU_RSVD, mask, value & mask);
-}
-
-/*==============================================================================
- * Counters
- *============================================================================*/
-
-/**
- * @brief Set the wakeup pin debounce counts (WKUP_CNT).
- * @note The value is packed as PIN0_CNT[15:0] | (PIN1_CNT[15:0] << 16),
- *       i.e. cnt = (pin1_cnt << 16) | pin0_cnt.
- * @param[in] PMUCx PMUC instance pointer.
- * @param[in] cnt Packed 16-bit debounce counts for PIN0 and PIN1.
- */
-static inline void ll_pmuc_set_wkup_count(PMUC_TypeDef *PMUCx, uint32_t cnt)
-{
-	WRITE_REG(PMUCx->WKUP_CNT,
-		  cnt & (PMUC_WKUP_CNT_PIN1_CNT | PMUC_WKUP_CNT_PIN0_CNT));
 }
 
 /**
@@ -1811,6 +1987,1504 @@ static inline uint8_t ll_pmuc_get_lpsys_vout(PMUC_TypeDef *PMUCx)
 static inline uint8_t ll_pmuc_get_buck_vout(PMUC_TypeDef *PMUCx)
 {
 	return (uint8_t)(READ_REG(PMUCx->BUCK_VOUT) & PMUC_BUCK_VOUT_VOUT_Msk);
+}
+
+/**
+ * @brief Set the PA27 wakeup mode (WKUP_MODE.PA27_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa27_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA27_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA27_MODE_Msk, PMUC_WKUP_MODE_PA27_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA27 wakeup mode (WKUP_MODE.PA27_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa27_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA27_MODE);
+}
+
+/**
+ * @brief Set the PA26 wakeup mode (WKUP_MODE.PA26_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa26_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA26_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA26_MODE_Msk, PMUC_WKUP_MODE_PA26_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA26 wakeup mode (WKUP_MODE.PA26_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa26_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA26_MODE);
+}
+
+/**
+ * @brief Set the PA25 wakeup mode (WKUP_MODE.PA25_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa25_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA25_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA25_MODE_Msk, PMUC_WKUP_MODE_PA25_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA25 wakeup mode (WKUP_MODE.PA25_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa25_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA25_MODE);
+}
+
+/*==============================================================================
+ * Wakeup Pin Mode (WKUP_MODE)
+ *============================================================================*/
+
+/**
+ * @brief Set the PA24 wakeup mode (WKUP_MODE.PA24_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa24_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA24_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA24_MODE_Msk, PMUC_WKUP_MODE_PA24_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA24 wakeup mode (WKUP_MODE.PA24_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa24_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA24_MODE);
+}
+
+/**
+ * @brief Set the PA42 wakeup mode (WKUP_MODE.PA42_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa42_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA42_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA42_MODE_Msk, PMUC_WKUP_MODE_PA42_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA42 wakeup mode (WKUP_MODE.PA42_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa42_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA42_MODE);
+}
+
+/**
+ * @brief Set the PA41 wakeup mode (WKUP_MODE.PA41_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa41_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA41_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA41_MODE_Msk, PMUC_WKUP_MODE_PA41_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA41 wakeup mode (WKUP_MODE.PA41_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa41_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA41_MODE);
+}
+
+/**
+ * @brief Set the PA40 wakeup mode (WKUP_MODE.PA40_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa40_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA40_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA40_MODE_Msk, PMUC_WKUP_MODE_PA40_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA40 wakeup mode (WKUP_MODE.PA40_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa40_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA40_MODE);
+}
+
+/**
+ * @brief Set the PA39 wakeup mode (WKUP_MODE.PA39_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa39_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA39_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA39_MODE_Msk, PMUC_WKUP_MODE_PA39_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA39 wakeup mode (WKUP_MODE.PA39_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa39_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA39_MODE);
+}
+
+/**
+ * @brief Set the PA38 wakeup mode (WKUP_MODE.PA38_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa38_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA38_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA38_MODE_Msk, PMUC_WKUP_MODE_PA38_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA38 wakeup mode (WKUP_MODE.PA38_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa38_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA38_MODE);
+}
+
+/**
+ * @brief Set the PA37 wakeup mode (WKUP_MODE.PA37_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa37_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA37_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA37_MODE_Msk, PMUC_WKUP_MODE_PA37_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA37 wakeup mode (WKUP_MODE.PA37_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa37_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA37_MODE);
+}
+
+/**
+ * @brief Set the PA36 wakeup mode (WKUP_MODE.PA36_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa36_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA36_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA36_MODE_Msk, PMUC_WKUP_MODE_PA36_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA36 wakeup mode (WKUP_MODE.PA36_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa36_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA36_MODE);
+}
+
+/**
+ * @brief Set the PA35 wakeup mode (WKUP_MODE.PA35_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa35_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA35_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA35_MODE_Msk, PMUC_WKUP_MODE_PA35_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA35 wakeup mode (WKUP_MODE.PA35_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa35_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA35_MODE);
+}
+
+/**
+ * @brief Set the PA34 wakeup mode (WKUP_MODE.PA34_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa34_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA34_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA34_MODE_Msk, PMUC_WKUP_MODE_PA34_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA34 wakeup mode (WKUP_MODE.PA34_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa34_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA34_MODE);
+}
+
+/**
+ * @brief Set the PA33 wakeup mode (WKUP_MODE.PA33_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] mode  Wakeup mode (2 bits).
+ */
+static inline void ll_pmuc_wkup_pa33_set_mode(PMUC_TypeDef *PMUCx, uint32_t mode)
+{
+	MODIFY_REG(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA33_MODE,
+		   MAKE_REG_VAL(mode, PMUC_WKUP_MODE_PA33_MODE_Msk, PMUC_WKUP_MODE_PA33_MODE_Pos));
+}
+
+/**
+ * @brief Get the PA33 wakeup mode (WKUP_MODE.PA33_MODE).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Wakeup mode (2 bits).
+ */
+static inline uint32_t ll_pmuc_wkup_pa33_get_mode(PMUC_TypeDef *PMUCx)
+{
+	return GET_REG_VAL2(PMUCx->WKUP_MODE, PMUC_WKUP_MODE_PA33_MODE);
+}
+
+/*==============================================================================
+ * Counters
+ *============================================================================*/
+
+/**
+ * @brief Set the wakeup pin debounce counts (WKUP_CNT).
+ * @note The value is packed as PIN0_CNT[15:0] | (PIN1_CNT[15:0] << 16),
+ *       i.e. cnt = (pin1_cnt << 16) | pin0_cnt.
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] cnt Packed 16-bit debounce counts for PIN0 and PIN1.
+ */
+static inline void ll_pmuc_set_wkup_count(PMUC_TypeDef *PMUCx, uint32_t cnt)
+{
+	WRITE_REG(PMUCx->WKUP_CNT,
+		  cnt & PMUC_WKUP_CNT_PIN_DLY);
+}
+
+/**
+ * @brief Read the PA31 reset status (PRSR1.PA31).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa31(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA31) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA30 reset status (PRSR1.PA30).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa30(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA30) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA29 reset status (PRSR1.PA29).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa29(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA29) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA28 reset status (PRSR1.PA28).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa28(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA28) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA27 reset status (PRSR1.PA27).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa27(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA27) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA26 reset status (PRSR1.PA26).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa26(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA26) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA25 reset status (PRSR1.PA25).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa25(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA25) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA24 reset status (PRSR1.PA24).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa24(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA24) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA23 reset status (PRSR1.PA23).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa23(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA23) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA22 reset status (PRSR1.PA22).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa22(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA22) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA21 reset status (PRSR1.PA21).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa21(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA21) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA20 reset status (PRSR1.PA20).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa20(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA20) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA19 reset status (PRSR1.PA19).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa19(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA19) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA18 reset status (PRSR1.PA18).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa18(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA18) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA17 reset status (PRSR1.PA17).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa17(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA17) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA16 reset status (PRSR1.PA16).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa16(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA16) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA15 reset status (PRSR1.PA15).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa15(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA15) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA14 reset status (PRSR1.PA14).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa14(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA14) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA13 reset status (PRSR1.PA13).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa13(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA13) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA12 reset status (PRSR1.PA12).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa12(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA12) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA11 reset status (PRSR1.PA11).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa11(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA11) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA10 reset status (PRSR1.PA10).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa10(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA10) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA9 reset status (PRSR1.PA9).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa9(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA9) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA8 reset status (PRSR1.PA8).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa8(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA8) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA7 reset status (PRSR1.PA7).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa7(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA7) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA6 reset status (PRSR1.PA6).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa6(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA6) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA5 reset status (PRSR1.PA5).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa5(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA5) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA4 reset status (PRSR1.PA4).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa4(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA4) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA3 reset status (PRSR1.PA3).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa3(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA3) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA2 reset status (PRSR1.PA2).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa2(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA2) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA1 reset status (PRSR1.PA1).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa1(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA1) ? 1UL : 0UL;
+}
+
+/*==============================================================================
+ * Pin Reset Status (PRSR1 / PRSR2)
+ *============================================================================*/
+
+/**
+ * @brief Read the PA0 reset status (PRSR1.PA0).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr1_get_pa0(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR1, PMUC_PRSR1_PA0) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PRSR2 SA flag (PRSR2.SA).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_sa(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_SA) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PRSR2 SB flag (PRSR2.SB).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_sb(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_SB) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA57 reset status (PRSR2.PA57).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa57(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA57) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA56 reset status (PRSR2.PA56).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa56(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA56) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA55 reset status (PRSR2.PA55).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa55(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA55) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA54 reset status (PRSR2.PA54).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa54(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA54) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA53 reset status (PRSR2.PA53).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa53(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA53) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA52 reset status (PRSR2.PA52).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa52(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA52) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA51 reset status (PRSR2.PA51).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa51(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA51) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA50 reset status (PRSR2.PA50).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa50(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA50) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA49 reset status (PRSR2.PA49).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa49(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA49) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA48 reset status (PRSR2.PA48).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa48(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA48) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA47 reset status (PRSR2.PA47).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa47(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA47) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA46 reset status (PRSR2.PA46).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa46(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA46) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA45 reset status (PRSR2.PA45).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa45(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA45) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA44 reset status (PRSR2.PA44).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa44(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA44) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA43 reset status (PRSR2.PA43).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa43(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA43) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA42 reset status (PRSR2.PA42).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa42(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA42) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA41 reset status (PRSR2.PA41).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa41(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA41) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA40 reset status (PRSR2.PA40).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa40(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA40) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA39 reset status (PRSR2.PA39).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa39(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA39) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA38 reset status (PRSR2.PA38).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa38(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA38) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA37 reset status (PRSR2.PA37).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa37(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA37) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA36 reset status (PRSR2.PA36).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa36(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA36) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA35 reset status (PRSR2.PA35).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa35(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA35) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA34 reset status (PRSR2.PA34).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa34(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA34) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA33 reset status (PRSR2.PA33).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa33(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA33) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Read the PA32 reset status (PRSR2.PA32).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @return Non-zero when the pin reset state is set.
+ */
+static inline uint32_t ll_pmuc_prsr2_get_pa32(PMUC_TypeDef *PMUCx)
+{
+	return READ_BIT(PMUCx->PRSR2, PMUC_PRSR2_PA32) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Clear the PA31 reset flag (PRCR1.PA31, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa31(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA31);
+}
+
+/**
+ * @brief Clear the PA30 reset flag (PRCR1.PA30, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa30(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA30);
+}
+
+/**
+ * @brief Clear the PA29 reset flag (PRCR1.PA29, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa29(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA29);
+}
+
+/**
+ * @brief Clear the PA28 reset flag (PRCR1.PA28, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa28(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA28);
+}
+
+/**
+ * @brief Clear the PA27 reset flag (PRCR1.PA27, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa27(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA27);
+}
+
+/**
+ * @brief Clear the PA26 reset flag (PRCR1.PA26, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa26(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA26);
+}
+
+/**
+ * @brief Clear the PA25 reset flag (PRCR1.PA25, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa25(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA25);
+}
+
+/**
+ * @brief Clear the PA24 reset flag (PRCR1.PA24, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa24(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA24);
+}
+
+/**
+ * @brief Clear the PA23 reset flag (PRCR1.PA23, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa23(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA23);
+}
+
+/**
+ * @brief Clear the PA22 reset flag (PRCR1.PA22, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa22(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA22);
+}
+
+/**
+ * @brief Clear the PA21 reset flag (PRCR1.PA21, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa21(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA21);
+}
+
+/**
+ * @brief Clear the PA20 reset flag (PRCR1.PA20, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa20(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA20);
+}
+
+/**
+ * @brief Clear the PA19 reset flag (PRCR1.PA19, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa19(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA19);
+}
+
+/**
+ * @brief Clear the PA18 reset flag (PRCR1.PA18, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa18(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA18);
+}
+
+/**
+ * @brief Clear the PA17 reset flag (PRCR1.PA17, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa17(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA17);
+}
+
+/**
+ * @brief Clear the PA16 reset flag (PRCR1.PA16, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa16(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA16);
+}
+
+/**
+ * @brief Clear the PA15 reset flag (PRCR1.PA15, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa15(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA15);
+}
+
+/**
+ * @brief Clear the PA14 reset flag (PRCR1.PA14, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa14(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA14);
+}
+
+/**
+ * @brief Clear the PA13 reset flag (PRCR1.PA13, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa13(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA13);
+}
+
+/**
+ * @brief Clear the PA12 reset flag (PRCR1.PA12, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa12(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA12);
+}
+
+/**
+ * @brief Clear the PA11 reset flag (PRCR1.PA11, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa11(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA11);
+}
+
+/**
+ * @brief Clear the PA10 reset flag (PRCR1.PA10, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa10(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA10);
+}
+
+/**
+ * @brief Clear the PA9 reset flag (PRCR1.PA9, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa9(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA9);
+}
+
+/**
+ * @brief Clear the PA8 reset flag (PRCR1.PA8, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa8(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA8);
+}
+
+/**
+ * @brief Clear the PA7 reset flag (PRCR1.PA7, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa7(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA7);
+}
+
+/**
+ * @brief Clear the PA6 reset flag (PRCR1.PA6, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa6(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA6);
+}
+
+/**
+ * @brief Clear the PA5 reset flag (PRCR1.PA5, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa5(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA5);
+}
+
+/**
+ * @brief Clear the PA4 reset flag (PRCR1.PA4, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa4(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA4);
+}
+
+/**
+ * @brief Clear the PA3 reset flag (PRCR1.PA3, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa3(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA3);
+}
+
+/**
+ * @brief Clear the PA2 reset flag (PRCR1.PA2, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa2(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA2);
+}
+
+/**
+ * @brief Clear the PA1 reset flag (PRCR1.PA1, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa1(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA1);
+}
+
+/*==============================================================================
+ * Pin Reset Clear (PRCR1 / PRCR2)
+ *============================================================================*/
+
+/**
+ * @brief Clear the PA0 reset flag (PRCR1.PA0, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr1_clear_pa0(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR1, PMUC_PRCR1_PA0);
+}
+
+/**
+ * @brief Clear the PRCR2 SA flag (PRCR2.SA, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_sa(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_SA);
+}
+
+/**
+ * @brief Clear the PRCR2 SB flag (PRCR2.SB, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_sb(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_SB);
+}
+
+/**
+ * @brief Clear the PA57 reset flag (PRCR2.PA57, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa57(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA57);
+}
+
+/**
+ * @brief Clear the PA56 reset flag (PRCR2.PA56, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa56(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA56);
+}
+
+/**
+ * @brief Clear the PA55 reset flag (PRCR2.PA55, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa55(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA55);
+}
+
+/**
+ * @brief Clear the PA54 reset flag (PRCR2.PA54, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa54(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA54);
+}
+
+/**
+ * @brief Clear the PA53 reset flag (PRCR2.PA53, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa53(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA53);
+}
+
+/**
+ * @brief Clear the PA52 reset flag (PRCR2.PA52, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa52(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA52);
+}
+
+/**
+ * @brief Clear the PA51 reset flag (PRCR2.PA51, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa51(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA51);
+}
+
+/**
+ * @brief Clear the PA50 reset flag (PRCR2.PA50, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa50(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA50);
+}
+
+/**
+ * @brief Clear the PA49 reset flag (PRCR2.PA49, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa49(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA49);
+}
+
+/**
+ * @brief Clear the PA48 reset flag (PRCR2.PA48, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa48(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA48);
+}
+
+/**
+ * @brief Clear the PA47 reset flag (PRCR2.PA47, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa47(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA47);
+}
+
+/**
+ * @brief Clear the PA46 reset flag (PRCR2.PA46, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa46(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA46);
+}
+
+/**
+ * @brief Clear the PA45 reset flag (PRCR2.PA45, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa45(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA45);
+}
+
+/**
+ * @brief Clear the PA44 reset flag (PRCR2.PA44, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa44(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA44);
+}
+
+/**
+ * @brief Clear the PA43 reset flag (PRCR2.PA43, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa43(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA43);
+}
+
+/**
+ * @brief Clear the PA42 reset flag (PRCR2.PA42, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa42(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA42);
+}
+
+/**
+ * @brief Clear the PA41 reset flag (PRCR2.PA41, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa41(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA41);
+}
+
+/**
+ * @brief Clear the PA40 reset flag (PRCR2.PA40, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa40(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA40);
+}
+
+/**
+ * @brief Clear the PA39 reset flag (PRCR2.PA39, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa39(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA39);
+}
+
+/**
+ * @brief Clear the PA38 reset flag (PRCR2.PA38, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa38(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA38);
+}
+
+/**
+ * @brief Clear the PA37 reset flag (PRCR2.PA37, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa37(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA37);
+}
+
+/**
+ * @brief Clear the PA36 reset flag (PRCR2.PA36, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa36(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA36);
+}
+
+/**
+ * @brief Clear the PA35 reset flag (PRCR2.PA35, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa35(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA35);
+}
+
+/**
+ * @brief Clear the PA34 reset flag (PRCR2.PA34, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa34(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA34);
+}
+
+/**
+ * @brief Clear the PA33 reset flag (PRCR2.PA33, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa33(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA33);
+}
+
+/**
+ * @brief Clear the PA32 reset flag (PRCR2.PA32, write 1).
+ * @param[in] PMUCx PMUC instance pointer.
+ */
+static inline void ll_pmuc_prcr2_clear_pa32(PMUC_TypeDef *PMUCx)
+{
+	SET_BIT(PMUCx->PRCR2, PMUC_PRCR2_PA32);
+}
+
+/**
+ * @brief Set the PBR debug select (PBRCR.DBG_SEL).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] sel   Debug select (4 bits).
+ */
+static inline void ll_pmuc_pbr_set_dbg_sel(PMUC_TypeDef *PMUCx, uint32_t sel)
+{
+	MODIFY_REG(PMUCx->PBRCR, PMUC_PBRCR_DBG_SEL,
+		   MAKE_REG_VAL(sel, PMUC_PBRCR_DBG_SEL_Msk, PMUC_PBRCR_DBG_SEL_Pos));
+}
+
+/**
+ * @brief Set the PBR sense bit (PBRCR.SNS).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] en    Non-zero to set, zero to clear.
+ */
+static inline void ll_pmuc_pbr_set_sns(PMUC_TypeDef *PMUCx, uint32_t en)
+{
+	MODIFY_REG(PMUCx->PBRCR, PMUC_PBRCR_SNS, en ? PMUC_PBRCR_SNS : 0UL);
+}
+
+/*==============================================================================
+ * PBR Control (PBRCR)
+ *============================================================================*/
+
+/**
+ * @brief Set the PBR reset-toggle bit (PBRCR.RTO).
+ * @param[in] PMUCx PMUC instance pointer.
+ * @param[in] en    Non-zero to set, zero to clear.
+ */
+static inline void ll_pmuc_pbr_set_rto(PMUC_TypeDef *PMUCx, uint32_t en)
+{
+	MODIFY_REG(PMUCx->PBRCR, PMUC_PBRCR_RTO, en ? PMUC_PBRCR_RTO : 0UL);
 }
 
 #ifdef __cplusplus

@@ -188,6 +188,28 @@ static inline void ll_rtc_disable_alarm_interrupt(RTC_TypeDef *rtc)
 	CLEAR_BIT(rtc->CR, RTC_CR_ALRMIE);
 }
 
+/*==============================================================================
+ * Timestamp
+ *============================================================================*/
+
+/**
+ * @brief Enable timestamp capture (CR.TSE).
+ * @param[in] rtc RTC instance pointer.
+ */
+static inline void ll_rtc_enable_timestamp(RTC_TypeDef *rtc)
+{
+	SET_BIT(rtc->CR, RTC_CR_TSE);
+}
+
+/**
+ * @brief Disable timestamp capture (CR.TSE).
+ * @param[in] rtc RTC instance pointer.
+ */
+static inline void ll_rtc_disable_timestamp(RTC_TypeDef *rtc)
+{
+	CLEAR_BIT(rtc->CR, RTC_CR_TSE);
+}
+
 /**
  * @brief Enable the wakeup timer (CR.WUTE). The event sets ISR.WUTF.
  * @note To get an interrupt, also enable @ref ll_rtc_enable_wakeup_interrupt.
@@ -309,6 +331,39 @@ static inline void ll_rtc_wait_sync(RTC_TypeDef *rtc)
 static inline uint32_t ll_rtc_get_shift_pending_flag(RTC_TypeDef *rtc)
 {
 	return READ_BIT(rtc->ISR, RTC_ISR_SHPF) ? 1UL : 0UL;
+}
+
+/**< clk_rtc = clk_lxt32 (32.768kHz) */
+/** @} */
+
+/**
+ * @brief Get the timestamp overflow flag (ISR.TSOVF).
+ * @param[in] rtc RTC instance pointer.
+ * @return Non-zero when a second timestamp event occurred before the first one
+ *         was read (previous timestamp lost).
+ */
+static inline uint32_t ll_rtc_get_timestamp_overflow_flag(RTC_TypeDef *rtc)
+{
+	return READ_BIT(rtc->ISR, RTC_ISR_TSOVF) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the timestamp flag (ISR.TSF).
+ * @param[in] rtc RTC instance pointer.
+ * @return Non-zero when a timestamp event occurred.
+ */
+static inline uint32_t ll_rtc_get_timestamp_flag(RTC_TypeDef *rtc)
+{
+	return READ_BIT(rtc->ISR, RTC_ISR_TSF) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Clear the timestamp flag (ISR.TSF, rw0c: write 0 to clear).
+ * @param[in] rtc RTC instance pointer.
+ */
+static inline void ll_rtc_clear_timestamp_flag(RTC_TypeDef *rtc)
+{
+	CLEAR_BIT(rtc->ISR, RTC_ISR_TSF);
 }
 
 /**
@@ -497,104 +552,6 @@ static inline void ll_rtc_set_alarm_date(RTC_TypeDef *rtc, uint8_t wd, uint8_t m
 }
 
 /**
- * @brief Enable write protection (lock RTC registers)
- */
-static inline void ll_rtc_enable_write_protection(RTC_TypeDef *rtc)
-{
-	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
-	(void)rtc;
-}
-
-static inline void ll_rtc_disable_write_protection(RTC_TypeDef *rtc)
-{
-	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
-	(void)rtc;
-}
-
-/*==============================================================================
- * Low-Power Clock Select
- *============================================================================*/
-
-/** @defgroup LL_RTC_LPCLK RTC Low-Power Clock Source */
-/** @{ */
-#define LL_RTC_LPCLK_LRC10 0U /**< clk_rtc = clk_lrc10 (~10kHz) */
-#define LL_RTC_LPCLK_LXT32 1U /*==============================================================================
- * Timestamp
- *============================================================================*/
-
-/**
- * @brief Enable timestamp capture (CR.TSE).
- * @param[in] rtc RTC instance pointer.
- */
-static inline void ll_rtc_enable_timestamp(RTC_TypeDef *rtc)
-{
-	SET_BIT(rtc->CR, RTC_CR_TSE);
-}
-
-/**
- * @brief Disable timestamp capture (CR.TSE).
- * @param[in] rtc RTC instance pointer.
- */
-static inline void ll_rtc_disable_timestamp(RTC_TypeDef *rtc)
-{
-	CLEAR_BIT(rtc->CR, RTC_CR_TSE);
-}
-
-/**< clk_rtc = clk_lxt32 (32.768kHz) */
-/** @} */
-
-/**
- * @brief Select the clk_rtc low-power clock source (CR.LPCKSEL).
- * @param[in] rtc RTC instance pointer.
- * @param[in] src Use LL_RTC_LPCLK_xxx.
- */
-static inline void ll_rtc_set_lpclk_source(RTC_TypeDef *rtc, uint32_t src)
-{
-	MODIFY_REG(rtc->CR, RTC_CR_LPCKSEL,
-		   MAKE_REG_VAL(src, RTC_CR_LPCKSEL_Msk, RTC_CR_LPCKSEL_Pos));
-}
-
-/**
- * @brief Get the clk_rtc low-power clock source (CR.LPCKSEL).
- * @param[in] rtc RTC instance pointer.
- * @return Current LPCKSEL value.
- */
-static inline uint32_t ll_rtc_get_lpclk_source(RTC_TypeDef *rtc)
-{
-	return GET_REG_VAL2(rtc->CR, RTC_CR_LPCKSEL);
-}
-
-/**
- * @brief Get the timestamp overflow flag (ISR.TSOVF).
- * @param[in] rtc RTC instance pointer.
- * @return Non-zero when a second timestamp event occurred before the first one
- *         was read (previous timestamp lost).
- */
-static inline uint32_t ll_rtc_get_timestamp_overflow_flag(RTC_TypeDef *rtc)
-{
-	return READ_BIT(rtc->ISR, RTC_ISR_TSOVF) ? 1UL : 0UL;
-}
-
-/**
- * @brief Get the timestamp flag (ISR.TSF).
- * @param[in] rtc RTC instance pointer.
- * @return Non-zero when a timestamp event occurred.
- */
-static inline uint32_t ll_rtc_get_timestamp_flag(RTC_TypeDef *rtc)
-{
-	return READ_BIT(rtc->ISR, RTC_ISR_TSF) ? 1UL : 0UL;
-}
-
-/**
- * @brief Clear the timestamp flag (ISR.TSF, rw0c: write 0 to clear).
- * @param[in] rtc RTC instance pointer.
- */
-static inline void ll_rtc_clear_timestamp_flag(RTC_TypeDef *rtc)
-{
-	CLEAR_BIT(rtc->ISR, RTC_ISR_TSF);
-}
-
-/**
  * @brief Add one second to the calendar (SHIFTR.ADD1S).
  * @param[in] rtc RTC instance pointer.
  */
@@ -685,73 +642,18 @@ static inline uint32_t ll_rtc_read_backup(RTC_TypeDef *rtc, uint32_t idx)
 }
 
 /**
- * @brief Configure the PBR pad control register (PBRCR).
- * @param[in] rtc     RTC instance pointer.
- * @param[in] rto     RTO bit.
- * @param[in] sns     SNS bit.
- * @param[in] dbg_sel Debug select (4 bits).
+ * @brief Enable write protection (lock RTC registers)
  */
-static inline void ll_rtc_set_pbr_config(RTC_TypeDef *rtc, uint32_t rto, uint32_t sns,
-					 uint32_t dbg_sel)
+static inline void ll_rtc_enable_write_protection(RTC_TypeDef *rtc)
 {
-	MODIFY_REG(rtc->PBRCR, RTC_PBRCR_RTO | RTC_PBRCR_SNS | RTC_PBRCR_DBG_SEL,
-		   MAKE_REG_VAL(rto, RTC_PBRCR_RTO_Msk, RTC_PBRCR_RTO_Pos) |
-		   MAKE_REG_VAL(sns, RTC_PBRCR_SNS_Msk, RTC_PBRCR_SNS_Pos) |
-		   MAKE_REG_VAL(dbg_sel, RTC_PBRCR_DBG_SEL_Msk, RTC_PBRCR_DBG_SEL_Pos));
+	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
+	(void)rtc;
 }
 
-/**
- * @brief Write a PBR pad control register by index (PBR0R..PBR3R).
- * @param[in] rtc RTC instance pointer.
- * @param[in] idx PBR index, 0..3.
- * @param[in] val Raw register value.
- */
-static inline void ll_rtc_write_pbr(RTC_TypeDef *rtc, uint32_t idx, uint32_t val)
+static inline void ll_rtc_disable_write_protection(RTC_TypeDef *rtc)
 {
-	if (idx < 4U) {
-		(&rtc->PBR0R)[idx] = val;
-	}
-}
-
-/**
- * @brief Read a PBR pad control register by index (PBR0R..PBR3R).
- * @param[in] rtc RTC instance pointer.
- * @param[in] idx PBR index, 0..3.
- * @return Raw register value, or 0 if idx is out of range.
- */
-static inline uint32_t ll_rtc_read_pbr(RTC_TypeDef *rtc, uint32_t idx)
-{
-	return (idx < 4U) ? (&rtc->PBR0R)[idx] : 0UL;
-}
-
-/**
- * @brief Set the PA WKUP pull-down enable mask (PAWK1R.PE).
- * @param[in] rtc  RTC instance pointer.
- * @param[in] mask Pin mask (PA00..PA44), 1 = pull-down enabled by default.
- */
-static inline void ll_rtc_set_wkup_pull_down(RTC_TypeDef *rtc, uint32_t mask)
-{
-	WRITE_REG(rtc->PAWK1R, mask);
-}
-
-/**
- * @brief Set the PA WKUP pull strength mask (PAWK2R.PS).
- * @param[in] rtc  RTC instance pointer.
- * @param[in] mask Pin mask.
- */
-static inline void ll_rtc_set_wkup_pull_strength(RTC_TypeDef *rtc, uint32_t mask)
-{
-	WRITE_REG(rtc->PAWK2R, mask);
-}
-
-/**
- * @brief Set the PA WKUP input mask (PAWK3R.IS).
- * @param[in] rtc  RTC instance pointer.
- * @param[in] mask Pin mask.
- */
-static inline void ll_rtc_set_wkup_input(RTC_TypeDef *rtc, uint32_t mask)
-{
-	WRITE_REG(rtc->PAWK3R, mask);
+	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
+	(void)rtc;
 }
 
 #ifdef __cplusplus

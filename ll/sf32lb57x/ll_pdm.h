@@ -15,6 +15,31 @@
 extern "C" {
 #endif
 
+/** @brief Enable the synergy mode (CFG0.SYNERGY_EN). */
+static inline void ll_pdm_enable_synergy(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_SYNERGY_EN);
+}
+
+/** @brief Disable the synergy mode (CFG0.SYNERGY_EN). */
+static inline void ll_pdm_disable_synergy(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SYNERGY_EN);
+}
+
+	
+/** @brief Enable the same-edge sample mode (CFG0.SAME_EDGE_EN). */
+static inline void ll_pdm_enable_same_edge(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_SAME_EDGE_EN);
+}
+
+/** @brief Disable the same-edge sample mode (CFG0.SAME_EDGE_EN). */
+static inline void ll_pdm_disable_same_edge(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SAME_EDGE_EN);
+}
+
 /**
  * @brief Swap the right and left channels (CFG0.SWAP_EN).
  * @param[in] PDMx PDM instance pointer.
@@ -167,14 +192,29 @@ static inline void ll_pdm_set_left_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
  *============================================================================*/
 
 /**
- * @brief Set the number of delay cells before the data stream is sampled (CFG1.BUF_DLY).
+ * @brief Set the number of delay cells before the data stream is sampled (CFG1.BUF_DLY0/BUF_DLY1).
  * @param[in] PDMx PDM instance pointer.
  * @param[in] dly  Delay cell count (5 bits).
  */
 static inline void ll_pdm_set_buf_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_BUF_DLY,
-		   MAKE_REG_VAL(dly, PDM_CFG1_BUF_DLY_Msk, PDM_CFG1_BUF_DLY_Pos));
+	MODIFY_REG(PDMx->CFG1, PDM_CFG1_BUF_DLY0 | PDM_CFG1_BUF_DLY1,
+		   MAKE_REG_VAL(dly, PDM_CFG1_BUF_DLY0_Msk, PDM_CFG1_BUF_DLY0_Pos) |
+		   MAKE_REG_VAL(dly, PDM_CFG1_BUF_DLY1_Msk, PDM_CFG1_BUF_DLY1_Pos));
+}
+
+/** @brief Set the SINC filter shift (SINC_CFG.SINC_SHIFT). */
+static inline void ll_pdm_set_sinc_shift(PDM_TypeDef *PDMx, uint32_t shift)
+{
+	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_SHIFT,
+		   MAKE_REG_VAL(shift, PDM_SINC_CFG_SINC_SHIFT_Msk, PDM_SINC_CFG_SINC_SHIFT_Pos));
+}
+
+/** @brief Set the SINC filter differentiator select (SINC_CFG.SINC_DIFF_SEL). */
+static inline void ll_pdm_set_sinc_diff_sel(PDM_TypeDef *PDMx, uint32_t sel)
+{
+	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_DIFF_SEL,
+		   sel ? PDM_SINC_CFG_SINC_DIFF_SEL : 0U);
 }
 
 /**
@@ -201,6 +241,20 @@ static inline void ll_pdm_set_sinc_rate(PDM_TypeDef *PDMx, uint32_t rate)
 {
 	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_RATE,
 		   MAKE_REG_VAL(rate, PDM_SINC_CFG_SINC_RATE_Msk, PDM_SINC_CFG_SINC_RATE_Pos));
+}
+
+/** @brief Set the compensation filter bypass (COMP_FLT_CFG.COMP_BYPASS). */
+static inline void ll_pdm_set_comp_filter_bypass(PDM_TypeDef *PDMx, uint32_t en)
+{
+	MODIFY_REG(PDMx->COMP_FLT_CFG, PDM_COMP_FLT_CFG_COMP_BYPASS,
+		   en ? PDM_COMP_FLT_CFG_COMP_BYPASS : 0U);
+}
+
+/** @brief Set the compensation filter coefficient select (COMP_FLT_CFG.COEFF_SEL). */
+static inline void ll_pdm_set_comp_filter_coeff_sel(PDM_TypeDef *PDMx, uint32_t sel)
+{
+	MODIFY_REG(PDMx->COMP_FLT_CFG, PDM_COMP_FLT_CFG_COEFF_SEL,
+		   sel ? PDM_COMP_FLT_CFG_COEFF_SEL : 0U);
 }
 
 /**
@@ -280,44 +334,32 @@ static inline void ll_pdm_set_pga_gain_l(PDM_TypeDef *PDMx, uint32_t gain)
 		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_L_Msk, PDM_PGA_CFG_PGA_GAIN_L_Pos));
 }
 
-/*==============================================================================
- * Low-Pass Filter (LPF_CFG6)
- *============================================================================*/
-
-/**
- * @brief Bypass the low-pass filter (LPF_CFG6.LPF_BYPASS).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_lpf_bypass(PDM_TypeDef *PDMx)
+/** @brief Set the HBF2 bypass (HBF_CFG.HBF2_BYPASS). */
+static inline void ll_pdm_set_hbf2_bypass(PDM_TypeDef *PDMx, uint32_t en)
 {
-	SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
+	MODIFY_REG(PDMx->HBF_CFG, PDM_HBF_CFG_HBF2_BYPASS,
+		   en ? PDM_HBF_CFG_HBF2_BYPASS : 0U);
 }
 
-/**
- * @brief Enable the low-pass filter (LPF_CFG6.LPF_BYPASS = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_lpf_enable(PDM_TypeDef *PDMx)
+/** @brief Set the HBF2 gain enable (HBF_CFG.HBF2_GAIN_EN). */
+static inline void ll_pdm_set_hbf2_gain_enable(PDM_TypeDef *PDMx, uint32_t en)
 {
-	CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
+	MODIFY_REG(PDMx->HBF_CFG, PDM_HBF_CFG_HBF2_GAIN_EN,
+		   en ? PDM_HBF_CFG_HBF2_GAIN_EN : 0U);
 }
 
-/**
- * @brief Enable down-sampling in the LPF stage (LPF_CFG6.LPF_DS).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_lpf_ds_enable(PDM_TypeDef *PDMx)
+/** @brief Set the HBF1 bypass (HBF_CFG.HBF1_BYPASS). */
+static inline void ll_pdm_set_hbf1_bypass(PDM_TypeDef *PDMx, uint32_t en)
 {
-	SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
+	MODIFY_REG(PDMx->HBF_CFG, PDM_HBF_CFG_HBF1_BYPASS,
+		   en ? PDM_HBF_CFG_HBF1_BYPASS : 0U);
 }
 
-/**
- * @brief Disable down-sampling in the LPF stage (LPF_CFG6.LPF_DS = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_lpf_ds_disable(PDM_TypeDef *PDMx)
+/** @brief Set the HBF1 gain enable (HBF_CFG.HBF1_GAIN_EN). */
+static inline void ll_pdm_set_hbf1_gain_enable(PDM_TypeDef *PDMx, uint32_t en)
 {
-	CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
+	MODIFY_REG(PDMx->HBF_CFG, PDM_HBF_CFG_HBF1_GAIN_EN,
+		   en ? PDM_HBF_CFG_HBF1_GAIN_EN : 0U);
 }
 
 /**
@@ -372,17 +414,6 @@ static inline void ll_pdm_mask_dma_r(PDM_TypeDef *PDMx)
 static inline void ll_pdm_unmask_dma_r(PDM_TypeDef *PDMx)
 {
 	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_R);
-}
-
-/**
- * @brief Set the PCM sample shift (FIFO_CFG.PDM_SHIFT).
- * @param[in] PDMx   PDM instance pointer.
- * @param[in] shift  Sample shift (3 bits).
- */
-static inline void ll_pdm_set_shift(PDM_TypeDef *PDMx, uint32_t shift)
-{
-	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_PDM_SHIFT,
-		   MAKE_REG_VAL(shift, PDM_FIFO_CFG_PDM_SHIFT_Msk, PDM_FIFO_CFG_PDM_SHIFT_Pos));
 }
 
 /**
@@ -600,7 +631,6 @@ static inline void ll_pdm_clear_flag_overflow_r(PDM_TypeDef *PDMx)
 {
 	SET_BIT(PDMx->INT_CLR, PDM_INT_CLR_INT_CLR_R);
 }
-
 #ifdef __cplusplus
 }
 #endif

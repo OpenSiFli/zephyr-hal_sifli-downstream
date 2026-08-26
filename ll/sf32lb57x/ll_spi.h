@@ -11,6 +11,10 @@
 #include "spi.h"
 #include "cmsis_utils.h"
 
+
+
+
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -59,7 +63,6 @@ extern "C"
 /** @defgroup LL_SPI_CLOCKSRC LL SPI Clock Source */
 /** @{ */
 #define LL_SPI_CLOCKSRC_DIV 0x00000000U
-#define LL_SPI_CLOCKSRC_SYS SPI_CLK_CTRL_CLK_SEL
 /** @} */
 
 /** @defgroup LL_SPI_ENDIAN LL SPI FIFO Endian */
@@ -140,6 +143,128 @@ typedef struct
     uint32_t clk_sel; /**< Clock source, use @ref LL_SPI_CLOCKSRC_DIV or
                          @ref LL_SPI_CLOCKSRC_SYS. */
 } ll_spi_clock_config_t;
+
+/**
+ * @brief Enable or disable dynamic SSP work-width changes (TOP_CTRL.SSP_WORK_WIDTH_DYN_CHANGE).
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] en   Non-zero to enable dynamic width changes.
+ */
+static inline void ll_spi_set_dynamic_work_width(SPI_TypeDef *SPIx, uint32_t en)
+{
+    MODIFY_REG(SPIx->TOP_CTRL, SPI_TOP_CTRL_SSP_WORK_WIDTH_DYN_CHANGE,
+               en ? SPI_TOP_CTRL_SSP_WORK_WIDTH_DYN_CHANGE : 0UL);
+}
+
+/**
+ * @brief Set three-wire direction to TX (TOP_CTRL.TXD_OEN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_set_three_wire_tx(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_TXD_OEN);
+}
+
+/**
+ * @brief Set three-wire direction to RX (TOP_CTRL.TXD_OEN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_set_three_wire_rx(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_TXD_OEN);
+}
+
+/**
+ * @brief Enable three-wire half-duplex mode (TOP_CTRL.SPI_TRI_WIRE_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_enable_three_wire(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_SPI_TRI_WIRE_EN);
+}
+
+/**
+ * @brief Disable three-wire half-duplex mode (TOP_CTRL.SPI_TRI_WIRE_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_disable_three_wire(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_SPI_TRI_WIRE_EN);
+}
+
+/**
+ * @brief Select SPI_DI pin as data input source (TOP_CTRL.SPI_DI_SEL).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_select_data_input_from_spi_di(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_SPI_DI_SEL);
+}
+
+/**
+ * @brief Select SPI_DIO pin as data input source (TOP_CTRL.SPI_DI_SEL).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_select_data_input_from_spi_dio(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_SPI_DI_SEL);
+}
+
+/**
+ * @brief Configure SPI clock divider/source and enable SPI clock path.
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] cfg Pointer to clock configuration.
+ */
+static inline void ll_spi_config_clock(SPI_TypeDef *SPIx,
+                                       const ll_spi_clock_config_t *cfg)
+{
+    MODIFY_REG(SPIx->TOP_CTRL,
+               SPI_TOP_CTRL_CLK_DIV | SPI_TOP_CTRL_CLK_SEL |
+                   SPI_TOP_CTRL_CLK_SSP_EN,
+               ((cfg->clk_div << SPI_TOP_CTRL_CLK_DIV_Pos) &
+                SPI_TOP_CTRL_CLK_DIV_Msk) |
+                   cfg->clk_sel | SPI_TOP_CTRL_CLK_SSP_EN);
+}
+
+/**
+ * @brief Enable the SPI clock path (TOP_CTRL.CLK_SSP_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_enable_clock(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_CLK_SSP_EN);
+}
+
+/**
+ * @brief Disable the SPI clock path (TOP_CTRL.CLK_SSP_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_disable_clock(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL, SPI_TOP_CTRL_CLK_SSP_EN);
+}
+
+/**
+ * @brief Set the SPI clock source (TOP_CTRL.CLK_SEL).
+ * @param[in] SPIx   SPI instance pointer.
+ * @param[in] sel    Clock source, use @ref LL_SPI_CLOCKSRC_DIV or
+ *                   @ref LL_SPI_CLOCKSRC_SYS.
+ */
+static inline void ll_spi_set_clock_source(SPI_TypeDef *SPIx, uint32_t sel)
+{
+    MODIFY_REG(SPIx->TOP_CTRL, SPI_TOP_CTRL_CLK_SEL,
+               sel ? SPI_TOP_CTRL_CLK_SEL : 0UL);
+}
+
+/**
+ * @brief Set the SPI clock divider (TOP_CTRL.CLK_DIV).
+ * @param[in] SPIx   SPI instance pointer.
+ * @param[in] div    Clock divider field value.
+ */
+static inline void ll_spi_set_clock_divider(SPI_TypeDef *SPIx, uint32_t div)
+{
+    MODIFY_REG(SPIx->TOP_CTRL, SPI_TOP_CTRL_CLK_DIV,
+               MAKE_REG_VAL(div, SPI_TOP_CTRL_CLK_DIV_Msk, SPI_TOP_CTRL_CLK_DIV_Pos));
+}
 
 /**
  * @brief Configure SPI frame width and frame behavior fields.
@@ -542,26 +667,6 @@ static inline void ll_spi_set_timeout(SPI_TypeDef *SPIx, uint32_t timeout)
 }
 
 /**
- * @brief Write one 32-bit item to TX FIFO data port.
- * @param[in] SPIx SPI instance pointer.
- * @param[in] data 32-bit data payload.
- */
-static inline void ll_spi_transmit_data32(SPI_TypeDef *SPIx, uint32_t data)
-{
-    WRITE_REG(SPIx->DATA, data);
-}
-
-/**
- * @brief Read one 32-bit item from RX FIFO data port.
- * @param[in] SPIx SPI instance pointer.
- * @return 32-bit data payload.
- */
-static inline uint32_t ll_spi_receive_data32(SPI_TypeDef *SPIx)
-{
-    return READ_REG(SPIx->DATA);
-}
-
-/**
  * @brief Read the aggregate STATUS register.
  * @param[in] SPIx SPI instance pointer.
  * @return STATUS register value.
@@ -788,134 +893,188 @@ static inline uint32_t ll_spi_is_active_flag_busy(SPI_TypeDef *SPIx)
 }
 
 /**
- * @brief Configure the programmable serial protocol control register.
+ * @brief Write one 32-bit item to TX FIFO data port.
  * @param[in] SPIx SPI instance pointer.
- * @param[in] value Encoded PSP_CTRL field value.
+ * @param[in] data 32-bit data payload.
  */
-static inline void ll_spi_set_psp_control(SPI_TypeDef *SPIx, uint32_t value)
+static inline void ll_spi_transmit_data32(SPI_TypeDef *SPIx, uint32_t data)
 {
-    const uint32_t valid_mask = SPI_PSP_CTRL_EDMYSTOP |
-                                SPI_PSP_CTRL_DMYSTOP |
-                                SPI_PSP_CTRL_EDMYSTRT |
-                                SPI_PSP_CTRL_DMYSTRT |
-                                SPI_PSP_CTRL_STRTDLY |
-                                SPI_PSP_CTRL_SFRMWDTH |
-                                SPI_PSP_CTRL_SFRMDLY |
-                                SPI_PSP_CTRL_SFRMP |
-                                SPI_PSP_CTRL_FSRT |
-                                SPI_PSP_CTRL_ETDS |
-                                SPI_PSP_CTRL_SCMODE;
-
-    WRITE_REG(SPIx->PSP_CTRL, value & valid_mask);
+    WRITE_REG(SPIx->DATA, data);
 }
 
 /**
- * @brief Configure the network-mode control register.
+ * @brief Read one 32-bit item from RX FIFO data port.
  * @param[in] SPIx SPI instance pointer.
- * @param[in] value Encoded NW_CTRL field value.
+ * @return 32-bit data payload.
  */
-static inline void ll_spi_set_network_control(SPI_TypeDef *SPIx, uint32_t value)
+static inline uint32_t ll_spi_receive_data32(SPI_TypeDef *SPIx)
 {
-    const uint32_t valid_mask = SPI_NW_CTRL_RSTA | SPI_NW_CTRL_TTSA |
-                                SPI_NW_CTRL_FRDC | SPI_NW_CTRL_NET_WORK_MOD;
-
-    WRITE_REG(SPIx->NW_CTRL, value & valid_mask);
+    return READ_REG(SPIx->DATA);
 }
 
 /**
- * @brief Get the network-mode busy flag (NW_STATUS.NMBSY).
+ * @brief Write the frame header data (FRM_HDR_DATA.HDR_DATA).
  * @param[in] SPIx SPI instance pointer.
- * @return Non-zero when a network frame is active.
+ * @param[in] data 32-bit frame header data.
  */
-static inline uint32_t ll_spi_is_network_busy(SPI_TypeDef *SPIx)
+static inline void ll_spi_set_frame_header_data(SPI_TypeDef *SPIx, uint32_t data)
 {
-    return READ_BIT(SPIx->NW_STATUS, SPI_NW_STATUS_NMBSY);
+    WRITE_REG(SPIx->FRM_HDR_DATA, data);
 }
 
 /**
- * @brief Get the active network time slot (NW_STATUS.TSS).
+ * @brief Set the RWOT capture condition count (TOP_CTRL2.SSPRWOTCCM).
  * @param[in] SPIx SPI instance pointer.
- * @return Active time-slot number.
+ * @param[in] cnt   Capture condition count (16 bits).
  */
-static inline uint32_t ll_spi_get_network_time_slot(SPI_TypeDef *SPIx)
+static inline void ll_spi_set_rwot_capture_condition_count(SPI_TypeDef *SPIx, uint32_t cnt)
 {
-    return GET_REG_VAL2(SPIx->NW_STATUS, SPI_NW_STATUS_TSS);
+    MODIFY_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_SSPRWOTCCM,
+               MAKE_REG_VAL(cnt, SPI_TOP_CTRL2_SSPRWOTCCM_Msk, SPI_TOP_CTRL2_SSPRWOTCCM_Pos));
 }
 
 /**
- * @brief Mask or unmask the RWOT last-sample flag.
+ * @brief Select GPIO clock input for SPI clock (TOP_CTRL2.SELECT_GPIO_CLKI).
  * @param[in] SPIx SPI instance pointer.
- * @param[in] en   Non-zero to mask the last-sample flag.
+ */
+static inline void ll_spi_select_gpio_clki(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_SELECT_GPIO_CLKI);
+}
+
+/**
+ * @brief Deselect GPIO clock input for SPI clock (TOP_CTRL2.SELECT_GPIO_CLKI).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_deselect_gpio_clki(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_SELECT_GPIO_CLKI);
+}
+
+/**
+ * @brief Invert the RX clock (TOP_CTRL2.INV_RX_CLK).
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] en   Non-zero to invert RX clock.
+ */
+static inline void ll_spi_set_rx_clock_inversion(SPI_TypeDef *SPIx, uint32_t en)
+{
+    MODIFY_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_INV_RX_CLK,
+               en ? SPI_TOP_CTRL2_INV_RX_CLK : 0UL);
+}
+
+/**
+ * @brief Set the frame mode (TOP_CTRL2.FRM_MODE).
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] mode Frame mode, 0 or SPI_TOP_CTRL2_FRM_MODE.
+ */
+static inline void ll_spi_set_frame_mode(SPI_TypeDef *SPIx, uint32_t mode)
+{
+    MODIFY_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_FRM_MODE,
+               mode ? SPI_TOP_CTRL2_FRM_MODE : 0UL);
+}
+
+/**
+ * @brief Enable frame three-wire mode (TOP_CTRL2.FRM_TRI_WIRE_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_enable_frame_three_wire(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_FRM_TRI_WIRE_EN);
+}
+
+/**
+ * @brief Disable frame three-wire mode (TOP_CTRL2.FRM_TRI_WIRE_EN).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_disable_frame_three_wire(SPI_TypeDef *SPIx)
+{
+    CLEAR_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_FRM_TRI_WIRE_EN);
+}
+
+/**
+ * @brief Set the frame header length (TOP_CTRL2.FRM_HDR_LENGTH).
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] len   Frame header length (5 bits).
+ */
+static inline void ll_spi_set_frame_header_length(SPI_TypeDef *SPIx, uint32_t len)
+{
+    MODIFY_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_FRM_HDR_LENGTH,
+               MAKE_REG_VAL(len, SPI_TOP_CTRL2_FRM_HDR_LENGTH_Msk, SPI_TOP_CTRL2_FRM_HDR_LENGTH_Pos));
+}
+
+/**
+ * @brief Start frame transmission (TOP_CTRL2.FRM_START).
+ * @param[in] SPIx SPI instance pointer.
+ */
+static inline void ll_spi_start_frame(SPI_TypeDef *SPIx)
+{
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_FRM_START);
+}
+
+/**
+ * @brief Mask the last sample for RWOT capture (TOP_CTRL2.MASK_RWOT_LAST_SAMPLE).
+ * @param[in] SPIx SPI instance pointer.
+ * @param[in] en   Non-zero to mask last sample.
  */
 static inline void ll_spi_set_rwot_last_sample_mask(SPI_TypeDef *SPIx, uint32_t en)
 {
-    MODIFY_REG(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_MASK_RWOT_LAST_SAMPLE,
-               en ? SPI_RWOT_CTRL_MASK_RWOT_LAST_SAMPLE : 0UL);
+    MODIFY_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_MASK_RWOT_LAST_SAMPLE,
+               en ? SPI_TOP_CTRL2_MASK_RWOT_LAST_SAMPLE : 0UL);
 }
 
 /**
- * @brief Request clearing RWOT cycle counter.
+ * @brief Clear the RWOT cycle counter (TOP_CTRL2.CLR_RWOT_CYCLE).
  * @param[in] SPIx SPI instance pointer.
  */
 static inline void ll_spi_clear_rwot_cycle_counter(SPI_TypeDef *SPIx)
 {
-    SET_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_CLR_RWOT_CYCLE);
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_CLR_RWOT_CYCLE);
 }
 
 /**
- * @brief Request setting RWOT cycle counter.
+ * @brief Set the RWOT cycle counter (TOP_CTRL2.SET_RWOT_CYCLE).
  * @param[in] SPIx SPI instance pointer.
  */
 static inline void ll_spi_set_rwot_cycle_counter(SPI_TypeDef *SPIx)
 {
-    SET_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_SET_RWOT_CYCLE);
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_SET_RWOT_CYCLE);
 }
 
 /**
- * @brief Enable RWOT cycle counter.
+ * @brief Enable the RWOT cycle counter (TOP_CTRL2.CYCLE_RWOT_EN).
  * @param[in] SPIx SPI instance pointer.
  */
 static inline void ll_spi_enable_rwot_cycle_counter(SPI_TypeDef *SPIx)
 {
-    SET_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_CYCLE_RWOT_EN);
+    SET_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_CYCLE_RWOT_EN);
 }
 
 /**
- * @brief Disable RWOT cycle counter.
+ * @brief Disable the RWOT cycle counter (TOP_CTRL2.CYCLE_RWOT_EN).
  * @param[in] SPIx SPI instance pointer.
  */
 static inline void ll_spi_disable_rwot_cycle_counter(SPI_TypeDef *SPIx)
 {
-    CLEAR_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_CYCLE_RWOT_EN);
+    CLEAR_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_CYCLE_RWOT_EN);
 }
 
 /**
- * @brief Enable receive-only mode.
+ * @brief Check whether the RWOT flag is set (TOP_CTRL2.RWOT).
  * @param[in] SPIx SPI instance pointer.
+ * @return Non-zero when RWOT is set.
  */
-static inline void ll_spi_enable_receive_only(SPI_TypeDef *SPIx)
+static inline uint32_t ll_spi_is_active_flag_rwot(SPI_TypeDef *SPIx)
 {
-    SET_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_RWOT);
+    return READ_BIT(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_RWOT);
 }
 
 /**
- * @brief Disable receive-only mode.
+ * @brief Clear the RWOT flag by rw1c write (TOP_CTRL2.RWOT).
  * @param[in] SPIx SPI instance pointer.
  */
-static inline void ll_spi_disable_receive_only(SPI_TypeDef *SPIx)
+static inline void ll_spi_clear_flag_rwot(SPI_TypeDef *SPIx)
 {
-    CLEAR_BIT(SPIx->RWOT_CTRL, SPI_RWOT_CTRL_RWOT);
-}
-
-/**
- * @brief Configure receive-only cycle match value.
- * @param[in] SPIx SPI instance pointer.
- * @param[in] cycles Cycle match value.
- */
-static inline void ll_spi_set_rwot_cycle_match(SPI_TypeDef *SPIx,
-                                               uint32_t cycles)
-{
-    WRITE_REG(SPIx->RWOT_CCM, cycles);
+    WRITE_REG(SPIx->TOP_CTRL2, SPI_TOP_CTRL2_RWOT);
 }
 
 /**
@@ -935,88 +1094,6 @@ static inline void ll_spi_capture_rwot_counter(SPI_TypeDef *SPIx)
 static inline uint32_t ll_spi_get_rwot_counter_capture(SPI_TypeDef *SPIx)
 {
     return READ_REG(SPIx->RWOT_CVWRN);
-}
-
-/**
- * @brief Select SPI_DI pin as data input source.
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_select_data_input_from_spi_di(SPI_TypeDef *SPIx)
-{
-    CLEAR_BIT(SPIx->CLK_CTRL, SPI_CLK_CTRL_SPI_DI_SEL);
-}
-
-/**
- * @brief Select SPI_DIO pin as data input source.
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_select_data_input_from_spi_dio(SPI_TypeDef *SPIx)
-{
-    SET_BIT(SPIx->CLK_CTRL, SPI_CLK_CTRL_SPI_DI_SEL);
-}
-
-/**
- * @brief Configure SPI clock divider/source and enable SPI clock path.
- * @param[in] SPIx SPI instance pointer.
- * @param[in] cfg Pointer to clock configuration.
- */
-static inline void ll_spi_config_clock(SPI_TypeDef *SPIx,
-                                       const ll_spi_clock_config_t *cfg)
-{
-    MODIFY_REG(SPIx->CLK_CTRL,
-               SPI_CLK_CTRL_CLK_DIV | SPI_CLK_CTRL_CLK_SEL |
-                   SPI_CLK_CTRL_CLK_SSP_EN,
-               ((cfg->clk_div << SPI_CLK_CTRL_CLK_DIV_Pos) &
-                SPI_CLK_CTRL_CLK_DIV_Msk) |
-                   cfg->clk_sel | SPI_CLK_CTRL_CLK_SSP_EN);
-}
-
-/**
- * @brief Enable or disable dynamic SSP work-width changes.
- * @param[in] SPIx SPI instance pointer.
- * @param[in] en   Non-zero to enable dynamic width changes.
- */
-static inline void ll_spi_set_dynamic_work_width(SPI_TypeDef *SPIx, uint32_t en)
-{
-    MODIFY_REG(SPIx->TRIWIRE_CTRL,
-               SPI_TRIWIRE_CTRL_SSP_WORK_WIDTH_DYN_CHANGE,
-               en ? SPI_TRIWIRE_CTRL_SSP_WORK_WIDTH_DYN_CHANGE : 0UL);
-}
-
-/**
- * @brief Set three-wire direction to TX (DIO output).
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_set_three_wire_tx(SPI_TypeDef *SPIx)
-{
-    CLEAR_BIT(SPIx->TRIWIRE_CTRL, SPI_TRIWIRE_CTRL_TXD_OEN);
-}
-
-/**
- * @brief Set three-wire direction to RX (DIO input).
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_set_three_wire_rx(SPI_TypeDef *SPIx)
-{
-    SET_BIT(SPIx->TRIWIRE_CTRL, SPI_TRIWIRE_CTRL_TXD_OEN);
-}
-
-/**
- * @brief Enable three-wire half-duplex mode.
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_enable_three_wire(SPI_TypeDef *SPIx)
-{
-    SET_BIT(SPIx->TRIWIRE_CTRL, SPI_TRIWIRE_CTRL_SPI_TRI_WIRE_EN);
-}
-
-/**
- * @brief Disable three-wire half-duplex mode.
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_disable_three_wire(SPI_TypeDef *SPIx)
-{
-    CLEAR_BIT(SPIx->TRIWIRE_CTRL, SPI_TRIWIRE_CTRL_SPI_TRI_WIRE_EN);
 }
 
 #ifdef __cplusplus

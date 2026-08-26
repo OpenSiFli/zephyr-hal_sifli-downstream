@@ -591,6 +591,17 @@ typedef struct
 } ll_i2s_bt_phone_config_t;
 
 /**
+ * @brief Set the audio I2S slave timing merge master mode (AUDIO_I2S_SL_MERGE.MASTER_TIMING_MODE).
+ * @param[in] I2Sx I2S instance pointer.
+ * @param[in] en   Non-zero to enable master timing mode.
+ */
+static inline void ll_i2s_set_slave_merge_master_timing_mode(I2S_TypeDef *I2Sx, uint32_t en)
+{
+    MODIFY_REG(I2Sx->AUDIO_I2S_SL_MERGE, I2S_AUDIO_I2S_SL_MERGE_MASTER_TIMING_MODE,
+               en ? I2S_AUDIO_I2S_SL_MERGE_MASTER_TIMING_MODE : 0UL);
+}
+
+/**
  * @brief Disable BT phone path.
  * @param[in] I2Sx I2S instance pointer.
  */
@@ -953,6 +964,76 @@ static inline void ll_i2s_set_tx_eq_gain2(I2S_TypeDef *I2Sx,
                    I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN) |
                   ((g10 << I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN_Pos) &
                    I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN));
+}
+
+/**
+ * @brief Configure TX interface converter fields (TX_INTF_CONV).
+ * @param[in] I2Sx I2S instance pointer.
+ * @param[in] bypass  Non-zero to bypass conversion.
+ * @param[in] en      Non-zero to enable the converter.
+ * @param[in] mode    Converter mode.
+ * @param[in] deglitch Non-zero to enable clock deglitch.
+ * @param[in] pcm_width PCM width field value.
+ * @param[in] slot_cnt TDM slot count field value.
+ * @param[in] slot_width TDM slot width field value.
+ */
+static inline void ll_i2s_config_tx_intf_conv(I2S_TypeDef *I2Sx, uint32_t bypass,
+                                              uint32_t en, uint32_t mode,
+                                              uint32_t deglitch,
+                                              uint32_t pcm_width,
+                                              uint32_t slot_cnt,
+                                              uint32_t slot_width)
+{
+    MODIFY_REG(I2Sx->TX_INTF_CONV,
+               I2S_TX_INTF_CONV_BYPASS | I2S_TX_INTF_CONV_EN |
+                   I2S_TX_INTF_CONV_MODE | I2S_TX_INTF_CONV_CLK_DEGLITCH |
+                   I2S_TX_INTF_CONV_PCM_WIDTH | I2S_TX_INTF_CONV_TDM_SLOT_CNT |
+                   I2S_TX_INTF_CONV_TDM_SLOT_WIDTH,
+               (bypass ? I2S_TX_INTF_CONV_BYPASS : 0UL) |
+                   (en ? I2S_TX_INTF_CONV_EN : 0UL) |
+                   (mode ? I2S_TX_INTF_CONV_MODE : 0UL) |
+                   (deglitch ? I2S_TX_INTF_CONV_CLK_DEGLITCH : 0UL) |
+                   ((pcm_width << I2S_TX_INTF_CONV_PCM_WIDTH_Pos) &
+                    I2S_TX_INTF_CONV_PCM_WIDTH) |
+                   ((slot_cnt << I2S_TX_INTF_CONV_TDM_SLOT_CNT_Pos) &
+                    I2S_TX_INTF_CONV_TDM_SLOT_CNT) |
+                   ((slot_width << I2S_TX_INTF_CONV_TDM_SLOT_WIDTH_Pos) &
+                    I2S_TX_INTF_CONV_TDM_SLOT_WIDTH));
+}
+
+/**
+ * @brief Configure RX interface converter fields (RX_INTF_CONV).
+ * @param[in] I2Sx I2S instance pointer.
+ * @param[in] bypass  Non-zero to bypass conversion.
+ * @param[in] en      Non-zero to enable the converter.
+ * @param[in] mode    Converter mode.
+ * @param[in] deglitch Non-zero to enable clock deglitch.
+ * @param[in] pcm_width PCM width field value.
+ * @param[in] slot_cnt TDM slot count field value.
+ * @param[in] slot_width TDM slot width field value.
+ */
+static inline void ll_i2s_config_rx_intf_conv(I2S_TypeDef *I2Sx, uint32_t bypass,
+                                              uint32_t en, uint32_t mode,
+                                              uint32_t deglitch,
+                                              uint32_t pcm_width,
+                                              uint32_t slot_cnt,
+                                              uint32_t slot_width)
+{
+    MODIFY_REG(I2Sx->RX_INTF_CONV,
+               I2S_RX_INTF_CONV_BYPASS | I2S_RX_INTF_CONV_EN |
+                   I2S_RX_INTF_CONV_MODE | I2S_RX_INTF_CONV_CLK_DEGLITCH |
+                   I2S_RX_INTF_CONV_PCM_WIDTH | I2S_RX_INTF_CONV_TDM_SLOT_CNT |
+                   I2S_RX_INTF_CONV_TDM_SLOT_WIDTH,
+               (bypass ? I2S_RX_INTF_CONV_BYPASS : 0UL) |
+                   (en ? I2S_RX_INTF_CONV_EN : 0UL) |
+                   (mode ? I2S_RX_INTF_CONV_MODE : 0UL) |
+                   (deglitch ? I2S_RX_INTF_CONV_CLK_DEGLITCH : 0UL) |
+                   ((pcm_width << I2S_RX_INTF_CONV_PCM_WIDTH_Pos) &
+                    I2S_RX_INTF_CONV_PCM_WIDTH) |
+                   ((slot_cnt << I2S_RX_INTF_CONV_TDM_SLOT_CNT_Pos) &
+                    I2S_RX_INTF_CONV_TDM_SLOT_CNT) |
+                   ((slot_width << I2S_RX_INTF_CONV_TDM_SLOT_WIDTH_Pos) &
+                    I2S_RX_INTF_CONV_TDM_SLOT_WIDTH));
 }
 
 #ifdef __cplusplus

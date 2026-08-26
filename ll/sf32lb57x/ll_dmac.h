@@ -508,6 +508,95 @@ static inline uint32_t ll_dmac_get_debug_selection(DMAC_TypeDef *DMACx)
     return (READ_REG(DMACx->DBGSEL) & DMAC_DBGSEL_DBGSEL) >> DMAC_DBGSEL_DBGSEL_Pos;
 }
 
+
+/**
+     * @brief Select the DMA channel 1 request source (SELR1.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel1_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR1, DMAC_SELR1_CS,
+                   ((cs << DMAC_SELR1_CS_Pos) & DMAC_SELR1_CS));
+}
+
+/**
+     * @brief Select the DMA channel 2 request source (SELR2.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel2_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR2, DMAC_SELR2_CS,
+                   ((cs << DMAC_SELR2_CS_Pos) & DMAC_SELR2_CS));
+}
+
+/**
+     * @brief Select the DMA channel 3 request source (SELR3.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel3_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR3, DMAC_SELR3_CS,
+                   ((cs << DMAC_SELR3_CS_Pos) & DMAC_SELR3_CS));
+}
+
+/**
+     * @brief Select the DMA channel 4 request source (SELR4.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel4_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR4, DMAC_SELR4_CS,
+                   ((cs << DMAC_SELR4_CS_Pos) & DMAC_SELR4_CS));
+}
+
+/**
+     * @brief Select the DMA channel 5 request source (SELR5.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel5_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR5, DMAC_SELR5_CS,
+                   ((cs << DMAC_SELR5_CS_Pos) & DMAC_SELR5_CS));
+}
+
+/**
+     * @brief Select the DMA channel 6 request source (SELR6.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel6_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR6, DMAC_SELR6_CS,
+                   ((cs << DMAC_SELR6_CS_Pos) & DMAC_SELR6_CS));
+}
+
+/**
+     * @brief Select the DMA channel 7 request source (SELR7.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel7_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR7, DMAC_SELR7_CS,
+                   ((cs << DMAC_SELR7_CS_Pos) & DMAC_SELR7_CS));
+}
+
+/**
+     * @brief Select the DMA channel 8 request source (SELR8.CS).
+     * @param[in] DMACx DMAC instance pointer.
+     * @param[in] cs    Channel source select value.
+     */
+static inline void ll_dmac_set_channel8_source(DMAC_TypeDef *DMACx, uint32_t cs)
+{
+        MODIFY_REG(DMACx->SELR8, DMAC_SELR8_CS,
+                   ((cs << DMAC_SELR8_CS_Pos) & DMAC_SELR8_CS));
+}
+
 #ifdef __cplusplus
 }
 #endif

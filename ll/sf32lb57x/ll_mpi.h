@@ -78,32 +78,18 @@ static inline void ll_mpi_set_x16_mode(MPI_TypeDef *mpi, uint32_t en)
 	MODIFY_REG(mpi->CR, MPI_CR_MX16, en ? MPI_CR_MX16 : 0UL);
 }
 
-static inline void ll_mpi_set_prefetch_enable(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->CR, MPI_CR_PREFE, en ? MPI_CR_PREFE : 0UL);
-}
-
 /**
  * @brief Set protocol mode (SPI / OPI / HyperBus)
  */
 static inline void ll_mpi_set_protocol(MPI_TypeDef *mpi, uint32_t proto)
 {
-	if (proto == LL_MPI_PROTO_OPI || proto == LL_MPI_PROTO_HYPER) {
-		/* HyperBus also uses the octal (x8) interface. */
-		SET_BIT(mpi->CR, MPI_CR_OPIE);
-	} else {
-		CLEAR_BIT(mpi->CR, MPI_CR_OPIE);
-	}
-	if (proto == LL_MPI_PROTO_HYPER) {
-		SET_BIT(mpi->DCR, MPI_DCR_HYPER);
-	} else {
-		CLEAR_BIT(mpi->DCR, MPI_DCR_HYPER);
-	}
-}
+	uint32_t dcr_proto = (proto == LL_MPI_PROTO_HYPER) ?
+			MPI_DCR_PROT_HYPER_BUS : MPI_DCR_PROT_XCCELA;
 
-static inline void ll_mpi_set_hardware_interface_enable(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->CR, MPI_CR_HWIFE, en ? MPI_CR_HWIFE : 0UL);
+	MODIFY_REG(mpi->DCR, MPI_DCR_PROT, dcr_proto);
+	MODIFY_REG(mpi->CR, MPI_CR_OPIE,
+		   (proto == LL_MPI_PROTO_OPI || proto == LL_MPI_PROTO_HYPER) ?
+			   MPI_CR_OPIE : 0UL);
 }
 
 /**
@@ -185,24 +171,24 @@ static inline void ll_mpi_disable_status_match_interrupt(MPI_TypeDef *mpi)
 	CLEAR_BIT(mpi->CR, MPI_CR_SMIE);
 }
 
-static inline void ll_mpi_enable_fifo_overflow_interrupt(MPI_TypeDef *mpi)
+static inline void ll_mpi_enable_read_overflow_interrupt(MPI_TypeDef *mpi)
 {
-	SET_BIT(mpi->CR, MPI_CR_FOIE);
+	SET_BIT(mpi->CR, MPI_CR_ROIE);
 }
 
-static inline void ll_mpi_disable_fifo_overflow_interrupt(MPI_TypeDef *mpi)
+static inline void ll_mpi_disable_read_overflow_interrupt(MPI_TypeDef *mpi)
 {
-	CLEAR_BIT(mpi->CR, MPI_CR_FOIE);
+	CLEAR_BIT(mpi->CR, MPI_CR_ROIE);
 }
 
-static inline void ll_mpi_enable_fifo_underflow_interrupt(MPI_TypeDef *mpi)
+static inline void ll_mpi_enable_transfer_overflow_interrupt(MPI_TypeDef *mpi)
 {
-	SET_BIT(mpi->CR, MPI_CR_FUIE);
+	SET_BIT(mpi->CR, MPI_CR_TOIE);
 }
 
-static inline void ll_mpi_disable_fifo_underflow_interrupt(MPI_TypeDef *mpi)
+static inline void ll_mpi_disable_transfer_overflow_interrupt(MPI_TypeDef *mpi)
 {
-	CLEAR_BIT(mpi->CR, MPI_CR_FUIE);
+	CLEAR_BIT(mpi->CR, MPI_CR_TOIE);
 }
 
 static inline void ll_mpi_enable_transfer_complete_interrupt(MPI_TypeDef *mpi)
@@ -307,15 +293,7 @@ static inline void ll_mpi_write_data(MPI_TypeDef *mpi, uint32_t data)
  * @param[in] mpi MPI instance pointer.
  * @param[in] en Non-zero to enable fixed latency, zero otherwise.
  */
-static inline void ll_mpi_set_fixed_latency(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->DCR, MPI_DCR_FIXLAT, en ? MPI_DCR_FIXLAT : 0UL);
-}
-
-/*==============================================================================
- * Timing Configuration
- *============================================================================*/
-
+/* SF32LB57x removed DCR.FIXLAT; the fixed-latency API is not available. */
 /**
  * @brief Configure CS timing parameters (in MPI clock cycles)
  * @param cslmax  CS low max
@@ -334,34 +312,6 @@ static inline void ll_mpi_set_cs_timing(MPI_TypeDef *mpi, uint32_t cslmax, uint3
 		   MAKE_REG_VAL(cshmin, MPI_DCR_CSHMIN_Msk, MPI_DCR_CSHMIN_Pos));
 	MODIFY_REG(mpi->DCR, MPI_DCR_TRCMIN,
 		   MAKE_REG_VAL(trcmin, MPI_DCR_TRCMIN_Msk, MPI_DCR_TRCMIN_Pos));
-}
-
-/**
- * @brief Enable/disable the Xccela legacy protocol (DCR.XLEGACY).
- * @param[in] mpi MPI instance pointer.
- * @param[in] en  Non-zero to enable Xccela legacy mode, zero to disable it.
- */
-static inline void ll_mpi_set_xlegacy(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->DCR, MPI_DCR_XLEGACY, en ? MPI_DCR_XLEGACY : 0UL);
-}
-
-/**
- * @brief Enable DQS (data strobe) for OPI PSRAM
- */
-static inline void ll_mpi_enable_dqs(MPI_TypeDef *mpi)
-{
-	SET_BIT(mpi->DCR, MPI_DCR_DQSE);
-}
-
-/**
- * @brief Enable/disable DQS (data strobe) sampling (DCR.DQSE).
- * @param[in] mpi MPI instance pointer.
- * @param[in] en  Non-zero to enable DQS sampling, zero to disable it.
- */
-static inline void ll_mpi_set_dqs(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->DCR, MPI_DCR_DQSE, en ? MPI_DCR_DQSE : 0UL);
 }
 
 /**
@@ -395,6 +345,25 @@ static inline uint32_t ll_mpi_is_busy(MPI_TypeDef *mpi)
 	return READ_BIT(mpi->SR, MPI_SR_BUSY) ? 1UL : 0UL;
 }
 
+	
+/** @brief Check whether the command bus is busy (SR.CMDBUSY). */
+static inline uint32_t ll_mpi_is_cmd_busy(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_CMDBUSY) ? 1UL : 0UL;
+}
+
+/** @brief Check whether the AHB bus is busy (SR.AHBBUSY). */
+static inline uint32_t ll_mpi_is_ahb_busy(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_AHBBUSY) ? 1UL : 0UL;
+}
+
+/** @brief Check whether the device is idle (SR.IDLEF). */
+static inline uint32_t ll_mpi_is_idle(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->SR, MPI_SR_IDLEF) ? 1UL : 0UL;
+}
+
 static inline uint32_t ll_mpi_get_row_boundary_flag(MPI_TypeDef *mpi)
 {
 	return READ_BIT(mpi->SR, MPI_SR_RBXF) ? 1UL : 0UL;
@@ -410,14 +379,14 @@ static inline uint32_t ll_mpi_get_status_match_flag(MPI_TypeDef *mpi)
 	return READ_BIT(mpi->SR, MPI_SR_SMF) ? 1UL : 0UL;
 }
 
-static inline uint32_t ll_mpi_get_fifo_overflow_flag(MPI_TypeDef *mpi)
+static inline uint32_t ll_mpi_get_read_overflow_flag(MPI_TypeDef *mpi)
 {
-	return READ_BIT(mpi->SR, MPI_SR_FOF) ? 1UL : 0UL;
+	return READ_BIT(mpi->SR, MPI_SR_ROF) ? 1UL : 0UL;
 }
 
-static inline uint32_t ll_mpi_get_fifo_underflow_flag(MPI_TypeDef *mpi)
+static inline uint32_t ll_mpi_get_transfer_overflow_flag(MPI_TypeDef *mpi)
 {
-	return READ_BIT(mpi->SR, MPI_SR_FUF) ? 1UL : 0UL;
+	return READ_BIT(mpi->SR, MPI_SR_TOF) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -444,14 +413,14 @@ static inline void ll_mpi_clear_status_match_flag(MPI_TypeDef *mpi)
 	WRITE_REG(mpi->SCR, MPI_SCR_SMFC);
 }
 
-static inline void ll_mpi_clear_fifo_overflow_flag(MPI_TypeDef *mpi)
+static inline void ll_mpi_clear_read_overflow_flag(MPI_TypeDef *mpi)
 {
-	WRITE_REG(mpi->SCR, MPI_SCR_FOFC);
+	WRITE_REG(mpi->SCR, MPI_SCR_ROFC);
 }
 
-static inline void ll_mpi_clear_fifo_underflow_flag(MPI_TypeDef *mpi)
+static inline void ll_mpi_clear_transfer_overflow_flag(MPI_TypeDef *mpi)
 {
-	WRITE_REG(mpi->SCR, MPI_SCR_FUFC);
+	WRITE_REG(mpi->SCR, MPI_SCR_TOFC);
 }
 
 static inline void ll_mpi_clear_transfer_complete_flag(MPI_TypeDef *mpi)
@@ -731,15 +700,10 @@ static inline uint32_t ll_mpi_is_rx_fifo_empty(MPI_TypeDef *mpi)
 	return READ_BIT(mpi->FIFOCR, MPI_FIFOCR_RXE) ? 1UL : 0UL;
 }
 
-static inline void ll_mpi_set_debug_select(MPI_TypeDef *mpi, uint32_t sel)
+/** @brief Set the read data latency (MISCR.LC2DLY). */
+static inline void ll_mpi_set_lc2dly(MPI_TypeDef *mpi, uint32_t dly)
 {
-	MODIFY_REG(mpi->MISCR, MPI_MISCR_DBGSEL,
-		   MAKE_REG_VAL(sel, MPI_MISCR_DBGSEL_Msk, MPI_MISCR_DBGSEL_Pos));
-}
-
-static inline void ll_mpi_set_dtr_presample(MPI_TypeDef *mpi, uint32_t en)
-{
-	MODIFY_REG(mpi->MISCR, MPI_MISCR_DTRPRE, en ? MPI_MISCR_DTRPRE : 0UL);
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_LC2DLY, dly ? MPI_MISCR_LC2DLY : 0UL);
 }
 
 /**
@@ -750,31 +714,6 @@ static inline void ll_mpi_set_dtr_presample(MPI_TypeDef *mpi, uint32_t en)
 static inline void ll_mpi_set_sck_invert(MPI_TypeDef *mpi, uint32_t invert)
 {
 	MODIFY_REG(mpi->MISCR, MPI_MISCR_SCKINV, invert ? MPI_MISCR_SCKINV : 0UL);
-}
-
-/*==============================================================================
- * Clock Signal Control (MISCR)
- *============================================================================*/
-
-/**
- * @brief Set the receive clock inversion (MISCR.RXCLKINV).
- * @param[in] mpi     MPI instance pointer.
- * @param[in] invert Non-zero to invert the receive clock, zero otherwise.
- */
-static inline void ll_mpi_set_rx_clk_invert(MPI_TypeDef *mpi, uint32_t invert)
-{
-	MODIFY_REG(mpi->MISCR, MPI_MISCR_RXCLKINV, invert ? MPI_MISCR_RXCLKINV : 0UL);
-}
-
-/**
- * @brief Set the DQS delay (MISCR.DQSDLY).
- * @param[in] mpi MPI instance pointer.
- * @param[in] dly DQS delay value.
- */
-static inline void ll_mpi_set_dqs_delay(MPI_TypeDef *mpi, uint32_t dly)
-{
-	MODIFY_REG(mpi->MISCR, MPI_MISCR_DQSDLY,
-		   MAKE_REG_VAL(dly, MPI_MISCR_DQSDLY_Msk, MPI_MISCR_DQSDLY_Pos));
 }
 
 /**
@@ -788,10 +727,89 @@ static inline void ll_mpi_set_sck_delay(MPI_TypeDef *mpi, uint32_t dly)
 		   MAKE_REG_VAL(dly, MPI_MISCR_SCKDLY_Msk, MPI_MISCR_SCKDLY_Pos));
 }
 
-static inline void ll_mpi_set_rx_clk_delay(MPI_TypeDef *mpi, uint32_t dly)
+/*==============================================================================
+ * Clock Signal Control (MISCR)
+ *============================================================================*/
+
+/**
+
+ * @param[in] mpi MPI instance pointer.
+ * @param[in] dly DQS delay value.
+ */
+static inline void ll_mpi_set_dqs_delay(MPI_TypeDef *mpi, uint32_t dly)
 {
-	MODIFY_REG(mpi->MISCR, MPI_MISCR_RXCLKDLY,
-		   MAKE_REG_VAL(dly, MPI_MISCR_RXCLKDLY_Msk, MPI_MISCR_RXCLKDLY_Pos));
+	MODIFY_REG(mpi->MISCR, MPI_MISCR_DQSDLY,
+		   MAKE_REG_VAL(dly, MPI_MISCR_DQSDLY_Msk, MPI_MISCR_DQSDLY_Pos));
+}
+
+/*==============================================================================
+ * Calibration
+ *============================================================================*/
+
+/**
+ * @brief Start MPI delay calibration (CALCR.START).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_enable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CALCR, MPI_CALCR_START);
+}
+
+/**
+ * @brief Stop MPI delay calibration (CALCR.STOP).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_disable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CALCR, MPI_CALCR_STOP);
+}
+
+/**
+ * @brief Check whether delay calibration is running (CALRR.RUN).
+ * @param[in] mpi MPI instance pointer.
+ * @return Non-zero when calibration is running, 0 otherwise.
+ */
+static inline uint32_t ll_mpi_is_calibration_done(MPI_TypeDef *mpi)
+{
+	return READ_BIT(mpi->CALRR, MPI_CALRR_RUN) == 0UL ? 1UL : 0UL;
+}
+
+/**
+ * @brief Enable the OPI calibration data output (CALRR.CSMP).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_output_enable(MPI_TypeDef *mpi)
+{
+	SET_BIT(mpi->CALRR, MPI_CALRR_CSMP);
+}
+
+/**
+ * @brief Disable the OPI calibration data output (CALRR.CSMP = 0).
+ * @param[in] mpi MPI instance pointer.
+ */
+static inline void ll_mpi_calibration_output_disable(MPI_TypeDef *mpi)
+{
+	CLEAR_BIT(mpi->CALRR, MPI_CALRR_CSMP);
+}
+
+/**
+ * @brief Read the calibration delay value (CALRR.DSMP).
+ * @param[in] mpi MPI instance pointer.
+ * @return Calibration delay value.
+ */
+static inline uint32_t ll_mpi_get_calibration_delay(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->CALRR, MPI_CALRR_DSMP);
+}
+
+/**
+ * @brief Get the OPI calibration feedback data (CALRR.DSMP).
+ * @param[in] mpi MPI instance pointer.
+ * @return Calibration data.
+ */
+static inline uint32_t ll_mpi_get_calibration_data(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->CALRR, MPI_CALRR_DSMP);
 }
 
 /**
@@ -913,116 +931,23 @@ static inline void ll_mpi_set_watchdog(MPI_TypeDef *mpi, uint32_t val)
 	WRITE_REG(mpi->WDTR, val & (MPI_WDTR_EN | MPI_WDTR_TIMEOUT));
 }
 
-/**
- * @brief Set the prefetch starting address (PRSAR.SA[31:10]).
- * @param[in] mpi  MPI instance pointer.
- * @param[in] addr Starting address of the prefetch area.
- */
-static inline void ll_mpi_set_prefetch_start_address(MPI_TypeDef *mpi, uint32_t addr)
+/** @brief Enable CS2 (CR2.CS2E). */
+static inline void ll_mpi_enable_cs2(MPI_TypeDef *mpi)
 {
-	WRITE_REG(mpi->PRSAR, addr & MPI_PRSAR_SA_Msk);
+	SET_BIT(mpi->CR2, MPI_CR2_CS2E);
 }
 
-/**
- * @brief Set the prefetch ending address (PREAR.EA[31:10]).
- * @param[in] mpi  MPI instance pointer.
- * @param[in] addr Ending address of the prefetch area.
- */
-static inline void ll_mpi_set_prefetch_end_address(MPI_TypeDef *mpi, uint32_t addr)
+/** @brief Disable CS2 (CR2.CS2E). */
+static inline void ll_mpi_disable_cs2(MPI_TypeDef *mpi)
 {
-	WRITE_REG(mpi->PREAR, addr & MPI_PREAR_EA_Msk);
+	CLEAR_BIT(mpi->CR2, MPI_CR2_CS2E);
 }
 
-/*==============================================================================
- * Calibration
- *============================================================================*/
-
-/**
- * @brief Start MPI delay calibration (CALCR.EN).
- * @param[in] mpi MPI instance pointer.
- */
-static inline void ll_mpi_calibration_enable(MPI_TypeDef *mpi)
+/** @brief Set CS1 size (CR2.CS1SIZE). */
+static inline void ll_mpi_set_cs1_size(MPI_TypeDef *mpi, uint32_t size)
 {
-	SET_BIT(mpi->CALCR, MPI_CALCR_EN);
-}
-
-/**
- * @brief Stop MPI delay calibration (CALCR.EN).
- * @param[in] mpi MPI instance pointer.
- */
-static inline void ll_mpi_calibration_disable(MPI_TypeDef *mpi)
-{
-	CLEAR_BIT(mpi->CALCR, MPI_CALCR_EN);
-}
-
-/**
- * @brief Check whether delay calibration is complete (CALCR.DONE).
- * @param[in] mpi MPI instance pointer.
- * @return Non-zero when calibration is done, 0 otherwise.
- */
-static inline uint32_t ll_mpi_is_calibration_done(MPI_TypeDef *mpi)
-{
-	return READ_BIT(mpi->CALCR, MPI_CALCR_DONE) != 0UL;
-}
-
-/**
- * @brief Read the calibration delay value (CALCR.DELAY).
- * @param[in] mpi MPI instance pointer.
- * @return Calibration delay value.
- */
-static inline uint32_t ll_mpi_get_calibration_delay(MPI_TypeDef *mpi)
-{
-	return GET_REG_VAL2(mpi->CALCR, MPI_CALCR_DELAY);
-}
-
-/**
- * @brief Enable the OPI calibration data output (CALDOR.EN).
- * @param[in] mpi MPI instance pointer.
- */
-static inline void ll_mpi_calibration_output_enable(MPI_TypeDef *mpi)
-{
-	SET_BIT(mpi->CALDOR, MPI_CALDOR_EN);
-}
-
-/**
- * @brief Disable the OPI calibration data output (CALDOR.EN = 0).
- * @param[in] mpi MPI instance pointer.
- */
-static inline void ll_mpi_calibration_output_disable(MPI_TypeDef *mpi)
-{
-	CLEAR_BIT(mpi->CALDOR, MPI_CALDOR_EN);
-}
-
-/**
- * @brief Get the OPI calibration feedback data (CALDOR.DATA).
- * @param[in] mpi MPI instance pointer.
- * @return Calibration data.
- */
-static inline uint32_t ll_mpi_get_calibration_data(MPI_TypeDef *mpi)
-{
-	return GET_REG_VAL2(mpi->CALDOR, MPI_CALDOR_DATA);
-}
-
-/**
- * @brief Set the APM32 falling-edge TCPH (APM32CR.TCPHW).
- * @param[in] mpi   MPI instance pointer.
- * @param[in] tcphw TCPH falling value (4 bits).
- */
-static inline void ll_mpi_set_apm32_tcphw(MPI_TypeDef *mpi, uint32_t tcphw)
-{
-	MODIFY_REG(mpi->APM32CR, MPI_APM32CR_TCPHW,
-		   MAKE_REG_VAL(tcphw, MPI_APM32CR_TCPHW_Msk, MPI_APM32CR_TCPHW_Pos));
-}
-
-/**
- * @brief Set the APM32 rising-edge TCPH (APM32CR.TCPHR).
- * @param[in] mpi   MPI instance pointer.
- * @param[in] tcphr TCPH rising value (4 bits).
- */
-static inline void ll_mpi_set_apm32_tcphr(MPI_TypeDef *mpi, uint32_t tcphr)
-{
-	MODIFY_REG(mpi->APM32CR, MPI_APM32CR_TCPHR,
-		   MAKE_REG_VAL(tcphr, MPI_APM32CR_TCPHR_Msk, MPI_APM32CR_TCPHR_Pos));
+	MODIFY_REG(mpi->CR2, MPI_CR2_CS1SIZE,
+		   MAKE_REG_VAL(size, MPI_CR2_CS1SIZE_Msk, MPI_CR2_CS1SIZE_Pos));
 }
 
 static inline void ll_mpi_set_loop_command(MPI_TypeDef *mpi, uint32_t loop)
@@ -1031,54 +956,101 @@ static inline void ll_mpi_set_loop_command(MPI_TypeDef *mpi, uint32_t loop)
 		   MAKE_REG_VAL(loop, MPI_CR2_LOOP_Msk, MPI_CR2_LOOP_Pos));
 }
 
-/**
- * @brief Set the OPI output delay of a signal line (OPIDLY_OCR1.SO0..SO7).
- * @param[in] mpi   MPI instance pointer.
- * @param[in] pin   Signal line index, 0..7.
- * @param[in] delay Output delay (4 bits).
- */
-static inline void ll_mpi_set_opi_output_delay(MPI_TypeDef *mpi, uint32_t pin, uint32_t delay)
+/** @brief Set the device configuration format (DCR2.CFMT). */
+static inline void ll_mpi_set_cfmt(MPI_TypeDef *mpi, uint32_t fmt)
 {
-	uint32_t msk, pos;
+	MODIFY_REG(mpi->DCR2, MPI_DCR2_CFMT, fmt ? MPI_DCR2_CFMT : 0UL);
+}
 
-	switch (pin) {
-	case 0U: msk = MPI_OPIDLY_OCR1_SO0_Msk; pos = MPI_OPIDLY_OCR1_SO0_Pos; break;
-	case 1U: msk = MPI_OPIDLY_OCR1_SO1_Msk; pos = MPI_OPIDLY_OCR1_SO1_Pos; break;
-	case 2U: msk = MPI_OPIDLY_OCR1_SO2_Msk; pos = MPI_OPIDLY_OCR1_SO2_Pos; break;
-	case 3U: msk = MPI_OPIDLY_OCR1_SO3_Msk; pos = MPI_OPIDLY_OCR1_SO3_Pos; break;
-	case 4U: msk = MPI_OPIDLY_OCR1_SO4_Msk; pos = MPI_OPIDLY_OCR1_SO4_Pos; break;
-	case 5U: msk = MPI_OPIDLY_OCR1_SO5_Msk; pos = MPI_OPIDLY_OCR1_SO5_Pos; break;
-	case 6U: msk = MPI_OPIDLY_OCR1_SO6_Msk; pos = MPI_OPIDLY_OCR1_SO6_Pos; break;
-	case 7U: msk = MPI_OPIDLY_OCR1_SO7_Msk; pos = MPI_OPIDLY_OCR1_SO7_Pos; break;
-	default: return;
-	}
-	MODIFY_REG(mpi->OPIDLY_OCR1, msk, MAKE_REG_VAL(delay, msk, pos));
+/** @brief Set the bus type (DCR2.BTYPE). */
+static inline void ll_mpi_set_btype(MPI_TypeDef *mpi, uint32_t type)
+{
+	MODIFY_REG(mpi->DCR2, MPI_DCR2_BTYPE, type ? MPI_DCR2_BTYPE : 0UL);
 }
 
 /**
- * @brief Set the OPI input delay of a signal line (OPIDLY_ICR1.SI0..SI7).
+ * @brief Set the APM32 falling-edge TCPH (DCR2.TCPHW).
  * @param[in] mpi   MPI instance pointer.
- * @param[in] pin   Signal line index, 0..7.
- * @param[in] delay Input delay (4 bits).
+ * @param[in] tcphw TCPH falling value (4 bits).
  */
-static inline void ll_mpi_set_opi_input_delay(MPI_TypeDef *mpi, uint32_t pin, uint32_t delay)
+static inline void ll_mpi_set_apm32_tcphw(MPI_TypeDef *mpi, uint32_t tcphw)
 {
-	uint32_t msk, pos;
-
-	switch (pin) {
-	case 0U: msk = MPI_OPIDLY_ICR1_SI0_Msk; pos = MPI_OPIDLY_ICR1_SI0_Pos; break;
-	case 1U: msk = MPI_OPIDLY_ICR1_SI1_Msk; pos = MPI_OPIDLY_ICR1_SI1_Pos; break;
-	case 2U: msk = MPI_OPIDLY_ICR1_SI2_Msk; pos = MPI_OPIDLY_ICR1_SI2_Pos; break;
-	case 3U: msk = MPI_OPIDLY_ICR1_SI3_Msk; pos = MPI_OPIDLY_ICR1_SI3_Pos; break;
-	case 4U: msk = MPI_OPIDLY_ICR1_SI4_Msk; pos = MPI_OPIDLY_ICR1_SI4_Pos; break;
-	case 5U: msk = MPI_OPIDLY_ICR1_SI5_Msk; pos = MPI_OPIDLY_ICR1_SI5_Pos; break;
-	case 6U: msk = MPI_OPIDLY_ICR1_SI6_Msk; pos = MPI_OPIDLY_ICR1_SI6_Pos; break;
-	case 7U: msk = MPI_OPIDLY_ICR1_SI7_Msk; pos = MPI_OPIDLY_ICR1_SI7_Pos; break;
-	default: return;
-	}
-	MODIFY_REG(mpi->OPIDLY_ICR1, msk, MAKE_REG_VAL(delay, msk, pos));
+	MODIFY_REG(mpi->DCR2, MPI_DCR2_TCPHW,
+		   MAKE_REG_VAL(tcphw, MPI_DCR2_TCPHW_Msk, MPI_DCR2_TCPHW_Pos));
 }
 
+/**
+ * @brief Set the APM32 rising-edge TCPH (DCR2.TCPHR).
+ * @param[in] mpi   MPI instance pointer.
+ * @param[in] tcphr TCPH rising value (4 bits).
+ */
+static inline void ll_mpi_set_apm32_tcphr(MPI_TypeDef *mpi, uint32_t tcphr)
+{
+	MODIFY_REG(mpi->DCR2, MPI_DCR2_TCPHR,
+		   MAKE_REG_VAL(tcphr, MPI_DCR2_TCPHR_Msk, MPI_DCR2_TCPHR_Pos));
+}
+
+/** @brief Set the command 2 start address (CTRSAR2.SA). */
+static inline void ll_mpi_set_command2_start_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	MODIFY_REG(mpi->CTRSAR2, MPI_CTRSAR2_SA,
+		   MAKE_REG_VAL(addr, MPI_CTRSAR2_SA_Msk, MPI_CTRSAR2_SA_Pos));
+}
+
+/** @brief Set the command 2 end address (CTREAR2.EA). */
+static inline void ll_mpi_set_command2_end_address(MPI_TypeDef *mpi, uint32_t addr)
+{
+	MODIFY_REG(mpi->CTREAR2, MPI_CTREAR2_EA,
+		   MAKE_REG_VAL(addr, MPI_CTREAR2_EA_Msk, MPI_CTREAR2_EA_Pos));
+}
+
+/** @brief Set the command 2 nonce A (NONCEA2.NONCEA). */
+static inline void ll_mpi_set_nonce2_a(MPI_TypeDef *mpi, uint32_t nonce)
+{
+	WRITE_REG(mpi->NONCEA2, nonce);
+}
+
+/** @brief Set the command 2 nonce B (NONCEB2.NONCEB). */
+static inline void ll_mpi_set_nonce2_b(MPI_TypeDef *mpi, uint32_t nonce)
+{
+	WRITE_REG(mpi->NONCEB2, nonce);
+}
+
+static inline void ll_mpi_set_debug_select(MPI_TypeDef *mpi, uint32_t sel)
+{
+	MODIFY_REG(mpi->DBGR, MPI_DBGR_DBGSEL,
+		   MAKE_REG_VAL(sel, MPI_DBGR_DBGSEL_Msk, MPI_DBGR_DBGSEL_Pos));
+}
+
+/** @brief Get the PHY state (DBGR.PHY_STATE). */
+static inline uint32_t ll_mpi_get_phy_state(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->DBGR, MPI_DBGR_PHY_STATE);
+}
+
+/** @brief Get the AHB1 master (DBGR.AHB1_MASTER). */
+static inline uint32_t ll_mpi_get_ahb1_master(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->DBGR, MPI_DBGR_AHB1_MASTER);
+}
+
+/** @brief Get the AHB1 state (DBGR.AHB1_STATE). */
+static inline uint32_t ll_mpi_get_ahb1_state(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->DBGR, MPI_DBGR_AHB1_STATE);
+}
+
+/** @brief Get the AHB0 master (DBGR.AHB0_MASTER). */
+static inline uint32_t ll_mpi_get_ahb0_master(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->DBGR, MPI_DBGR_AHB0_MASTER);
+}
+
+/** @brief Get the AHB0 state (DBGR.AHB0_STATE). */
+static inline uint32_t ll_mpi_get_ahb0_state(MPI_TypeDef *mpi)
+{
+	return GET_REG_VAL2(mpi->DBGR, MPI_DBGR_AHB0_STATE);
+}
 #ifdef __cplusplus
 }
 #endif

@@ -408,23 +408,6 @@ static inline void ll_lcdc_layer_set_line_fetch_mode(LCD_IF_TypeDef *lcd, uint32
 	}
 }
 
-/**
- * @brief Enable/disable layer prefetch (LAYERx_CONFIG.PREFETCH_EN).
- * @param[in] lcd   LCD_IF instance pointer.
- * @param[in] layer Layer index, 0 or 1.
- * @param[in] en    Non-zero to enable prefetch, zero to disable.
- */
-static inline void ll_lcdc_layer_set_prefetch(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t en)
-{
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_PREFETCH_EN,
-			   en ? LCD_IF_LAYER0_CONFIG_PREFETCH_EN : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_PREFETCH_EN,
-			   en ? LCD_IF_LAYER1_CONFIG_PREFETCH_EN : 0UL);
-	}
-}
-
 /*==============================================================================
  * Layer Configuration (Layer 0 / Layer 1)
  *============================================================================*/
@@ -558,165 +541,6 @@ static inline void ll_lcdc_layer_set_fill(LCD_IF_TypeDef *lcd, uint32_t layer, u
 	}
 }
 
-/*==============================================================================
- * eZip Decompression (Layer 0)
- *============================================================================*/
-
-/**
- * @brief Configure layer 0 decompression (LAYER0_DECOMP).
- * @param[in] lcd LCD_IF instance pointer.
- * @param[in] col_size Number of columns in a line of the original image.
- * @param[in] target_words Size of a single channel data before decompression,
- *                         in half words.
- * @param[in] en Non-zero to enable decompression, zero to disable it.
- * @note eZip standalone DMA source/dest addresses belong to the separate EZIP
- *       module, not to these LCDC registers.
- */
-static inline void ll_lcdc_ezip_set_config(LCD_IF_TypeDef *lcd, uint16_t col_size,
-					   uint16_t target_words, uint32_t en)
-{
-	WRITE_REG(lcd->LAYER0_DECOMP,
-		  MAKE_REG_VAL(en, LCD_IF_LAYER0_DECOMP_ENABLE_Msk, LCD_IF_LAYER0_DECOMP_ENABLE_Pos) |
-		  MAKE_REG_VAL(target_words, LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Msk,
-			       LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Pos) |
-		  MAKE_REG_VAL(col_size, LCD_IF_LAYER0_DECOMP_COL_SIZE_Msk,
-			       LCD_IF_LAYER0_DECOMP_COL_SIZE_Pos));
-}
-
-/**
- * @brief Get the layer 0 decompression CFG0 reserved field.
- * @param[in] lcd LCD_IF instance pointer.
- * @return CFG0 reserved field value.
- */
-static inline uint32_t ll_lcdc_ezip_get_cfg0_reserved(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG0,
-			    LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED);
-}
-
-/**
- * @brief Set the layer 0 decompression CFG0 reserved field.
- * @param[in] lcd   LCD_IF instance pointer.
- * @param[in] value CFG0 reserved field value.
- */
-static inline void ll_lcdc_ezip_set_cfg0_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
-{
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
-		   LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED,
-		   MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Pos));
-}
-
-/*==============================================================================
- * Layer 0 Decompression Config (LAYER0_DECOMP_CFG0 / LAYER0_DECOMP_CFG1)
- *============================================================================*/
-
-/**
- * @brief Configure the layer 0 decompression quality table (LAYER0_DECOMP_CFG0).
- * @param[in] lcd            LCD_IF instance pointer.
- * @param[in] extra_high     Extra bit for high-quality block (4 bits).
- * @param[in] extra_threshold Threshold to distinguish high/low quality (4 bits).
- * @param[in] use_lossless   Condition to increase qidx (4 bits).
- * @param[in] lossless_qidx1 Up level for adjusted qidx (4 bits).
- * @param[in] lossless_qidx2 Condition to decrease qidx (4 bits).
- */
-static inline void ll_lcdc_ezip_set_cfg0(LCD_IF_TypeDef *lcd, uint32_t extra_high,
-					 uint32_t extra_threshold, uint32_t use_lossless,
-					 uint32_t lossless_qidx1, uint32_t lossless_qidx2)
-{
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
-		   LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH |
-			   LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD |
-			   LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1 |
-			   LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2,
-		   MAKE_REG_VAL(extra_high, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Pos) |
-		   MAKE_REG_VAL(extra_threshold, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Pos) |
-		   MAKE_REG_VAL(use_lossless, LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Pos) |
-		   MAKE_REG_VAL(lossless_qidx1, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Pos) |
-		   MAKE_REG_VAL(lossless_qidx2, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Pos));
-}
-
-/**
- * @brief Configure the layer 0 decompression block/line options (LAYER0_DECOMP_CFG1).
- * @param[in] lcd             LCD_IF instance pointer.
- * @param[in] extra_low       Extra bit for low-quality block (4 bits).
- * @param[in] block_min_qidx  Minimum qidx for block mode (4 bits).
- * @param[in] line_min_qidx   Minimum qidx for line mode (4 bits).
- * @param[in] failover_r      Failover target bits (Red, 4 bits).
- * @param[in] failover_g      Failover target bits (Green, 4 bits).
- * @param[in] failover_b      Failover target bits (Blue, 4 bits).
- * @param[in] dither          Dithering function (1 bit).
- * @param[in] block_width     Block size: 0 = 16 pixels, 1 = 32 pixels.
- */
-static inline void ll_lcdc_ezip_set_cfg1(LCD_IF_TypeDef *lcd, uint32_t extra_low,
-					 uint32_t block_min_qidx, uint32_t line_min_qidx,
-					 uint32_t failover_r, uint32_t failover_g,
-					 uint32_t failover_b, uint32_t dither,
-					 uint32_t block_width)
-{
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
-		   LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW |
-			   LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B |
-			   LCD_IF_LAYER0_DECOMP_CFG1_DITHER |
-			   LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH,
-		   MAKE_REG_VAL(extra_low, LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Pos) |
-		   MAKE_REG_VAL(block_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Pos) |
-		   MAKE_REG_VAL(line_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Pos) |
-		   MAKE_REG_VAL(failover_r, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Pos) |
-		   MAKE_REG_VAL(failover_g, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Pos) |
-		   MAKE_REG_VAL(failover_b, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Pos) |
-		   (dither ? LCD_IF_LAYER0_DECOMP_CFG1_DITHER : 0UL) |
-		   (block_width ? LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH : 0UL));
-}
-
-/**
- * @brief Get the layer 0 decompression CFG1 reserved field.
- * @param[in] lcd LCD_IF instance pointer.
- * @return CFG1 reserved field value.
- */
-static inline uint32_t ll_lcdc_ezip_get_cfg1_reserved(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG1,
-			    LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED);
-}
-
-/**
- * @brief Set the layer 0 decompression CFG1 reserved field.
- * @param[in] lcd   LCD_IF instance pointer.
- * @param[in] value CFG1 reserved field value.
- */
-static inline void ll_lcdc_ezip_set_cfg1_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
-{
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
-		   LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED,
-		   MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Pos));
-}
-
-/**
- * @brief Get the layer 0 decompression buffer maximum usage.
- */
-static inline uint32_t ll_lcdc_ezip_get_status(LCD_IF_TypeDef *lcd)
-{
-	return READ_REG(lcd->LAYER0_DECOMP_STAT);
-}
-
 /**
  * @brief Load the LFSR init value (DITHER_CONF.LFSR_LOAD, write 1 to load).
  * @param[in] lcd LCD_IF instance pointer.
@@ -787,16 +611,133 @@ static inline void ll_lcdc_dither_set_lfsr_init(LCD_IF_TypeDef *lcd, uint32_t va
 	WRITE_REG(lcd->DITHER_LFSR, value);
 }
 
+/*==============================================================================
+ * Conversion (CONV_CFG / GREY_CONV)
+ *============================================================================*/
+
 /**
- * @brief Set the SPI read selection (LCD_CONF.SPI_RD_SEL).
- * @param[in] lcd LCD_IF instance pointer.
- * @param[in] sel SPI read select (2 bits).
+ * @brief Set the conversion format (CONV_CFG.FORMAT).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] format Conversion format (3 bits).
  */
-static inline void ll_lcdc_set_spi_rd_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
+static inline void ll_lcdc_conv_set_format(LCD_IF_TypeDef *lcd, uint32_t format)
 {
-	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_SPI_RD_SEL,
-		   MAKE_REG_VAL(sel, LCD_IF_LCD_CONF_SPI_RD_SEL_Msk,
-				LCD_IF_LCD_CONF_SPI_RD_SEL_Pos));
+	MODIFY_REG(lcd->CONV_CFG, LCD_IF_CONV_CFG_FORMAT,
+		   MAKE_REG_VAL(format, LCD_IF_CONV_CFG_FORMAT_Msk, LCD_IF_CONV_CFG_FORMAT_Pos));
+}
+
+/**
+ * @brief Set the grey-conversion order (GREY_CONV.ORDER).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] order Conversion order.
+ */
+static inline void ll_lcdc_grey_conv_set_order(LCD_IF_TypeDef *lcd, uint32_t order)
+{
+	MODIFY_REG(lcd->GREY_CONV, LCD_IF_GREY_CONV_ORDER,
+		   order ? LCD_IF_GREY_CONV_ORDER : 0UL);
+}
+
+/**
+ * @brief Set the grey-conversion coefficients (GREY_CONV.coef0/coef1/coef2).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] coef0 Coef 0 (10 bits).
+ * @param[in] coef1 Coef 1 (10 bits).
+ * @param[in] coef2 Coef 2 (10 bits).
+ */
+static inline void ll_lcdc_grey_conv_set_coefs(LCD_IF_TypeDef *lcd, uint32_t coef0,
+					       uint32_t coef1, uint32_t coef2)
+{
+	MODIFY_REG(lcd->GREY_CONV,
+		   LCD_IF_GREY_CONV_COEF0 | LCD_IF_GREY_CONV_COEF1 | LCD_IF_GREY_CONV_COEF2,
+		   MAKE_REG_VAL(coef0, LCD_IF_GREY_CONV_COEF0_Msk, LCD_IF_GREY_CONV_COEF0_Pos) |
+		   MAKE_REG_VAL(coef1, LCD_IF_GREY_CONV_COEF1_Msk, LCD_IF_GREY_CONV_COEF1_Pos) |
+		   MAKE_REG_VAL(coef2, LCD_IF_GREY_CONV_COEF2_Msk, LCD_IF_GREY_CONV_COEF2_Pos));
+}
+
+/*==============================================================================
+ * Flexible Select (FLEX_SEL_L / FLEX_SEL_H)
+ *============================================================================*/
+
+/**
+ * @brief Set the low flexible-select bits (FLEX_SEL_L.bit0..bit3).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] bit0 Select for bit 0 (5 bits).
+ * @param[in] bit1 Select for bit 1 (5 bits).
+ * @param[in] bit2 Select for bit 2 (5 bits).
+ * @param[in] bit3 Select for bit 3 (5 bits).
+ */
+static inline void ll_lcdc_flex_sel_l_set(LCD_IF_TypeDef *lcd, uint32_t bit0, uint32_t bit1,
+					  uint32_t bit2, uint32_t bit3)
+{
+	MODIFY_REG(lcd->FLEX_SEL_L,
+		   LCD_IF_FLEX_SEL_L_BIT0 | LCD_IF_FLEX_SEL_L_BIT1 |
+			   LCD_IF_FLEX_SEL_L_BIT2 | LCD_IF_FLEX_SEL_L_BIT3,
+		   MAKE_REG_VAL(bit0, LCD_IF_FLEX_SEL_L_BIT0_Msk, LCD_IF_FLEX_SEL_L_BIT0_Pos) |
+		   MAKE_REG_VAL(bit1, LCD_IF_FLEX_SEL_L_BIT1_Msk, LCD_IF_FLEX_SEL_L_BIT1_Pos) |
+		   MAKE_REG_VAL(bit2, LCD_IF_FLEX_SEL_L_BIT2_Msk, LCD_IF_FLEX_SEL_L_BIT2_Pos) |
+		   MAKE_REG_VAL(bit3, LCD_IF_FLEX_SEL_L_BIT3_Msk, LCD_IF_FLEX_SEL_L_BIT3_Pos));
+}
+
+/**
+ * @brief Set the high flexible-select bits (FLEX_SEL_H.bit4..bit7).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] bit4 Select for bit 4 (5 bits).
+ * @param[in] bit5 Select for bit 5 (5 bits).
+ * @param[in] bit6 Select for bit 6 (5 bits).
+ * @param[in] bit7 Select for bit 7 (5 bits).
+ */
+static inline void ll_lcdc_flex_sel_h_set(LCD_IF_TypeDef *lcd, uint32_t bit4, uint32_t bit5,
+					  uint32_t bit6, uint32_t bit7)
+{
+	MODIFY_REG(lcd->FLEX_SEL_H,
+		   LCD_IF_FLEX_SEL_H_BIT4 | LCD_IF_FLEX_SEL_H_BIT5 |
+			   LCD_IF_FLEX_SEL_H_BIT6 | LCD_IF_FLEX_SEL_H_BIT7,
+		   MAKE_REG_VAL(bit4, LCD_IF_FLEX_SEL_H_BIT4_Msk, LCD_IF_FLEX_SEL_H_BIT4_Pos) |
+		   MAKE_REG_VAL(bit5, LCD_IF_FLEX_SEL_H_BIT5_Msk, LCD_IF_FLEX_SEL_H_BIT5_Pos) |
+		   MAKE_REG_VAL(bit6, LCD_IF_FLEX_SEL_H_BIT6_Msk, LCD_IF_FLEX_SEL_H_BIT6_Pos) |
+		   MAKE_REG_VAL(bit7, LCD_IF_FLEX_SEL_H_BIT7_Msk, LCD_IF_FLEX_SEL_H_BIT7_Pos));
+}
+
+/**
+ * @brief Select the interface clock 2.5 divider (LCD_CONF.INTF_CLK_DIV2P5_SEL).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to use the 2.5 divider.
+ */
+static inline void ll_lcdc_set_intf_clk_div2p5(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_INTF_CLK_DIV2P5_SEL,
+		   en ? LCD_IF_LCD_CONF_INTF_CLK_DIV2P5_SEL : 0UL);
+}
+
+/**
+ * @brief Trigger the interface clock divider update (LCD_CONF.INTF_CLK_DIV_UPDATE).
+ * @param[in] lcd LCD_IF instance pointer.
+ */
+static inline void ll_lcdc_set_intf_clk_div_update(LCD_IF_TypeDef *lcd)
+{
+	SET_BIT(lcd->LCD_CONF, LCD_IF_LCD_CONF_INTF_CLK_DIV_UPDATE);
+}
+
+/**
+ * @brief Set the interface clock divider (LCD_CONF.INTF_CLK_DIV).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] div Interface clock divider (4 bits).
+ */
+static inline void ll_lcdc_set_intf_clk_div(LCD_IF_TypeDef *lcd, uint32_t div)
+{
+	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_INTF_CLK_DIV,
+		   MAKE_REG_VAL(div, LCD_IF_LCD_CONF_INTF_CLK_DIV_Msk, LCD_IF_LCD_CONF_INTF_CLK_DIV_Pos));
+}
+
+/**
+ * @brief Enable the AHB clock divider (LCD_CONF.AHB_DIV_EN).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_set_ahb_div_en(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_AHB_DIV_EN,
+		   en ? LCD_IF_LCD_CONF_AHB_DIV_EN : 0UL);
 }
 
 /**
@@ -1027,7 +968,7 @@ static inline uint32_t ll_lcdc_read_data(LCD_IF_TypeDef *lcd)
 static inline void ll_lcdc_spi_set_bus_config(LCD_IF_TypeDef *lcd, uint32_t conf)
 {
 	const uint32_t valid_mask = LCD_IF_SPI_IF_CONF_SPI_CLK_INIT |
-					LCD_IF_SPI_IF_CONF_SPI_CLK_POL |
+					LCD_IF_SPI_IF_CONF_SPI_CLK_PHASE |
 					LCD_IF_SPI_IF_CONF_SPI_CS_POL |
 					LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS |
 					LCD_IF_SPI_IF_CONF_SPI_CS_NO_IDLE |
@@ -1037,10 +978,25 @@ static inline void ll_lcdc_spi_set_bus_config(LCD_IF_TypeDef *lcd, uint32_t conf
 					LCD_IF_SPI_IF_CONF_RD_LEN |
 					LCD_IF_SPI_IF_CONF_LINE |
 					LCD_IF_SPI_IF_CONF_DUMMY_CYCLE |
-					LCD_IF_SPI_IF_CONF_CLK_DIV |
-					LCD_IF_SPI_IF_CONF_WAIT_CYCLE;
+					LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV |
+					LCD_IF_SPI_IF_CONF_EXT_LINE_WAIT_CYCLE;
 
-	WRITE_REG(lcd->SPI_IF_CONF, conf & valid_mask);
+	MODIFY_REG(lcd->SPI_IF_CONF,
+		   LCD_IF_SPI_IF_CONF_SPI_CLK_INIT |
+			   LCD_IF_SPI_IF_CONF_SPI_CLK_PHASE |
+			   LCD_IF_SPI_IF_CONF_SPI_CS_POL |
+			   LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS |
+			   LCD_IF_SPI_IF_CONF_SPI_CS_NO_IDLE |
+			   LCD_IF_SPI_IF_CONF_SPI_CLK_AUTO_DIS |
+			   LCD_IF_SPI_IF_CONF_SPI_RD_MODE |
+			   LCD_IF_SPI_IF_CONF_WR_LEN |
+			   LCD_IF_SPI_IF_CONF_RD_LEN |
+			   LCD_IF_SPI_IF_CONF_LINE |
+			   LCD_IF_SPI_IF_CONF_DUMMY_CYCLE,
+		   conf & valid_mask);
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT,
+		   LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV | LCD_IF_SPI_IF_CONF_EXT_LINE_WAIT_CYCLE,
+		   conf & (LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV | LCD_IF_SPI_IF_CONF_EXT_LINE_WAIT_CYCLE));
 }
 
 /*==============================================================================
@@ -1094,14 +1050,85 @@ static inline void ll_lcdc_spi_set_read_mode(LCD_IF_TypeDef *lcd, uint32_t en)
 }
 
 /**
- * @brief Set the SPI clock divider (SPI_IF_CONF.CLK_DIV).
+ * @brief Set the SPI clock DDR divider low/high (SPI_IF_CONF.CLK_DDR_DIV_L/H).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] divl DDR divider low (7 bits).
+ * @param[in] divh DDR divider high (7 bits).
+ */
+static inline void ll_lcdc_spi_set_clk_ddr_div(LCD_IF_TypeDef *lcd, uint32_t divl, uint32_t divh)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF,
+		   LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_L | LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_H,
+		   MAKE_REG_VAL(divl, LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_L_Msk, LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_L_Pos) |
+		   MAKE_REG_VAL(divh, LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_H_Msk, LCD_IF_SPI_IF_CONF_CLK_DDR_DIV_H_Pos));
+}
+
+/**
+ * @brief Set the SPI clock divider (SPI_IF_CONF_EXT.EXT_CLK_SDR_DIV).
  * @param[in] lcd LCD_IF instance pointer.
  * @param[in] div Clock divider value.
  */
 static inline void ll_lcdc_spi_set_clock_div(LCD_IF_TypeDef *lcd, uint32_t div)
 {
-	MODIFY_REG(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_CLK_DIV,
-		   MAKE_REG_VAL(div, LCD_IF_SPI_IF_CONF_CLK_DIV_Msk, LCD_IF_SPI_IF_CONF_CLK_DIV_Pos));
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV,
+		   MAKE_REG_VAL(div, LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV_Msk, LCD_IF_SPI_IF_CONF_EXT_CLK_SDR_DIV_Pos));
+}
+
+/**
+ * @brief Set the SPI read selection (SPI_IF_CONF_EXT.EXT_SPI_RD_SEL).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] sel SPI read select (2 bits).
+ */
+static inline void ll_lcdc_set_spi_rd_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_SPI_RD_SEL,
+		   MAKE_REG_VAL(sel, LCD_IF_SPI_IF_CONF_EXT_SPI_RD_SEL_Msk,
+				LCD_IF_SPI_IF_CONF_EXT_SPI_RD_SEL_Pos));
+}
+
+/**
+ * @brief Set the SPI clock half-delay (SPI_IF_CONF_EXT.SPI_CLK_HALF_DLY).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable half delay.
+ */
+static inline void ll_lcdc_spi_set_clk_half_dly(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_SPI_CLK_HALF_DLY,
+		   en ? LCD_IF_SPI_IF_CONF_EXT_SPI_CLK_HALF_DLY : 0UL);
+}
+
+/**
+ * @brief Set the SPI clock DDR mode (SPI_IF_CONF_EXT.SPI_CLK_DDR_MODE).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable DDR mode.
+ */
+static inline void ll_lcdc_spi_set_clk_ddr_mode(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_SPI_CLK_DDR_MODE,
+		   en ? LCD_IF_SPI_IF_CONF_EXT_SPI_CLK_DDR_MODE : 0UL);
+}
+
+/**
+ * @brief Enable the post-wait clock (SPI_IF_CONF_EXT.POST_WAIT_CLK_EN).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_spi_set_post_wait_clk_en(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_POST_WAIT_CLK_EN,
+		   en ? LCD_IF_SPI_IF_CONF_EXT_POST_WAIT_CLK_EN : 0UL);
+}
+
+/**
+ * @brief Set the post-wait cycle count (SPI_IF_CONF_EXT.POST_WAIT_CYCLE).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] cycle Post-wait cycle count (6 bits).
+ */
+static inline void ll_lcdc_spi_set_post_wait_cycle(LCD_IF_TypeDef *lcd, uint32_t cycle)
+{
+	MODIFY_REG(lcd->SPI_IF_CONF_EXT, LCD_IF_SPI_IF_CONF_EXT_POST_WAIT_CYCLE,
+		   MAKE_REG_VAL(cycle, LCD_IF_SPI_IF_CONF_EXT_POST_WAIT_CYCLE_Msk,
+				LCD_IF_SPI_IF_CONF_EXT_POST_WAIT_CYCLE_Pos));
 }
 
 /*==============================================================================
@@ -1179,6 +1206,50 @@ static inline void ll_lcdc_te_set_delay(LCD_IF_TypeDef *lcd, uint32_t dly)
 }
 
 /*==============================================================================
+ * Tearing Effect (TE_CONF3 / TE_CONF4 / TE_STAT / TE_STAT2)
+ *============================================================================*/
+
+/**
+ * @brief Set the TE delay count 1 (TE_CONF3.DLY_CNT1).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] count Delay count.
+ */
+static inline void ll_lcdc_te_set_dly_cnt1(LCD_IF_TypeDef *lcd, uint32_t count)
+{
+	WRITE_REG(lcd->TE_CONF3, count & LCD_IF_TE_CONF3_DLY_CNT1);
+}
+
+/**
+ * @brief Set the TE delay count 2 (TE_CONF4.DLY_CNT2).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] count Delay count.
+ */
+static inline void ll_lcdc_te_set_dly_cnt2(LCD_IF_TypeDef *lcd, uint32_t count)
+{
+	WRITE_REG(lcd->TE_CONF4, count & LCD_IF_TE_CONF4_DLY_CNT2);
+}
+
+/**
+ * @brief Get the TE current count (TE_STAT.TE_C_CNT).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Current TE count.
+ */
+static inline uint32_t ll_lcdc_te_get_count(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->TE_STAT) & LCD_IF_TE_STAT_TE_C_CNT;
+}
+
+/**
+ * @brief Get the TE max count (TE_STAT2.TE_MAX_CNT).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Max TE count.
+ */
+static inline uint32_t ll_lcdc_te_get_max_count(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->TE_STAT2) & LCD_IF_TE_STAT2_TE_MAX_CNT;
+}
+
+/*==============================================================================
  * DPI Interface
  *============================================================================*/
 
@@ -1220,6 +1291,43 @@ static inline void ll_lcdc_dpi_set_active_size(LCD_IF_TypeDef *lcd, uint16_t act
 		  MAKE_REG_VAL(active_w, LCD_IF_DPI_IF_CONF4_HAW_Msk, LCD_IF_DPI_IF_CONF4_HAW_Pos));
 }
 
+/*==============================================================================
+ * DPI (DPI_IF_CONF5 / DPI_CTRL)
+ *============================================================================*/
+
+/**
+ * @brief Set the DPI interlace mode (DPI_IF_CONF5.interlace).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] en   Non-zero to enable interlace.
+ */
+static inline void ll_lcdc_dpi_set_interlace(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->DPI_IF_CONF5, LCD_IF_DPI_IF_CONF5_INTERLACE,
+		   en ? LCD_IF_DPI_IF_CONF5_INTERLACE : 0UL);
+}
+
+/**
+ * @brief Set the DPI next parity (DPI_IF_CONF5.nxt_parity).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] par  Parity value.
+ */
+static inline void ll_lcdc_dpi_set_nxt_parity(LCD_IF_TypeDef *lcd, uint32_t par)
+{
+	MODIFY_REG(lcd->DPI_IF_CONF5, LCD_IF_DPI_IF_CONF5_NXT_PARITY,
+		   par ? LCD_IF_DPI_IF_CONF5_NXT_PARITY : 0UL);
+}
+
+/**
+ * @brief Set the DPI current parity (DPI_IF_CONF5.cur_parity).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] par  Parity value.
+ */
+static inline void ll_lcdc_dpi_set_cur_parity(LCD_IF_TypeDef *lcd, uint32_t par)
+{
+	MODIFY_REG(lcd->DPI_IF_CONF5, LCD_IF_DPI_IF_CONF5_CUR_PARITY,
+		   par ? LCD_IF_DPI_IF_CONF5_CUR_PARITY : 0UL);
+}
+
 /**
  * @brief Configure DPI clock and polarity (DPI_IF_CONF5).
  * @param[in] lcd        LCD_IF instance pointer.
@@ -1250,6 +1358,28 @@ static inline void ll_lcdc_dpi_set_clock_polarity(LCD_IF_TypeDef *lcd, uint32_t 
 		   MAKE_REG_VAL(int_line, LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Msk,
 				LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Pos) |
 		   (clk_force ? LCD_IF_DPI_IF_CONF5_CLK_FORCE_ON : 0UL));
+}
+
+/**
+ * @brief Enable the DPI auto gate (DPI_CTRL.auto_gate_en).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_dpi_set_auto_gate(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_AUTO_GATE_EN,
+		   en ? LCD_IF_DPI_CTRL_AUTO_GATE_EN : 0UL);
+}
+
+/**
+ * @brief Set the DPI HSTAT select (DPI_CTRL.HSTAT).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] sel  HSTAT select (3 bits).
+ */
+static inline void ll_lcdc_dpi_set_hstat(LCD_IF_TypeDef *lcd, uint32_t sel)
+{
+	MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_HSTAT,
+		   MAKE_REG_VAL(sel, LCD_IF_DPI_CTRL_HSTAT_Msk, LCD_IF_DPI_CTRL_HSTAT_Pos));
 }
 
 /**
@@ -1315,16 +1445,6 @@ static inline void ll_lcdc_dpi_disable(LCD_IF_TypeDef *lcd)
 static inline uint32_t ll_lcdc_dpi_get_vpos(LCD_IF_TypeDef *lcd)
 {
 	return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_VPOS);
-}
-
-/**
- * @brief Get the DPI horizontal status (DPI_STAT.HSTAT).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Horizontal status.
- */
-static inline uint32_t ll_lcdc_dpi_get_hstat(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_HSTAT);
 }
 
 /**
@@ -1721,6 +1841,444 @@ static inline void ll_lcdc_jdi_par_set_hc_line(LCD_IF_TypeDef *lcd, uint32_t hc_
 }
 
 /**
+ * @brief Set the TCON SDCLK always-on external-2 (TCON_IF_CONF1.SDCLK_AON_EXT_2).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_tcon_set_sdclk_aon_ext2(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_SDCLK_AON_EXT_2,
+		   en ? LCD_IF_TCON_IF_CONF1_SDCLK_AON_EXT_2 : 0UL);
+}
+
+/**
+ * @brief Set the TCON SDCLK always-on external (TCON_IF_CONF1.SDCLK_AON_EXT).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_tcon_set_sdclk_aon_ext(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_SDCLK_AON_EXT,
+		   en ? LCD_IF_TCON_IF_CONF1_SDCLK_AON_EXT : 0UL);
+}
+
+/**
+ * @brief Set the TCON GDCLK always-on external (TCON_IF_CONF1.GDCLK_AON_EXT).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_tcon_set_gdclk_aon_ext(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_GDCLK_AON_EXT,
+		   en ? LCD_IF_TCON_IF_CONF1_GDCLK_AON_EXT : 0UL);
+}
+
+/**
+ * @brief Set the TCON SDCLK always-on (TCON_IF_CONF1.SDCLK_AON).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_tcon_set_sdclk_aon(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_SDCLK_AON,
+		   en ? LCD_IF_TCON_IF_CONF1_SDCLK_AON : 0UL);
+}
+
+/**
+ * @brief Set the TCON GDCLK always-on (TCON_IF_CONF1.GDCLK_AON).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_tcon_set_gdclk_aon(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_GDCLK_AON,
+		   en ? LCD_IF_TCON_IF_CONF1_GDCLK_AON : 0UL);
+}
+
+/**
+ * @brief Set the TCON signal polarities (TCON_IF_CONF1.GDSP_POL/GDCLK_POL/SDLE_POL/...).
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] gdsp  GDSP polarity.
+ * @param[in] gdclk GDCLK polarity.
+ * @param[in] sdl   SDLE polarity.
+ * @param[in] sdo   SDOE polarity.
+ * @param[in] sdstl SDSTL polarity.
+ * @param[in] sdclk SDCLK polarity.
+ */
+static inline void ll_lcdc_tcon_set_polarity(LCD_IF_TypeDef *lcd, uint32_t gdsp, uint32_t gdclk,
+					     uint32_t sdl, uint32_t sdo, uint32_t sdstl, uint32_t sdclk)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1,
+		   LCD_IF_TCON_IF_CONF1_GDSP_POL | LCD_IF_TCON_IF_CONF1_GDCLK_POL |
+			   LCD_IF_TCON_IF_CONF1_SDLE_POL | LCD_IF_TCON_IF_CONF1_SDOE_POL |
+			   LCD_IF_TCON_IF_CONF1_SDSTL_POL | LCD_IF_TCON_IF_CONF1_SDCLK_POL,
+		   (gdsp ? LCD_IF_TCON_IF_CONF1_GDSP_POL : 0UL) |
+		   (gdclk ? LCD_IF_TCON_IF_CONF1_GDCLK_POL : 0UL) |
+		   (sdl ? LCD_IF_TCON_IF_CONF1_SDLE_POL : 0UL) |
+		   (sdo ? LCD_IF_TCON_IF_CONF1_SDOE_POL : 0UL) |
+		   (sdstl ? LCD_IF_TCON_IF_CONF1_SDSTL_POL : 0UL) |
+		   (sdclk ? LCD_IF_TCON_IF_CONF1_SDCLK_POL : 0UL));
+}
+
+/*==============================================================================
+ * TCON Interface (TCON_IF_CONF1..CONF4)
+ *============================================================================*/
+
+/**
+ * @brief Set the TCON output format (TCON_IF_CONF1.FORMAT).
+ * @param[in] lcd    LCD_IF instance pointer.
+ * @param[in] format Output format (2 bits).
+ */
+static inline void ll_lcdc_tcon_set_format(LCD_IF_TypeDef *lcd, uint32_t format)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_FORMAT,
+		   MAKE_REG_VAL(format, LCD_IF_TCON_IF_CONF1_FORMAT_Msk, LCD_IF_TCON_IF_CONF1_FORMAT_Pos));
+}
+
+/**
+ * @brief Set the TCON scan mode (TCON_IF_CONF1.SMODE).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] mode Scan mode.
+ */
+static inline void ll_lcdc_tcon_set_scan_mode(LCD_IF_TypeDef *lcd, uint32_t mode)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_SMODE,
+		   mode ? LCD_IF_TCON_IF_CONF1_SMODE : 0UL);
+}
+
+/**
+ * @brief Set the TCON clock divider (TCON_IF_CONF1.CLK_DIV).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] div Clock divider (8 bits).
+ */
+static inline void ll_lcdc_tcon_set_clk_div(LCD_IF_TypeDef *lcd, uint32_t div)
+{
+	MODIFY_REG(lcd->TCON_IF_CONF1, LCD_IF_TCON_IF_CONF1_CLK_DIV,
+		   MAKE_REG_VAL(div, LCD_IF_TCON_IF_CONF1_CLK_DIV_Msk, LCD_IF_TCON_IF_CONF1_CLK_DIV_Pos));
+}
+
+/**
+ * @brief Set the TCON timing widths (TCON_IF_CONF2.GSTA/LEL/LBL/LSL).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] gsta Gate start (8 bits).
+ * @param[in] lel  Line end (8 bits).
+ * @param[in] lbl  Line blank (8 bits).
+ * @param[in] lsl  Line start (8 bits).
+ */
+static inline void ll_lcdc_tcon_set_conf2(LCD_IF_TypeDef *lcd, uint32_t gsta, uint32_t lel,
+					  uint32_t lbl, uint32_t lsl)
+{
+	WRITE_REG(lcd->TCON_IF_CONF2,
+		  MAKE_REG_VAL(gsta, LCD_IF_TCON_IF_CONF2_GSTA_Msk, LCD_IF_TCON_IF_CONF2_GSTA_Pos) |
+		  MAKE_REG_VAL(lel, LCD_IF_TCON_IF_CONF2_LEL_Msk, LCD_IF_TCON_IF_CONF2_LEL_Pos) |
+		  MAKE_REG_VAL(lbl, LCD_IF_TCON_IF_CONF2_LBL_Msk, LCD_IF_TCON_IF_CONF2_LBL_Pos) |
+		  MAKE_REG_VAL(lsl, LCD_IF_TCON_IF_CONF2_LSL_Msk, LCD_IF_TCON_IF_CONF2_LSL_Pos));
+}
+
+/**
+ * @brief Set the TCON line length and gate data hold (TCON_IF_CONF3.LDL/GDH).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] ldl Line data length (16 bits).
+ * @param[in] gdh Gate data hold (16 bits).
+ */
+static inline void ll_lcdc_tcon_set_conf3(LCD_IF_TypeDef *lcd, uint32_t ldl, uint32_t gdh)
+{
+	WRITE_REG(lcd->TCON_IF_CONF3,
+		  MAKE_REG_VAL(ldl, LCD_IF_TCON_IF_CONF3_LDL_Msk, LCD_IF_TCON_IF_CONF3_LDL_Pos) |
+		  MAKE_REG_VAL(gdh, LCD_IF_TCON_IF_CONF3_GDH_Msk, LCD_IF_TCON_IF_CONF3_GDH_Pos));
+}
+
+/**
+ * @brief Set the TCON frame timing widths (TCON_IF_CONF4.FDL/FSL/FBL/FEL).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] fdl Frame data length (16 bits).
+ * @param[in] fsl Frame start (4 bits).
+ * @param[in] fbl Frame blank (4 bits).
+ * @param[in] fel Frame end (4 bits).
+ */
+static inline void ll_lcdc_tcon_set_conf4(LCD_IF_TypeDef *lcd, uint32_t fdl, uint32_t fsl,
+					  uint32_t fbl, uint32_t fel)
+{
+	WRITE_REG(lcd->TCON_IF_CONF4,
+		  MAKE_REG_VAL(fdl, LCD_IF_TCON_IF_CONF4_FDL_Msk, LCD_IF_TCON_IF_CONF4_FDL_Pos) |
+		  MAKE_REG_VAL(fsl, LCD_IF_TCON_IF_CONF4_FSL_Msk, LCD_IF_TCON_IF_CONF4_FSL_Pos) |
+		  MAKE_REG_VAL(fbl, LCD_IF_TCON_IF_CONF4_FBL_Msk, LCD_IF_TCON_IF_CONF4_FBL_Pos) |
+		  MAKE_REG_VAL(fel, LCD_IF_TCON_IF_CONF4_FEL_Msk, LCD_IF_TCON_IF_CONF4_FEL_Pos));
+}
+
+/**
+ * @brief Set the JPEG channel select (COENG_CFG.JPEG_CH_SEL).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] sel Channel select (2 bits).
+ */
+static inline void ll_lcdc_jpeg_set_ch_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
+{
+	MODIFY_REG(lcd->COENG_CFG, LCD_IF_COENG_CFG_JPEG_CH_SEL,
+		   MAKE_REG_VAL(sel, LCD_IF_COENG_CFG_JPEG_CH_SEL_Msk, LCD_IF_COENG_CFG_JPEG_CH_SEL_Pos));
+}
+
+/*==============================================================================
+ * JPEG Engine (COENG_CFG / JPEG_ENG_CFG0 / JPEG_ENG_CFG1)
+ *============================================================================*/
+
+/**
+ * @brief Enable the JPEG engine (COENG_CFG.JPEG_EN).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_jpeg_enable(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->COENG_CFG, LCD_IF_COENG_CFG_JPEG_EN,
+		   en ? LCD_IF_COENG_CFG_JPEG_EN : 0UL);
+}
+
+/**
+ * @brief Set the decompression channel select (COENG_CFG.DECOMP_CH_SEL).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] sel Channel select (2 bits).
+ */
+static inline void ll_lcdc_decomp_set_ch_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
+{
+	MODIFY_REG(lcd->COENG_CFG, LCD_IF_COENG_CFG_DECOMP_CH_SEL,
+		   MAKE_REG_VAL(sel, LCD_IF_COENG_CFG_DECOMP_CH_SEL_Msk, LCD_IF_COENG_CFG_DECOMP_CH_SEL_Pos));
+}
+
+/*==============================================================================
+ * eZip Decompression (Layer 0)
+ *============================================================================*/
+
+/**
+ * @brief Configure layer 0 decompression (DECOMP_CFG0 + COENG_CFG).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] col_size Number of columns in a line of the original image.
+ * @param[in] target_words Size of a single channel data before decompression,
+ *                         in half words.
+ * @param[in] en Non-zero to enable decompression, zero to disable it.
+ * @note eZip standalone DMA source/dest addresses belong to the separate EZIP
+ *       module, not to these LCDC registers.
+ */
+static inline void ll_lcdc_ezip_set_config(LCD_IF_TypeDef *lcd, uint16_t col_size,
+					   uint16_t target_words, uint32_t en)
+{
+	WRITE_REG(lcd->DECOMP_CFG0,
+		  MAKE_REG_VAL(target_words, LCD_IF_DECOMP_CFG0_TARGET_WORDS_Msk,
+			       LCD_IF_DECOMP_CFG0_TARGET_WORDS_Pos) |
+		  MAKE_REG_VAL(col_size, LCD_IF_DECOMP_CFG0_COL_SIZE_Msk,
+			       LCD_IF_DECOMP_CFG0_COL_SIZE_Pos));
+	MODIFY_REG(lcd->COENG_CFG, LCD_IF_COENG_CFG_DECOMP_EN,
+		   en ? LCD_IF_COENG_CFG_DECOMP_EN : 0UL);
+}
+
+/**
+ * @brief Set the JPEG range select (JPEG_ENG_CFG0.RANGE_SEL).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] sel  Range select.
+ */
+static inline void ll_lcdc_jpeg_set_range_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
+{
+	MODIFY_REG(lcd->JPEG_ENG_CFG0, LCD_IF_JPEG_ENG_CFG0_RANGE_SEL,
+		   sel ? LCD_IF_JPEG_ENG_CFG0_RANGE_SEL : 0UL);
+}
+
+/**
+ * @brief Set the JPEG RGB-to-YUV coefficients (JPEG_ENG_CFG0.Fy/Fub/Fug).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] fy   Fy coefficient (10 bits).
+ * @param[in] fub  Fub coefficient (10 bits).
+ * @param[in] fug  Fug coefficient (10 bits).
+ */
+static inline void ll_lcdc_jpeg_set_cfg0(LCD_IF_TypeDef *lcd, uint32_t fy, uint32_t fub,
+					 uint32_t fug)
+{
+	MODIFY_REG(lcd->JPEG_ENG_CFG0,
+		   LCD_IF_JPEG_ENG_CFG0_FY | LCD_IF_JPEG_ENG_CFG0_FUB | LCD_IF_JPEG_ENG_CFG0_FUG,
+		   MAKE_REG_VAL(fy, LCD_IF_JPEG_ENG_CFG0_FY_Msk, LCD_IF_JPEG_ENG_CFG0_FY_Pos) |
+		   MAKE_REG_VAL(fub, LCD_IF_JPEG_ENG_CFG0_FUB_Msk, LCD_IF_JPEG_ENG_CFG0_FUB_Pos) |
+		   MAKE_REG_VAL(fug, LCD_IF_JPEG_ENG_CFG0_FUG_Msk, LCD_IF_JPEG_ENG_CFG0_FUG_Pos));
+}
+
+/**
+ * @brief Set the JPEG YUV coefficients (JPEG_ENG_CFG1.Fvg/Fvr).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] fvg Fvg coefficient (10 bits).
+ * @param[in] fvr Fvr coefficient (10 bits).
+ */
+static inline void ll_lcdc_jpeg_set_cfg1(LCD_IF_TypeDef *lcd, uint32_t fvg, uint32_t fvr)
+{
+	MODIFY_REG(lcd->JPEG_ENG_CFG1,
+		   LCD_IF_JPEG_ENG_CFG1_FVG | LCD_IF_JPEG_ENG_CFG1_FVR,
+		   MAKE_REG_VAL(fvg, LCD_IF_JPEG_ENG_CFG1_FVG_Msk, LCD_IF_JPEG_ENG_CFG1_FVG_Pos) |
+		   MAKE_REG_VAL(fvr, LCD_IF_JPEG_ENG_CFG1_FVR_Msk, LCD_IF_JPEG_ENG_CFG1_FVR_Pos));
+}
+
+/**
+ * @brief Get the layer 0 decompression CFG0 reserved field.
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return CFG0 reserved field value.
+ */
+static inline uint32_t ll_lcdc_ezip_get_cfg0_reserved(LCD_IF_TypeDef *lcd)
+{
+	return GET_REG_VAL2(lcd->DECOMP_CFG1,
+			    LCD_IF_DECOMP_CFG1_RESERVED0);
+}
+
+/**
+ * @brief Set the layer 0 decompression CFG0 reserved field.
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] value CFG0 reserved field value.
+ */
+static inline void ll_lcdc_ezip_set_cfg0_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
+{
+	MODIFY_REG(lcd->DECOMP_CFG1,
+		   LCD_IF_DECOMP_CFG1_RESERVED0,
+		   MAKE_REG_VAL(value, LCD_IF_DECOMP_CFG1_RESERVED0_Msk,
+				LCD_IF_DECOMP_CFG1_RESERVED0_Pos));
+}
+
+/*==============================================================================
+ * Layer 0 Decompression Config (LAYER0_DECOMP_CFG0 / LAYER0_DECOMP_CFG1)
+ *============================================================================*/
+
+/**
+ * @brief Configure the layer 0 decompression quality table (LAYER0_DECOMP_CFG0).
+ * @param[in] lcd            LCD_IF instance pointer.
+ * @param[in] extra_high     Extra bit for high-quality block (4 bits).
+ * @param[in] extra_threshold Threshold to distinguish high/low quality (4 bits).
+ * @param[in] use_lossless   Condition to increase qidx (4 bits).
+ * @param[in] lossless_qidx1 Up level for adjusted qidx (4 bits).
+ * @param[in] lossless_qidx2 Condition to decrease qidx (4 bits).
+ */
+static inline void ll_lcdc_ezip_set_cfg0(LCD_IF_TypeDef *lcd, uint32_t extra_high,
+					 uint32_t extra_threshold, uint32_t use_lossless,
+					 uint32_t lossless_qidx1, uint32_t lossless_qidx2)
+{
+	MODIFY_REG(lcd->DECOMP_CFG1,
+		   LCD_IF_DECOMP_CFG1_EXTRA_HIGH |
+			   LCD_IF_DECOMP_CFG1_EXTRA_THRESHOLD |
+			   LCD_IF_DECOMP_CFG1_USE_LOSSLESS_QIDX |
+			   LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX1 |
+			   LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX2,
+		   MAKE_REG_VAL(extra_high, LCD_IF_DECOMP_CFG1_EXTRA_HIGH_Msk,
+				LCD_IF_DECOMP_CFG1_EXTRA_HIGH_Pos) |
+		   MAKE_REG_VAL(extra_threshold, LCD_IF_DECOMP_CFG1_EXTRA_THRESHOLD_Msk,
+				LCD_IF_DECOMP_CFG1_EXTRA_THRESHOLD_Pos) |
+		   MAKE_REG_VAL(use_lossless, LCD_IF_DECOMP_CFG1_USE_LOSSLESS_QIDX_Msk,
+				LCD_IF_DECOMP_CFG1_USE_LOSSLESS_QIDX_Pos) |
+		   MAKE_REG_VAL(lossless_qidx1, LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX1_Msk,
+				LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX1_Pos) |
+		   MAKE_REG_VAL(lossless_qidx2, LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX2_Msk,
+				LCD_IF_DECOMP_CFG1_LOSSLESS_QIDX2_Pos));
+}
+
+/**
+ * @brief Configure the layer 0 decompression block/line options (LAYER0_DECOMP_CFG1).
+ * @param[in] lcd             LCD_IF instance pointer.
+ * @param[in] extra_low       Extra bit for low-quality block (4 bits).
+ * @param[in] block_min_qidx  Minimum qidx for block mode (4 bits).
+ * @param[in] line_min_qidx   Minimum qidx for line mode (4 bits).
+ * @param[in] failover_r      Failover target bits (Red, 4 bits).
+ * @param[in] failover_g      Failover target bits (Green, 4 bits).
+ * @param[in] failover_b      Failover target bits (Blue, 4 bits).
+ * @param[in] dither          Dithering function (1 bit).
+ * @param[in] block_width     Block size: 0 = 16 pixels, 1 = 32 pixels.
+ */
+static inline void ll_lcdc_ezip_set_cfg1(LCD_IF_TypeDef *lcd, uint32_t extra_low,
+					 uint32_t block_min_qidx, uint32_t line_min_qidx,
+					 uint32_t failover_r, uint32_t failover_g,
+					 uint32_t failover_b, uint32_t dither,
+					 uint32_t block_width)
+{
+	MODIFY_REG(lcd->DECOMP_CFG2,
+		   LCD_IF_DECOMP_CFG2_EXTRA_LOW |
+			   LCD_IF_DECOMP_CFG2_BLOCK_MIN_QIDX |
+			   LCD_IF_DECOMP_CFG2_LINE_MIN_QIDX |
+			   LCD_IF_DECOMP_CFG2_FAILOVER_BITS_R |
+			   LCD_IF_DECOMP_CFG2_FAILOVER_BITS_G |
+			   LCD_IF_DECOMP_CFG2_FAILOVER_BITS_B |
+			   LCD_IF_DECOMP_CFG2_DITHER |
+			   LCD_IF_DECOMP_CFG2_BLOCK_WIDTH,
+		   MAKE_REG_VAL(extra_low, LCD_IF_DECOMP_CFG2_EXTRA_LOW_Msk,
+				LCD_IF_DECOMP_CFG2_EXTRA_LOW_Pos) |
+		   MAKE_REG_VAL(block_min_qidx, LCD_IF_DECOMP_CFG2_BLOCK_MIN_QIDX_Msk,
+				LCD_IF_DECOMP_CFG2_BLOCK_MIN_QIDX_Pos) |
+		   MAKE_REG_VAL(line_min_qidx, LCD_IF_DECOMP_CFG2_LINE_MIN_QIDX_Msk,
+				LCD_IF_DECOMP_CFG2_LINE_MIN_QIDX_Pos) |
+		   MAKE_REG_VAL(failover_r, LCD_IF_DECOMP_CFG2_FAILOVER_BITS_R_Msk,
+				LCD_IF_DECOMP_CFG2_FAILOVER_BITS_R_Pos) |
+		   MAKE_REG_VAL(failover_g, LCD_IF_DECOMP_CFG2_FAILOVER_BITS_G_Msk,
+				LCD_IF_DECOMP_CFG2_FAILOVER_BITS_G_Pos) |
+		   MAKE_REG_VAL(failover_b, LCD_IF_DECOMP_CFG2_FAILOVER_BITS_B_Msk,
+				LCD_IF_DECOMP_CFG2_FAILOVER_BITS_B_Pos) |
+		   (dither ? LCD_IF_DECOMP_CFG2_DITHER : 0UL) |
+		   (block_width ? LCD_IF_DECOMP_CFG2_BLOCK_WIDTH : 0UL));
+}
+
+/**
+ * @brief Get the layer 0 decompression CFG1 reserved field.
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return CFG1 reserved field value.
+ */
+static inline uint32_t ll_lcdc_ezip_get_cfg1_reserved(LCD_IF_TypeDef *lcd)
+{
+	return GET_REG_VAL2(lcd->DECOMP_CFG2,
+			    LCD_IF_DECOMP_CFG2_RESERVED1);
+}
+
+/**
+ * @brief Set the layer 0 decompression CFG1 reserved field.
+ * @param[in] lcd   LCD_IF instance pointer.
+ * @param[in] value CFG1 reserved field value.
+ */
+static inline void ll_lcdc_ezip_set_cfg1_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
+{
+	MODIFY_REG(lcd->DECOMP_CFG2,
+		   LCD_IF_DECOMP_CFG2_RESERVED1,
+		   MAKE_REG_VAL(value, LCD_IF_DECOMP_CFG2_RESERVED1_Msk,
+				LCD_IF_DECOMP_CFG2_RESERVED1_Pos));
+}
+
+/**
+ * @brief Get the layer 0 decompression buffer maximum usage.
+ */
+static inline uint32_t ll_lcdc_ezip_get_status(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->DECOMP_STAT);
+}
+
+/*==============================================================================
+ * Performance Counter
+ *============================================================================*/
+
+static inline uint32_t ll_lcdc_get_perf_count(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->PERF_CNT);
+}
+
+/*==============================================================================
+ * Line Buffer (LINE_BUF0 / LINE_BUF1)
+ *============================================================================*/
+
+/**
+ * @brief Set the line buffer 0 address (LINE_BUF0.addr).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] addr Buffer address (word-aligned).
+ */
+static inline void ll_lcdc_line_buf0_set_addr(LCD_IF_TypeDef *lcd, uint32_t addr)
+{
+	WRITE_REG(lcd->LINE_BUF0, addr & LCD_IF_LINE_BUF0_ADDR);
+}
+
+/**
+ * @brief Set the line buffer 1 address (LINE_BUF1.addr).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] addr Buffer address (word-aligned).
+ */
+static inline void ll_lcdc_line_buf1_set_addr(LCD_IF_TypeDef *lcd, uint32_t addr)
+{
+	WRITE_REG(lcd->LINE_BUF1, addr & LCD_IF_LINE_BUF1_ADDR);
+}
+
+/**
  * @brief Get the canvas Y coordinate (CANVAS_STAT0.Y_COR).
  * @param[in] lcd LCD_IF instance pointer.
  * @return Canvas Y coordinate.
@@ -1783,56 +2341,6 @@ static inline uint32_t ll_lcdc_get_canvas_postc_stat(LCD_IF_TypeDef *lcd)
 static inline uint32_t ll_lcdc_get_canvas_fifo_cnt(LCD_IF_TypeDef *lcd)
 {
 	return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_FIFO_CNT);
-}
-
-/**
- * @brief Get the overlay 0 scale-lb0 state (OL0_STAT.SC_LB0).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Scale-lb0 state.
- */
-static inline uint32_t ll_lcdc_get_ol0_sc_lb0(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB0);
-}
-
-/**
- * @brief Get the overlay 0 scale-lb1 state (OL0_STAT.SC_LB1).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Scale-lb1 state.
- */
-static inline uint32_t ll_lcdc_get_ol0_sc_lb1(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB1);
-}
-
-/**
- * @brief Get the overlay 0 scale-front-end state (OL0_STAT.SC_FE).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Scale-front-end state.
- */
-static inline uint32_t ll_lcdc_get_ol0_sc_fe(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_FE);
-}
-
-/**
- * @brief Get the overlay 0 scale-back-end state (OL0_STAT.SC_BE).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Scale-back-end state.
- */
-static inline uint32_t ll_lcdc_get_ol0_sc_be(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_BE);
-}
-
-/**
- * @brief Get the overlay 0 scale-out state (OL0_STAT.SC_OUT).
- * @param[in] lcd LCD_IF instance pointer.
- * @return Scale-out state.
- */
-static inline uint32_t ll_lcdc_get_ol0_sc_out(LCD_IF_TypeDef *lcd)
-{
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_OUT);
 }
 
 /**
@@ -1956,42 +2464,190 @@ static inline uint32_t ll_lcdc_get_ol1_done_req(LCD_IF_TypeDef *lcd)
 }
 
 /**
- * @brief Get the memory-interface main arbiter status (MEM_IF_STAT.ARB_MAIN).
+ * @brief Get the memory-interface main arbiter B status (MEM_IF_STAT.ARB_MAIN_B).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Main arbiter-B status.
+ */
+static inline uint32_t ll_lcdc_get_mem_if_arb_main_b(LCD_IF_TypeDef *lcd)
+{
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_MAIN_B);
+}
+
+/**
+ * @brief Get the memory-interface read-port arbiter B status (MEM_IF_STAT.ARB_READ_PORT_B).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Read-port arbiter-B status.
+ */
+static inline uint32_t ll_lcdc_get_mem_if_arb_read_port_b(LCD_IF_TypeDef *lcd)
+{
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_READ_PORT_B);
+}
+
+/**
+ * @brief Get the memory-interface AHB bus B status (MEM_IF_STAT.AHB_B).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return AHB-B status.
+ */
+static inline uint32_t ll_lcdc_get_mem_if_ahb_b(LCD_IF_TypeDef *lcd)
+{
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_AHB_B);
+}
+
+/**
+ * @brief Get the memory-interface main arbiter status (MEM_IF_STAT.ARB_MAIN_A).
  * @param[in] lcd LCD_IF instance pointer.
  * @return Main arbiter status.
  */
 static inline uint32_t ll_lcdc_get_mem_if_arb_main(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_MAIN);
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_MAIN_A);
 }
 
 /**
- * @brief Get the memory-interface read-port arbiter status (MEM_IF_STAT.ARB_READ_PORT).
+ * @brief Get the memory-interface read-port arbiter status (MEM_IF_STAT.ARB_READ_PORT_A).
  * @param[in] lcd LCD_IF instance pointer.
  * @return Read-port arbiter status.
  */
 static inline uint32_t ll_lcdc_get_mem_if_arb_read_port(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_READ_PORT);
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_READ_PORT_A);
 }
 
 /**
- * @brief Get the memory-interface AHB bus status (MEM_IF_STAT.AHB).
+ * @brief Get the memory-interface AHB bus status (MEM_IF_STAT.AHB_A).
  * @param[in] lcd LCD_IF instance pointer.
  * @return AHB status.
  */
 static inline uint32_t ll_lcdc_get_mem_if_ahb(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_AHB);
+	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_AHB_A);
 }
 
 /*==============================================================================
- * Performance Counter
+ * Counters (TE_WIDTH_CNT0 / TE_WIDTH_CNT1 / DPI_FRAME_CNT)
  *============================================================================*/
 
-static inline uint32_t ll_lcdc_get_perf_count(LCD_IF_TypeDef *lcd)
+/**
+ * @brief Enable the TE width counter (TE_WIDTH_CNT0.EN).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_te_width_cnt_enable(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	return READ_REG(lcd->PERF_CNT);
+	MODIFY_REG(lcd->TE_WIDTH_CNT0, LCD_IF_TE_WIDTH_CNT0_EN,
+		   en ? LCD_IF_TE_WIDTH_CNT0_EN : 0UL);
+}
+
+/**
+ * @brief Set the TE width counter edge select (TE_WIDTH_CNT0.EDGE).
+ * @param[in] lcd  LCD_IF instance pointer.
+ * @param[in] edge Edge select.
+ */
+static inline void ll_lcdc_te_width_cnt_set_edge(LCD_IF_TypeDef *lcd, uint32_t edge)
+{
+	MODIFY_REG(lcd->TE_WIDTH_CNT0, LCD_IF_TE_WIDTH_CNT0_EDGE,
+		   edge ? LCD_IF_TE_WIDTH_CNT0_EDGE : 0UL);
+}
+
+/**
+ * @brief Get the TE width counter valid flag (TE_WIDTH_CNT0.VALID).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when valid.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt_is_valid(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->TE_WIDTH_CNT0, LCD_IF_TE_WIDTH_CNT0_VALID) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the TE width counter overflow flag (TE_WIDTH_CNT0.OVERFLOW).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when overflowed.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt_is_overflow(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->TE_WIDTH_CNT0, LCD_IF_TE_WIDTH_CNT0_OVERFLOW) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the TE width cycle count (TE_WIDTH_CNT0.CYCLE).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Cycle count.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt_get_cycle(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->TE_WIDTH_CNT0) & LCD_IF_TE_WIDTH_CNT0_CYCLE;
+}
+
+/**
+ * @brief Get the TE width counter 1 valid flag (TE_WIDTH_CNT1.VALID).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when valid.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt1_is_valid(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->TE_WIDTH_CNT1, LCD_IF_TE_WIDTH_CNT1_VALID) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the TE width counter 1 overflow flag (TE_WIDTH_CNT1.OVERFLOW).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when overflowed.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt1_is_overflow(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->TE_WIDTH_CNT1, LCD_IF_TE_WIDTH_CNT1_OVERFLOW) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the TE width counter 1 high count (TE_WIDTH_CNT1.HIGH).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return High count.
+ */
+static inline uint32_t ll_lcdc_te_width_cnt1_get_high(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->TE_WIDTH_CNT1) & LCD_IF_TE_WIDTH_CNT1_HIGH;
+}
+
+/**
+ * @brief Enable the DPI frame counter (DPI_FRAME_CNT.EN).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @param[in] en  Non-zero to enable.
+ */
+static inline void ll_lcdc_dpi_frame_cnt_enable(LCD_IF_TypeDef *lcd, uint32_t en)
+{
+	MODIFY_REG(lcd->DPI_FRAME_CNT, LCD_IF_DPI_FRAME_CNT_EN,
+		   en ? LCD_IF_DPI_FRAME_CNT_EN : 0UL);
+}
+
+/**
+ * @brief Get the DPI frame counter valid flag (DPI_FRAME_CNT.VALID).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when valid.
+ */
+static inline uint32_t ll_lcdc_dpi_frame_cnt_is_valid(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->DPI_FRAME_CNT, LCD_IF_DPI_FRAME_CNT_VALID) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the DPI frame counter overflow flag (DPI_FRAME_CNT.OVERFLOW).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Non-zero when overflowed.
+ */
+static inline uint32_t ll_lcdc_dpi_frame_cnt_is_overflow(LCD_IF_TypeDef *lcd)
+{
+	return READ_BIT(lcd->DPI_FRAME_CNT, LCD_IF_DPI_FRAME_CNT_OVERFLOW) ? 1UL : 0UL;
+}
+
+/**
+ * @brief Get the DPI frame count (DPI_FRAME_CNT.CYCLE).
+ * @param[in] lcd LCD_IF instance pointer.
+ * @return Frame count.
+ */
+static inline uint32_t ll_lcdc_dpi_frame_cnt_get(LCD_IF_TypeDef *lcd)
+{
+	return READ_REG(lcd->DPI_FRAME_CNT) & LCD_IF_DPI_FRAME_CNT_CYCLE;
 }
 
 #ifdef __cplusplus
