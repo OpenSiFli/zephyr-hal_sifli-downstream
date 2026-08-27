@@ -49,6 +49,7 @@ License Link:
 Patch List:
 
 - Add SF32LB52x LL headers under `ll/sf32lb52x`.
+- Sync SF32LB52x and SF32LB57x CMSIS headers from the SiFli SDK.
 
 ## Updating
 
