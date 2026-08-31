@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "regs/hpsys_aon.h"
+#include "hpsys_aon.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
@@ -30,31 +30,7 @@ extern "C" {
 #define LL_AON_PM_ACTIVE  (0U) /**< Active mode */
 #define LL_AON_PM_LIGHT   (1U) /**< Light sleep mode */
 #define LL_AON_PM_DEEP    (2U) /**< Deep sleep mode */
-#define LL_AON_PM_STANDBY (3U) /**< Standby mode */
-/** @} */
-
-/**
- * @brief Set the power mode (PMR.MODE).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] mode Power mode, see @ref LL_AON_PM_*.
- */
-static inline void ll_aon_pm_set_mode(HPSYS_AON_TypeDef *AONx, uint32_t mode)
-{
-	MODIFY_REG(AONx->PMR, HPSYS_AON_PMR_MODE,
-		   MAKE_REG_VAL(mode, HPSYS_AON_PMR_MODE_Msk, HPSYS_AON_PMR_MODE_Pos));
-}
-
-/**
- * @brief Get the power mode (PMR.MODE).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @return Current power mode, see @ref LL_AON_PM_*.
- */
-static inline uint32_t ll_aon_pm_get_mode(HPSYS_AON_TypeDef *AONx)
-{
-	return GET_REG_VAL2(AONx->PMR, HPSYS_AON_PMR_MODE);
-}
-
-/**
+#define LL_AON_PM_STANDBY (3U) /**
  * @brief Force entering low power mode (PMR.FORCE_SLEEP, auto-cleared).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
@@ -88,6 +64,30 @@ static inline void ll_aon_pm_force_lcpu_set(HPSYS_AON_TypeDef *AONx)
 static inline void ll_aon_pm_force_lcpu_clear(HPSYS_AON_TypeDef *AONx)
 {
 	CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
+}
+
+/**< Standby mode */
+/** @} */
+
+/**
+ * @brief Set the power mode (PMR.MODE).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] mode Power mode, see @ref LL_AON_PM_*.
+ */
+static inline void ll_aon_pm_set_mode(HPSYS_AON_TypeDef *AONx, uint32_t mode)
+{
+	MODIFY_REG(AONx->PMR, HPSYS_AON_PMR_MODE,
+		   MAKE_REG_VAL(mode, HPSYS_AON_PMR_MODE_Msk, HPSYS_AON_PMR_MODE_Pos));
+}
+
+/**
+ * @brief Get the power mode (PMR.MODE).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Current power mode, see @ref LL_AON_PM_*.
+ */
+static inline uint32_t ll_aon_pm_get_mode(HPSYS_AON_TypeDef *AONx)
+{
+	return GET_REG_VAL2(AONx->PMR, HPSYS_AON_PMR_MODE);
 }
 
 /*==============================================================================
@@ -150,32 +150,7 @@ static inline void ll_aon_cfg_set_pin_mode(HPSYS_AON_TypeDef *AONx, uint32_t pin
 /** @{ */
 #define LL_AON_PINOUT_DISABLED (0x0U) /**< No output routed to PBR */
 #define LL_AON_PINOUT_LPTIM1   (0x2U) /**< LPTIM1 PWM output (SEL1: inverted) */
-#define LL_AON_PINOUT_LPTIM2   (0x3U) /**< LPTIM2 PWM output (SEL1: inverted) */
-/** @} */
-
-/**
- * @brief Select the output routed to PBR (CR1.PINOUT_SEL0).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
- */
-static inline void ll_aon_cfg_set_pinout_sel0(HPSYS_AON_TypeDef *AONx, uint32_t sel)
-{
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL0,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL0_Msk, HPSYS_AON_CR1_PINOUT_SEL0_Pos));
-}
-
-/**
- * @brief Select the inverted output routed to PBR (CR1.PINOUT_SEL1).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
- */
-static inline void ll_aon_cfg_set_pinout_sel1(HPSYS_AON_TypeDef *AONx, uint32_t sel)
-{
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL1,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL1_Msk, HPSYS_AON_CR1_PINOUT_SEL1_Pos));
-}
-
-/**
+#define LL_AON_PINOUT_LPTIM2   (0x3U) /**
  * @brief Enable the global timer (CR1.GTIM_EN).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
@@ -191,6 +166,31 @@ static inline void ll_aon_cfg_gtim_enable(HPSYS_AON_TypeDef *AONx)
 static inline void ll_aon_cfg_gtim_disable(HPSYS_AON_TypeDef *AONx)
 {
 	CLEAR_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
+}
+
+/**
+ * @brief Select the inverted output routed to PBR (CR1.PINOUT_SEL1).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
+ */
+static inline void ll_aon_cfg_set_pinout_sel1(HPSYS_AON_TypeDef *AONx, uint32_t sel)
+{
+	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL1,
+		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL1_Msk, HPSYS_AON_CR1_PINOUT_SEL1_Pos));
+}
+
+/**< LPTIM2 PWM output (SEL1: inverted) */
+/** @} */
+
+/**
+ * @brief Select the output routed to PBR (CR1.PINOUT_SEL0).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] sel  Selection, see @ref LL_AON_PINOUT_*.
+ */
+static inline void ll_aon_cfg_set_pinout_sel0(HPSYS_AON_TypeDef *AONx, uint32_t sel)
+{
+	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL0,
+		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL0_Msk, HPSYS_AON_CR1_PINOUT_SEL0_Pos));
 }
 
 /*==============================================================================
@@ -218,6 +218,66 @@ static inline volatile uint32_t *ll_aon_req_reg(HPSYS_AON_TypeDef *AONx, uint32_
 	default:
 		return &AONx->ACR;
 	}
+}
+
+/**
+ * @brief Check whether HXT48 is ready (ACR.HXT48_RDY).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Non-zero when HXT48 is ready, 0 otherwise.
+ */
+static inline uint32_t ll_aon_hxt48_is_ready(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HXT48_RDY) != 0UL;
+}
+
+/**
+ * @brief Check whether HRC48 is ready (ACR.HRC48_RDY).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Non-zero when HRC48 is ready, 0 otherwise.
+ */
+static inline uint32_t ll_aon_hrc48_is_ready(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HRC48_RDY) != 0UL;
+}
+
+/**
+ * @brief Set the external power request in the given power mode (EXTPWR_REQ, debug only).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] mode Power mode, see @ref LL_AON_PM_*.
+ */
+static inline void ll_aon_extpwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
+{
+	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
+}
+
+/**
+ * @brief Clear the external power request in the given power mode (EXTPWR_REQ, debug only).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] mode Power mode, see @ref LL_AON_PM_*.
+ */
+static inline void ll_aon_extpwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
+{
+	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
+}
+
+/**
+ * @brief Request power in the given power mode (PWR_REQ).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] mode Power mode, see @ref LL_AON_PM_*.
+ */
+static inline void ll_aon_pwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
+{
+	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
+}
+
+/**
+ * @brief Release the power request in the given power mode (PWR_REQ).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] mode Power mode, see @ref LL_AON_PM_*.
+ */
+static inline void ll_aon_pwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
+{
+	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
 }
 
 /**
@@ -260,66 +320,6 @@ static inline void ll_aon_hrc48_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode
 	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HRC48_REQ);
 }
 
-/**
- * @brief Request power in the given power mode (PWR_REQ).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] mode Power mode, see @ref LL_AON_PM_*.
- */
-static inline void ll_aon_pwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
-{
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
-}
-
-/**
- * @brief Release the power request in the given power mode (PWR_REQ).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] mode Power mode, see @ref LL_AON_PM_*.
- */
-static inline void ll_aon_pwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
-{
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
-}
-
-/**
- * @brief Set the external power request in the given power mode (EXTPWR_REQ, debug only).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] mode Power mode, see @ref LL_AON_PM_*.
- */
-static inline void ll_aon_extpwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
-{
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
-}
-
-/**
- * @brief Clear the external power request in the given power mode (EXTPWR_REQ, debug only).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @param[in] mode Power mode, see @ref LL_AON_PM_*.
- */
-static inline void ll_aon_extpwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
-{
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
-}
-
-/**
- * @brief Check whether HXT48 is ready (ACR.HXT48_RDY).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @return Non-zero when HXT48 is ready, 0 otherwise.
- */
-static inline uint32_t ll_aon_hxt48_is_ready(HPSYS_AON_TypeDef *AONx)
-{
-	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HXT48_RDY) != 0UL;
-}
-
-/**
- * @brief Check whether HRC48 is ready (ACR.HRC48_RDY).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @return Non-zero when HRC48 is ready, 0 otherwise.
- */
-static inline uint32_t ll_aon_hrc48_is_ready(HPSYS_AON_TypeDef *AONx)
-{
-	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HRC48_RDY) != 0UL;
-}
-
 /*==============================================================================
  * RAM Power Down (SBCR)
  *============================================================================*/
@@ -328,7 +328,9 @@ static inline uint32_t ll_aon_hrc48_is_ready(HPSYS_AON_TypeDef *AONx)
 /** @{ */
 #define LL_AON_RAM_PD_0 HPSYS_AON_SBCR_PD_RAM0 /**< Power down RAM0 */
 #define LL_AON_RAM_PD_1 HPSYS_AON_SBCR_PD_RAM1 /**< Power down RAM1 */
-#define LL_AON_RAM_PD_2 HPSYS_AON_SBCR_PD_RAM2 /**< Power down RAM2 */
+#define LL_AON_RAM_PD_2 HPSYS_AON_SBCR_PD_RAM2
+
+/**< Power down RAM2 */
 /** @} */
 
 /**
@@ -385,7 +387,9 @@ static inline void ll_aon_ram_pd_clear(HPSYS_AON_TypeDef *AONx, uint32_t ram_mas
 #define LL_AON_WKUP_PIN19     HPSYS_AON_WER_PIN19
 #define LL_AON_WKUP_PIN20     HPSYS_AON_WER_PIN20
 #define LL_AON_WKUP_PIN_ALL   HPSYS_AON_WSR_PIN_ALL  /**< All wakeup pins */
-#define LL_AON_WKUP_AON       HPSYS_AON_WCR_AON      /**< AON wakeup IRQ (clear only) */
+#define LL_AON_WKUP_AON       HPSYS_AON_WCR_AON
+
+/**< AON wakeup IRQ (clear only) */
 /** @} */
 
 /**
@@ -439,6 +443,44 @@ static inline void ll_aon_clear_wakeup_flag(HPSYS_AON_TypeDef *AONx, uint32_t ma
 	WRITE_REG(AONx->WCR, mask);
 }
 
+/**
+ * @brief Check whether LPSYS is active (ISSR.LP_ACTIVE).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Non-zero when LPSYS is active, 0 otherwise.
+ */
+static inline uint32_t ll_aon_issr_is_lp_active(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP_ACTIVE) != 0UL;
+}
+
+/**
+ * @brief Indicate that HPSYS is active (ISSR.HP_ACTIVE).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ */
+static inline void ll_aon_issr_hp_active_set(HPSYS_AON_TypeDef *AONx)
+{
+	SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
+}
+
+/**
+ * @brief Clear the HPSYS-active indication (ISSR.HP_ACTIVE).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ */
+static inline void ll_aon_issr_hp_active_clear(HPSYS_AON_TypeDef *AONx)
+{
+	CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
+}
+
+/**
+ * @brief Check whether an LPSYS request exists (ISSR.LP2HP_REQ).
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Non-zero when the request exists, 0 otherwise.
+ */
+static inline uint32_t ll_aon_issr_is_lp2hp_req(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP2HP_REQ) != 0UL;
+}
+
 /*==============================================================================
  * Inter System Status (ISSR)
  *============================================================================*/
@@ -462,41 +504,21 @@ static inline void ll_aon_issr_hp2lp_req_clear(HPSYS_AON_TypeDef *AONx)
 }
 
 /**
- * @brief Check whether an LPSYS request exists (ISSR.LP2HP_REQ).
+ * @brief Force off all HPSYS related analog modules (ANACR.VHP_ISO).
  * @param[in] AONx HPSYS_AON instance pointer.
- * @return Non-zero when the request exists, 0 otherwise.
  */
-static inline uint32_t ll_aon_issr_is_lp2hp_req(HPSYS_AON_TypeDef *AONx)
+static inline void ll_aon_anacr_vhp_iso_set(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP2HP_REQ) != 0UL;
+	SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
 }
 
 /**
- * @brief Indicate that HPSYS is active (ISSR.HP_ACTIVE).
+ * @brief Clear the VHP isolation (ANACR.VHP_ISO).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
-static inline void ll_aon_issr_hp_active_set(HPSYS_AON_TypeDef *AONx)
+static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
-}
-
-/**
- * @brief Clear the HPSYS-active indication (ISSR.HP_ACTIVE).
- * @param[in] AONx HPSYS_AON instance pointer.
- */
-static inline void ll_aon_issr_hp_active_clear(HPSYS_AON_TypeDef *AONx)
-{
-	CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
-}
-
-/**
- * @brief Check whether LPSYS is active (ISSR.LP_ACTIVE).
- * @param[in] AONx HPSYS_AON instance pointer.
- * @return Non-zero when LPSYS is active, 0 otherwise.
- */
-static inline uint32_t ll_aon_issr_is_lp_active(HPSYS_AON_TypeDef *AONx)
-{
-	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP_ACTIVE) != 0UL;
+	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
 }
 
 /*==============================================================================
@@ -521,24 +543,6 @@ static inline void ll_aon_anacr_pa_iso_clear(HPSYS_AON_TypeDef *AONx)
 	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
 }
 
-/**
- * @brief Force off all HPSYS related analog modules (ANACR.VHP_ISO).
- * @param[in] AONx HPSYS_AON instance pointer.
- */
-static inline void ll_aon_anacr_vhp_iso_set(HPSYS_AON_TypeDef *AONx)
-{
-	SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
-}
-
-/**
- * @brief Clear the VHP isolation (ANACR.VHP_ISO).
- * @param[in] AONx HPSYS_AON instance pointer.
- */
-static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
-{
-	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
-}
-
 /*==============================================================================
  * Global Timer (GTIMR)
  *============================================================================*/
@@ -551,6 +555,46 @@ static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
 static inline uint32_t ll_aon_gtim_get_count(HPSYS_AON_TypeDef *AONx)
 {
 	return READ_REG(AONx->GTIMR);
+}
+
+/**
+ * @brief Set the AON reserve register 0.
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] value Reserve register value.
+ */
+static inline void ll_aon_set_reserve0(HPSYS_AON_TypeDef *AONx, uint32_t value)
+{
+	WRITE_REG(AONx->RESERVE0, value);
+}
+
+/**
+ * @brief Read the AON reserve register 0.
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Reserve register value.
+ */
+static inline uint32_t ll_aon_get_reserve0(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_REG(AONx->RESERVE0);
+}
+
+/**
+ * @brief Set the AON reserve register 1.
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @param[in] value Reserve register value.
+ */
+static inline void ll_aon_set_reserve1(HPSYS_AON_TypeDef *AONx, uint32_t value)
+{
+	WRITE_REG(AONx->RESERVE1, value);
+}
+
+/**
+ * @brief Read the AON reserve register 1.
+ * @param[in] AONx HPSYS_AON instance pointer.
+ * @return Reserve register value.
+ */
+static inline uint32_t ll_aon_get_reserve1(HPSYS_AON_TypeDef *AONx)
+{
+	return READ_REG(AONx->RESERVE1);
 }
 
 #ifdef __cplusplus

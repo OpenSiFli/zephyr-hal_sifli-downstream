@@ -8,7 +8,8 @@
 #define __LL_EXTDMA_H
 
 #include <stdint.h>
-#include "register.h"
+#include "extdma.h"
+#include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -82,6 +83,187 @@ typedef struct
 } ll_extdma_ctrl_config_t;
 
 /**
+ * @brief Read ExtDMA interrupt status register.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return ISR register value.
+ */
+static inline uint32_t ll_extdma_get_isr(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_REG(EXTDMAx->ISR);
+}
+
+/**
+ * @brief Check OFIF flag (compression overflow).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when OFIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_OFIF);
+}
+
+/**
+ * @brief Check TEIF flag.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when TEIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_teif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_TEIF);
+}
+
+/**
+ * @brief Check HTIF flag.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when HTIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_htif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_HTIF);
+}
+
+/**
+ * @brief Check TCIF flag.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when TCIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_tcif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_TCIF);
+}
+
+/**
+ * @brief Check GIF flag.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @return Non-zero when GIF is set.
+ */
+static inline uint32_t ll_extdma_is_active_flag_gif(EXTDMA_TypeDef *EXTDMAx)
+{
+    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_GIF);
+}
+
+/**
+ * @brief Clear OFIF flag by writing IFCR.COFIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_COFIF);
+}
+
+/**
+ * @brief Clear TEIF flag by writing IFCR.CTEIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_teif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CTEIF);
+}
+
+/**
+ * @brief Clear HTIF flag by writing IFCR.CHTIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_htif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CHTIF);
+}
+
+/**
+ * @brief Clear TCIF flag by writing IFCR.CTCIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_tcif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CTCIF);
+}
+
+/**
+ * @brief Clear GIF flag by writing IFCR.CGIF.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_clear_flag_gif(EXTDMA_TypeDef *EXTDMAx)
+{
+    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CGIF);
+}
+
+/**
+ * @brief Trigger ExtDMA software reset.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @note RESET bit is auto-cleared by hardware.
+ */
+static inline void ll_extdma_software_reset(EXTDMA_TypeDef *EXTDMAx)
+{
+    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_RESET);
+}
+
+/**
+ * @brief Configure ExtDMA control fields (burst/inc/interrupt/size).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] cfg Pointer to control configuration.
+ * @note SRCSIZE and DSTSIZE are always forced to 32-bit word.
+ */
+static inline void ll_extdma_config_ctrl(EXTDMA_TypeDef *EXTDMAx,
+                                         const ll_extdma_ctrl_config_t *cfg)
+{
+    MODIFY_REG(EXTDMAx->CCR,
+               EXTDMA_CCR_SRCBURST | EXTDMA_CCR_DSTBURST | EXTDMA_CCR_SRCSIZE |
+                   EXTDMA_CCR_DSTSIZE | EXTDMA_CCR_SRCINC | EXTDMA_CCR_DSTINC |
+                   EXTDMA_CCR_TCIE | EXTDMA_CCR_HTIE | EXTDMA_CCR_TEIE,
+               cfg->src_burst | cfg->dst_burst | LL_EXTDMA_SRCSIZE_WORD |
+                   LL_EXTDMA_DSTSIZE_WORD | cfg->src_inc | cfg->dst_inc |
+                   cfg->it_tc | cfg->it_ht | cfg->it_te);
+}
+
+/**
+ * @brief Enable compression overflow interrupt (CCR.OFIE).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_enable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
+}
+
+/**
+ * @brief Disable compression overflow interrupt (CCR.OFIE = 0).
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_disable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
+{
+    CLEAR_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
+}
+
+/**
+ * @brief Enable ExtDMA transfer.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_enable(EXTDMA_TypeDef *EXTDMAx)
+{
+    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_EN);
+}
+
+/**
+ * @brief Disable ExtDMA transfer.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ */
+static inline void ll_extdma_disable(EXTDMA_TypeDef *EXTDMAx)
+{
+    CLEAR_BIT(EXTDMAx->CCR, EXTDMA_CCR_EN);
+}
+
+/**
+ * @brief Set ExtDMA transfer count in words.
+ * @param[in] EXTDMAx ExtDMA instance pointer.
+ * @param[in] ndt_words Number of 32-bit words.
+ */
+static inline void ll_extdma_set_ndt_words(EXTDMA_TypeDef *EXTDMAx,
+                                           uint32_t ndt_words)
+{
+    MODIFY_REG(EXTDMAx->CNDTR, EXTDMA_CNDTR_NDT,
+               (ndt_words << EXTDMA_CNDTR_NDT_Pos) & EXTDMA_CNDTR_NDT_Msk);
+}
+
+/**
  * @brief Set ExtDMA source address register.
  * @param[in] EXTDMAx ExtDMA instance pointer.
  * @param[in] src_addr Source address (word aligned).
@@ -104,184 +286,27 @@ static inline void ll_extdma_set_dst_addr(EXTDMA_TypeDef *EXTDMAx,
 }
 
 /**
- * @brief Set ExtDMA transfer count in words.
+ * @brief Set the starting byte position in the first source word (CMPRCR.SRCPOS).
  * @param[in] EXTDMAx ExtDMA instance pointer.
- * @param[in] ndt_words Number of 32-bit words.
+ * @param[in] pos     Starting byte position (2 bits).
  */
-static inline void ll_extdma_set_ndt_words(EXTDMA_TypeDef *EXTDMAx,
-                                           uint32_t ndt_words)
+static inline void ll_extdma_cmpr_set_src_pos(EXTDMA_TypeDef *EXTDMAx, uint32_t pos)
 {
-    MODIFY_REG(EXTDMAx->CNDTR, EXTDMA_CNDTR_NDT,
-               (ndt_words << EXTDMA_CNDTR_NDT_Pos) & EXTDMA_CNDTR_NDT_Msk);
+    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCPOS,
+               MAKE_REG_VAL(pos, EXTDMA_CMPRCR_SRCPOS_Msk, EXTDMA_CMPRCR_SRCPOS_Pos));
 }
 
 /**
- * @brief Configure ExtDMA control fields (burst/inc/interrupt/size).
+ * @brief Set the source frame format (CMPRCR.SRCFMT).
  * @param[in] EXTDMAx ExtDMA instance pointer.
- * @param[in] cfg Pointer to control configuration.
- * @note SRCSIZE and DSTSIZE are always forced to 32-bit word.
+ * @param[in] fmt     Source format, one of @ref EXTDMA_CMPRCR_SRCFMT_RGB565,
+ *                    @ref EXTDMA_CMPRCR_SRCFMT_RGB888 or
+ *                    @ref EXTDMA_CMPRCR_SRCFMT_ARGB8888.
  */
-static inline void ll_extdma_config_ctrl(EXTDMA_TypeDef *EXTDMAx,
-                                         const ll_extdma_ctrl_config_t *cfg)
+static inline void ll_extdma_cmpr_set_src_fmt(EXTDMA_TypeDef *EXTDMAx, uint32_t fmt)
 {
-    MODIFY_REG(EXTDMAx->CCR,
-               EXTDMA_CCR_SRCBURST | EXTDMA_CCR_DSTBURST | EXTDMA_CCR_SRCSIZE |
-                   EXTDMA_CCR_DSTSIZE | EXTDMA_CCR_SRCINC | EXTDMA_CCR_DSTINC |
-                   EXTDMA_CCR_TCIE | EXTDMA_CCR_HTIE | EXTDMA_CCR_TEIE,
-               cfg->src_burst | cfg->dst_burst | LL_EXTDMA_SRCSIZE_WORD |
-                   LL_EXTDMA_DSTSIZE_WORD | cfg->src_inc | cfg->dst_inc |
-                   cfg->it_tc | cfg->it_ht | cfg->it_te);
-}
-
-/**
- * @brief Enable ExtDMA transfer.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_enable(EXTDMA_TypeDef *EXTDMAx)
-{
-    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_EN);
-}
-
-/**
- * @brief Disable ExtDMA transfer.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_disable(EXTDMA_TypeDef *EXTDMAx)
-{
-    CLEAR_BIT(EXTDMAx->CCR, EXTDMA_CCR_EN);
-}
-
-/**
- * @brief Trigger ExtDMA software reset.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @note RESET bit is auto-cleared by hardware.
- */
-static inline void ll_extdma_software_reset(EXTDMA_TypeDef *EXTDMAx)
-{
-    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_RESET);
-}
-
-/**
- * @brief Read ExtDMA interrupt status register.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return ISR register value.
- */
-static inline uint32_t ll_extdma_get_isr(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_REG(EXTDMAx->ISR);
-}
-
-/**
- * @brief Check GIF flag.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Non-zero when GIF is set.
- */
-static inline uint32_t ll_extdma_is_active_flag_gif(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_GIF);
-}
-
-/**
- * @brief Check TCIF flag.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Non-zero when TCIF is set.
- */
-static inline uint32_t ll_extdma_is_active_flag_tcif(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_TCIF);
-}
-
-/**
- * @brief Check HTIF flag.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Non-zero when HTIF is set.
- */
-static inline uint32_t ll_extdma_is_active_flag_htif(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_HTIF);
-}
-
-/**
- * @brief Check TEIF flag.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Non-zero when TEIF is set.
- */
-static inline uint32_t ll_extdma_is_active_flag_teif(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_TEIF);
-}
-
-/**
- * @brief Clear GIF flag by writing IFCR.CGIF.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_clear_flag_gif(EXTDMA_TypeDef *EXTDMAx)
-{
-    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CGIF);
-}
-
-/**
- * @brief Clear TCIF flag by writing IFCR.CTCIF.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_clear_flag_tcif(EXTDMA_TypeDef *EXTDMAx)
-{
-    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CTCIF);
-}
-
-/**
- * @brief Clear HTIF flag by writing IFCR.CHTIF.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_clear_flag_htif(EXTDMA_TypeDef *EXTDMAx)
-{
-    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CHTIF);
-}
-
-/**
- * @brief Clear TEIF flag by writing IFCR.CTEIF.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_clear_flag_teif(EXTDMA_TypeDef *EXTDMAx)
-{
-    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_CTEIF);
-}
-
-/**
- * @brief Check OFIF flag (compression overflow).
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Non-zero when OFIF is set.
- */
-static inline uint32_t ll_extdma_is_active_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
-{
-    return READ_BIT(EXTDMAx->ISR, EXTDMA_ISR_OFIF);
-}
-
-/**
- * @brief Clear OFIF flag by writing IFCR.COFIF.
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_clear_flag_ofif(EXTDMA_TypeDef *EXTDMAx)
-{
-    WRITE_REG(EXTDMAx->IFCR, EXTDMA_IFCR_COFIF);
-}
-
-/**
- * @brief Enable compression overflow interrupt (CCR.OFIE).
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_enable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
-{
-    SET_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
-}
-
-/**
- * @brief Disable compression overflow interrupt (CCR.OFIE = 0).
- * @param[in] EXTDMAx ExtDMA instance pointer.
- */
-static inline void ll_extdma_disable_it_ofif(EXTDMA_TypeDef *EXTDMAx)
-{
-    CLEAR_BIT(EXTDMAx->CCR, EXTDMA_CCR_OFIE);
+    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCFMT,
+               MAKE_REG_VAL(fmt, EXTDMA_CMPRCR_SRCFMT_Msk, EXTDMA_CMPRCR_SRCFMT_Pos));
 }
 
 /*==============================================================================
@@ -307,27 +332,26 @@ static inline void ll_extdma_cmpr_disable(EXTDMA_TypeDef *EXTDMAx)
 }
 
 /**
- * @brief Set the source frame format (CMPRCR.SRCFMT).
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @param[in] fmt     Source format, one of @ref EXTDMA_CMPRCR_SRCFMT_RGB565,
- *                    @ref EXTDMA_CMPRCR_SRCFMT_RGB888 or
- *                    @ref EXTDMA_CMPRCR_SRCFMT_ARGB8888.
+ * @brief Set the per-line output target size (CMPRSR.TGTSIZE).
+ * @param[in] EXTDMAx   ExtDMA instance pointer.
+ * @param[in] tgt_size  Output target size of each line (12 bits).
+ * @note Output data size of each line is tgt_size * 3 * 2 bytes.
  */
-static inline void ll_extdma_cmpr_set_src_fmt(EXTDMA_TypeDef *EXTDMAx, uint32_t fmt)
+static inline void ll_extdma_cmpr_set_tgt_size(EXTDMA_TypeDef *EXTDMAx, uint32_t tgt_size)
 {
-    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCFMT,
-               MAKE_REG_VAL(fmt, EXTDMA_CMPRCR_SRCFMT_Msk, EXTDMA_CMPRCR_SRCFMT_Pos));
+    MODIFY_REG(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE,
+               MAKE_REG_VAL(tgt_size, EXTDMA_CMPRSR_TGTSIZE_Msk,
+                            EXTDMA_CMPRSR_TGTSIZE_Pos));
 }
 
 /**
- * @brief Set the starting byte position in the first source word (CMPRCR.SRCPOS).
+ * @brief Get the per-line output target size (CMPRSR.TGTSIZE).
  * @param[in] EXTDMAx ExtDMA instance pointer.
- * @param[in] pos     Starting byte position (2 bits).
+ * @return Target size value.
  */
-static inline void ll_extdma_cmpr_set_src_pos(EXTDMA_TypeDef *EXTDMAx, uint32_t pos)
+static inline uint32_t ll_extdma_cmpr_get_tgt_size(EXTDMA_TypeDef *EXTDMAx)
 {
-    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCPOS,
-               MAKE_REG_VAL(pos, EXTDMA_CMPRCR_SRCPOS_Msk, EXTDMA_CMPRCR_SRCPOS_Pos));
+    return GET_REG_VAL2(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE);
 }
 
 /**
@@ -350,29 +374,6 @@ static inline void ll_extdma_cmpr_set_line_size(EXTDMA_TypeDef *EXTDMAx, uint32_
 static inline uint32_t ll_extdma_cmpr_get_line_size(EXTDMA_TypeDef *EXTDMAx)
 {
     return GET_REG_VAL2(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_LINESIZE);
-}
-
-/**
- * @brief Set the per-line output target size (CMPRSR.TGTSIZE).
- * @param[in] EXTDMAx   ExtDMA instance pointer.
- * @param[in] tgt_size  Output target size of each line (12 bits).
- * @note Output data size of each line is tgt_size * 3 * 2 bytes.
- */
-static inline void ll_extdma_cmpr_set_tgt_size(EXTDMA_TypeDef *EXTDMAx, uint32_t tgt_size)
-{
-    MODIFY_REG(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE,
-               MAKE_REG_VAL(tgt_size, EXTDMA_CMPRSR_TGTSIZE_Msk,
-                            EXTDMA_CMPRSR_TGTSIZE_Pos));
-}
-
-/**
- * @brief Get the per-line output target size (CMPRSR.TGTSIZE).
- * @param[in] EXTDMAx ExtDMA instance pointer.
- * @return Target size value.
- */
-static inline uint32_t ll_extdma_cmpr_get_tgt_size(EXTDMA_TypeDef *EXTDMAx)
-{
-    return GET_REG_VAL2(EXTDMAx->CMPRSR, EXTDMA_CMPRSR_TGTSIZE);
 }
 
 /**

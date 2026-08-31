@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "regs/hpsys_rcc.h"
+#include "hpsys_rcc.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
@@ -287,45 +287,25 @@ static inline void ll_rcc_clear_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t gr
 	}
 }
 
-/*==============================================================================
- * Clock Source Selection
- *============================================================================*/
-
 /**
- * @brief Set system clock source clk_hpsys
+ * @brief Set USB clock source
  * @param[in] rcc RCC peripheral pointer
- * @param[in] src Use LL_RCC_SYS_CLKSRC_xxx
+ * @param[in] src Use LL_RCC_USB_CLKSRC_xxx
  */
-static inline void ll_rcc_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+static inline void ll_rcc_set_usb_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_Msk, HPSYS_RCC_CSR_SEL_SYS_Pos));
-}
-
-static inline uint32_t ll_rcc_get_sys_clock_source(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS);
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_USBC_Msk, HPSYS_RCC_CSR_SEL_USBC_Pos));
 }
 
 /**
- * @brief Set peripheral clock source clk_peri_hpsys (USART/SPI/I2C/GPTIM2/BTIM2)
+ * @brief Get USB clock source
  * @param[in] rcc RCC peripheral pointer
- * @param[in] src Use LL_RCC_PERI_CLKSRC_xxx
+ * @return USB clock source selection value.
  */
-static inline void ll_rcc_set_peri_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+static inline uint32_t ll_rcc_get_usb_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_PERI_Msk, HPSYS_RCC_CSR_SEL_PERI_Pos));
-}
-
-/**
- * @brief Get peripheral clock source clk_peri_hpsys
- * @param[in] rcc RCC peripheral pointer
- * @return Peripheral clock source selection value.
- */
-static inline uint32_t ll_rcc_get_peri_clock_source(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI);
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC);
 }
 
 /**
@@ -350,45 +330,24 @@ static inline uint32_t ll_rcc_get_tick_clock_source(HPSYS_RCC_TypeDef *rcc)
 }
 
 /**
- * @brief Set USB clock source
+ * @brief Set peripheral clock source clk_peri_hpsys (USART/SPI/I2C/GPTIM2/BTIM2)
  * @param[in] rcc RCC peripheral pointer
- * @param[in] src Use LL_RCC_USB_CLKSRC_xxx
+ * @param[in] src Use LL_RCC_PERI_CLKSRC_xxx
  */
-static inline void ll_rcc_set_usb_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+static inline void ll_rcc_set_peri_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_USBC_Msk, HPSYS_RCC_CSR_SEL_USBC_Pos));
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_PERI_Msk, HPSYS_RCC_CSR_SEL_PERI_Pos));
 }
 
 /**
- * @brief Get USB clock source
+ * @brief Get peripheral clock source clk_peri_hpsys
  * @param[in] rcc RCC peripheral pointer
- * @return USB clock source selection value.
+ * @return Peripheral clock source selection value.
  */
-static inline uint32_t ll_rcc_get_usb_clock_source(HPSYS_RCC_TypeDef *rcc)
+static inline uint32_t ll_rcc_get_peri_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC);
-}
-
-/**
- * @brief Set MPI1 clock source
- * @param[in] rcc RCC peripheral pointer
- * @param[in] src Use LL_RCC_MPI_CLKSRC_xxx
- */
-static inline void ll_rcc_set_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
-{
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI1_Msk, HPSYS_RCC_CSR_SEL_MPI1_Pos));
-}
-
-/**
- * @brief Get MPI1 clock source
- * @param[in] rcc RCC peripheral pointer
- * @return MPI1 clock source selection value.
- */
-static inline uint32_t ll_rcc_get_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1);
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI);
 }
 
 /**
@@ -413,6 +372,27 @@ static inline uint32_t ll_rcc_get_mpi2_clock_source(HPSYS_RCC_TypeDef *rcc)
 }
 
 /**
+ * @brief Set MPI1 clock source
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] src Use LL_RCC_MPI_CLKSRC_xxx
+ */
+static inline void ll_rcc_set_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+{
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI1_Msk, HPSYS_RCC_CSR_SEL_MPI1_Pos));
+}
+
+/**
+ * @brief Get MPI1 clock source
+ * @param[in] rcc RCC peripheral pointer
+ * @return MPI1 clock source selection value.
+ */
+static inline uint32_t ll_rcc_get_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1);
+}
+
+/**
  * @brief Set low-power system clock source
  * @param[in] rcc RCC peripheral pointer
  * @param[in] src Use LL_RCC_SYS_LP_CLKSRC_xxx
@@ -431,6 +411,89 @@ static inline void ll_rcc_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc, uint32
 static inline uint32_t ll_rcc_get_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
 	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP);
+}
+
+/*==============================================================================
+ * Clock Source Selection
+ *============================================================================*/
+
+/**
+ * @brief Set system clock source clk_hpsys
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] src Use LL_RCC_SYS_CLKSRC_xxx
+ */
+static inline void ll_rcc_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+{
+	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS,
+		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_Msk, HPSYS_RCC_CSR_SEL_SYS_Pos));
+}
+
+static inline uint32_t ll_rcc_get_sys_clock_source(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS);
+}
+
+/**
+ * @brief Set Systick divider f_systick = f_SEL_TICK / div
+ * @param[in] rcc RCC peripheral pointer
+ * @param[in] div Divider value.
+ */
+static inline void ll_rcc_set_tick_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
+{
+	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV,
+		   MAKE_REG_VAL(div, HPSYS_RCC_CFGR_TICKDIV_Msk, HPSYS_RCC_CFGR_TICKDIV_Pos));
+}
+
+/**
+ * @brief Get Systick divider
+ * @param[in] rcc RCC peripheral pointer
+ * @return Current TICKDIV value.
+ */
+static inline uint32_t ll_rcc_get_tick_div(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV);
+}
+
+/**
+ * @brief Set APB2 clock divider pclk2_hpsys = hclk / (2^pdiv2)
+ * @param[in] rcc    RCC peripheral pointer
+ * @param[in] pdiv2  Exponent value (default 4 = divide by 16)
+ */
+static inline void ll_rcc_set_apb2_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv2)
+{
+	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2,
+		   MAKE_REG_VAL(pdiv2, HPSYS_RCC_CFGR_PDIV2_Msk, HPSYS_RCC_CFGR_PDIV2_Pos));
+}
+
+/**
+ * @brief Get APB2 clock divider exponent
+ * @param[in] rcc RCC peripheral pointer
+ * @return Current PDIV2 value.
+ */
+static inline uint32_t ll_rcc_get_apb2_div(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
+}
+
+/**
+ * @brief Set APB1 clock divider pclk_hpsys = hclk / (2^pdiv1)
+ * @param[in] rcc    RCC peripheral pointer
+ * @param[in] pdiv1  Exponent value (default 1 = divide by 2)
+ */
+static inline void ll_rcc_set_apb1_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv1)
+{
+	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1,
+		   MAKE_REG_VAL(pdiv1, HPSYS_RCC_CFGR_PDIV1_Msk, HPSYS_RCC_CFGR_PDIV1_Pos));
+}
+
+/**
+ * @brief Get APB1 clock divider exponent
+ * @param[in] rcc RCC peripheral pointer
+ * @return Current PDIV1 value.
+ */
+static inline uint32_t ll_rcc_get_apb1_div(HPSYS_RCC_TypeDef *rcc)
+{
+	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
 }
 
 /*==============================================================================
@@ -456,69 +519,6 @@ static inline void ll_rcc_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t hdiv)
 static inline uint32_t ll_rcc_get_ahb_div(HPSYS_RCC_TypeDef *rcc)
 {
 	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_HDIV);
-}
-
-/**
- * @brief Set APB1 clock divider pclk_hpsys = hclk / (2^pdiv1)
- * @param[in] rcc    RCC peripheral pointer
- * @param[in] pdiv1  Exponent value (default 1 = divide by 2)
- */
-static inline void ll_rcc_set_apb1_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv1)
-{
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1,
-		   MAKE_REG_VAL(pdiv1, HPSYS_RCC_CFGR_PDIV1_Msk, HPSYS_RCC_CFGR_PDIV1_Pos));
-}
-
-/**
- * @brief Get APB1 clock divider exponent
- * @param[in] rcc RCC peripheral pointer
- * @return Current PDIV1 value.
- */
-static inline uint32_t ll_rcc_get_apb1_div(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
-}
-
-/**
- * @brief Set APB2 clock divider pclk2_hpsys = hclk / (2^pdiv2)
- * @param[in] rcc    RCC peripheral pointer
- * @param[in] pdiv2  Exponent value (default 4 = divide by 16)
- */
-static inline void ll_rcc_set_apb2_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv2)
-{
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2,
-		   MAKE_REG_VAL(pdiv2, HPSYS_RCC_CFGR_PDIV2_Msk, HPSYS_RCC_CFGR_PDIV2_Pos));
-}
-
-/**
- * @brief Get APB2 clock divider exponent
- * @param[in] rcc RCC peripheral pointer
- * @return Current PDIV2 value.
- */
-static inline uint32_t ll_rcc_get_apb2_div(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
-}
-
-/**
- * @brief Set Systick divider f_systick = f_SEL_TICK / div
- * @param[in] rcc RCC peripheral pointer
- * @param[in] div Divider value.
- */
-static inline void ll_rcc_set_tick_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
-{
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV,
-		   MAKE_REG_VAL(div, HPSYS_RCC_CFGR_TICKDIV_Msk, HPSYS_RCC_CFGR_TICKDIV_Pos));
-}
-
-/**
- * @brief Get Systick divider
- * @param[in] rcc RCC peripheral pointer
- * @return Current TICKDIV value.
- */
-static inline uint32_t ll_rcc_get_tick_div(HPSYS_RCC_TypeDef *rcc)
-{
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV);
 }
 
 /*==============================================================================
@@ -580,32 +580,6 @@ static inline volatile uint32_t *ll_rcc_dll_cr_reg(HPSYS_RCC_TypeDef *rcc, uint3
 }
 
 /**
- * @brief Enable a DLL instance (DLLxCR.EN).
- * @param rcc RCC peripheral pointer.
- * @param idx DLL instance index (LL_RCC_DLL_INDEX_x).
- */
-static inline void ll_rcc_dll_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
-
-	if (cr != NULL) {
-		SET_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
-	}
-}
-
-/**
- * @brief Disable a DLL instance (DLLxCR.EN).
- */
-static inline void ll_rcc_dll_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
-
-	if (cr != NULL) {
-		CLEAR_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
-	}
-}
-
-/**
  * @brief Check a DLL instance ready status (DLLxCR.READY).
  * @return Non-zero when the DLL instance is ready.
  */
@@ -614,36 +588,6 @@ static inline uint32_t ll_rcc_dll_is_ready(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
 	return (cr != NULL) ? (READ_BIT(*cr, HPSYS_RCC_DLL1CR_READY) != 0UL) : 0UL;
-}
-
-/**
- * @brief Set a DLL instance frequency stage (DLLxCR.STG[5:2]).
- * @note f_dll_out = (STG+1)*24MHz when OUT_DIV2_EN=0, or half of that when
- *       OUT_DIV2_EN=1. OUT_DIV2_EN resets to 1, so use
- *       @ref ll_rcc_dll_set_out_div2 first if a non-divided output is wanted.
- * @param rcc RCC peripheral pointer.
- * @param idx DLL instance index (LL_RCC_DLL_INDEX_x).
- * @param stg Frequency stage, see @ref LL_RCC_DLL_STG_*.
- */
-static inline void ll_rcc_dll_set_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint32_t stg)
-{
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
-
-	if (cr != NULL) {
-		MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_STG,
-			   MAKE_REG_VAL(stg, HPSYS_RCC_DLL1CR_STG_Msk, HPSYS_RCC_DLL1CR_STG_Pos));
-	}
-}
-
-/**
- * @brief Get a DLL instance frequency stage (DLLxCR.STG[5:2]).
- * @return Current frequency stage.
- */
-static inline uint32_t ll_rcc_dll_get_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
-
-	return (cr != NULL) ? GET_REG_VAL2(*cr, HPSYS_RCC_DLL1CR_STG) : 0UL;
 }
 
 /**
@@ -682,6 +626,67 @@ static inline void ll_rcc_dll_set_in_div2(HPSYS_RCC_TypeDef *rcc, uint32_t idx, 
 	}
 }
 
+/**
+ * @brief Set a DLL instance frequency stage (DLLxCR.STG[5:2]).
+ * @note f_dll_out = (STG+1)*24MHz when OUT_DIV2_EN=0, or half of that when
+ *       OUT_DIV2_EN=1. OUT_DIV2_EN resets to 1, so use
+ *       @ref ll_rcc_dll_set_out_div2 first if a non-divided output is wanted.
+ * @param rcc RCC peripheral pointer.
+ * @param idx DLL instance index (LL_RCC_DLL_INDEX_x).
+ * @param stg Frequency stage, see @ref LL_RCC_DLL_STG_*.
+ */
+static inline void ll_rcc_dll_set_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint32_t stg)
+{
+	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+
+	if (cr != NULL) {
+		MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_STG,
+			   MAKE_REG_VAL(stg, HPSYS_RCC_DLL1CR_STG_Msk, HPSYS_RCC_DLL1CR_STG_Pos));
+	}
+}
+
+/**
+ * @brief Get a DLL instance frequency stage (DLLxCR.STG[5:2]).
+ * @return Current frequency stage.
+ */
+static inline uint32_t ll_rcc_dll_get_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+
+	return (cr != NULL) ? GET_REG_VAL2(*cr, HPSYS_RCC_DLL1CR_STG) : 0UL;
+}
+
+/**
+ * @brief Enable a DLL instance (DLLxCR.EN).
+ * @param rcc RCC peripheral pointer.
+ * @param idx DLL instance index (LL_RCC_DLL_INDEX_x).
+ */
+static inline void ll_rcc_dll_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+
+	if (cr != NULL) {
+		SET_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
+	}
+}
+
+/**
+ * @brief Disable a DLL instance (DLLxCR.EN).
+ */
+static inline void ll_rcc_dll_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+
+	if (cr != NULL) {
+		CLEAR_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
+	}
+}
+
+static inline uint32_t ll_rcc_hrc_is_calibration_done(HPSYS_RCC_TypeDef *rcc)
+{
+	return READ_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_DONE) ? 1UL : 0UL;
+}
+
 /*==============================================================================
  * HRC Calibration
  *============================================================================*/
@@ -704,11 +709,6 @@ static inline void ll_rcc_hrc_start_calibration(HPSYS_RCC_TypeDef *rcc, uint16_t
 	SET_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_EN);
 }
 
-static inline uint32_t ll_rcc_hrc_is_calibration_done(HPSYS_RCC_TypeDef *rcc)
-{
-	return READ_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_DONE) ? 1UL : 0UL;
-}
-
 /**
  * @brief Read HRC calibration results
  * @param[out] hxt_cnt clk_hxt48 count
@@ -720,6 +720,39 @@ static inline void ll_rcc_hrc_get_calibration_result(HPSYS_RCC_TypeDef *rcc, uin
 	uint32_t reg = READ_REG(rcc->HRCCAL2);
 	*hrc_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HRC_CNT);
 	*hxt_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HXT_CNT);
+}
+static inline void ll_rcc_deepwfi_set_dll_output(HPSYS_RCC_TypeDef *rcc,
+							 uint32_t dll1_out_en,
+							 uint32_t dll1_rstb,
+							 uint32_t dll2_out_en,
+							 uint32_t dll2_rstb)
+{
+	MODIFY_REG(rcc->DWCFGR,
+		   HPSYS_RCC_DWCFGR_DLL1_OUT_EN | HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB |
+			   HPSYS_RCC_DWCFGR_DLL2_OUT_EN | HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB,
+		   (dll1_out_en ? HPSYS_RCC_DWCFGR_DLL1_OUT_EN : 0UL) |
+		   (dll1_rstb ? HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB : 0UL) |
+		   (dll2_out_en ? HPSYS_RCC_DWCFGR_DLL2_OUT_EN : 0UL) |
+		   (dll2_rstb ? HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB : 0UL));
+}
+
+static inline void ll_rcc_deepwfi_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc,
+								   uint32_t src)
+{
+	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS_LP,
+		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_LP_Msk,
+				HPSYS_RCC_DWCFGR_SEL_SYS_LP_Pos));
+}
+
+/**
+ * @brief Set system clock source during Deep WFI
+ * @param[in] rcc RCC peripheral pointer.
+ * @param[in] src Use LL_RCC_SYS_CLKSRC_xxx.
+ */
+static inline void ll_rcc_deepwfi_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+{
+	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS,
+		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_Msk, HPSYS_RCC_DWCFGR_SEL_SYS_Pos));
 }
 
 /*==============================================================================
@@ -741,16 +774,14 @@ static inline void ll_rcc_deepwfi_disable_div_reconfig(HPSYS_RCC_TypeDef *rcc)
 {
 	CLEAR_BIT(rcc->DWCFGR, HPSYS_RCC_DWCFGR_DIV_EN);
 }
-
-/**
- * @brief Set system clock source during Deep WFI
- * @param[in] rcc RCC peripheral pointer.
- * @param[in] src Use LL_RCC_SYS_CLKSRC_xxx.
- */
-static inline void ll_rcc_deepwfi_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
+static inline void ll_rcc_deepwfi_set_apb_div(HPSYS_RCC_TypeDef *rcc,
+						      uint32_t pdiv1, uint32_t pdiv2)
 {
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS,
-		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_Msk, HPSYS_RCC_DWCFGR_SEL_SYS_Pos));
+	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_PDIV1 | HPSYS_RCC_DWCFGR_PDIV2,
+		   MAKE_REG_VAL(pdiv1, HPSYS_RCC_DWCFGR_PDIV1_Msk,
+				HPSYS_RCC_DWCFGR_PDIV1_Pos) |
+		   MAKE_REG_VAL(pdiv2, HPSYS_RCC_DWCFGR_PDIV2_Msk,
+				HPSYS_RCC_DWCFGR_PDIV2_Pos));
 }
 
 /**
@@ -769,9 +800,7 @@ static inline void ll_rcc_deepwfi_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t h
  *============================================================================*/
 
 #define LL_RCC_HRC48_FREQ (48000000UL) /**< HRC48 frequency */
-#define LL_RCC_HXT48_FREQ (48000000UL) /**< HXT48 frequency */
-
-/**
+#define LL_RCC_HXT48_FREQ (48000000UL) /**
  * @brief Get current clk_hpsys system clock frequency
  * @note Only valid in normal active mode with CSR.SEL_SYS_LP=0 (system clock
  *       selected by CSR.SEL_SYS). It does not reflect Deep WFI (DWCFGR) or
@@ -809,6 +838,15 @@ static inline uint32_t ll_rcc_get_hclk_freq(HPSYS_RCC_TypeDef *rcc)
 }
 
 /**
+ * @brief Get current PCLK2 frequency
+ */
+static inline uint32_t ll_rcc_get_pclk2_freq(HPSYS_RCC_TypeDef *rcc)
+{
+	uint32_t pdiv2 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
+	return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv2);
+}
+
+/**
  * @brief Get current PCLK frequency
  */
 static inline uint32_t ll_rcc_get_pclk_freq(HPSYS_RCC_TypeDef *rcc)
@@ -817,14 +855,7 @@ static inline uint32_t ll_rcc_get_pclk_freq(HPSYS_RCC_TypeDef *rcc)
 	return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv1);
 }
 
-/**
- * @brief Get current PCLK2 frequency
- */
-static inline uint32_t ll_rcc_get_pclk2_freq(HPSYS_RCC_TypeDef *rcc)
-{
-	uint32_t pdiv2 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
-	return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv2);
-}
+/**< HXT48 frequency */
 
 /*==============================================================================
  * Debug Configuration (DBGR / DBGCLKR / TESTR)
@@ -840,93 +871,147 @@ static inline uint32_t ll_rcc_get_pclk2_freq(HPSYS_RCC_TypeDef *rcc)
 #define HPSYS_RCC_DBGR_FORCE_GPIO     HPSYS_RCC_DBGR_FORCE_GPIO_Msk
 
 /**
- * @brief Force the system clock always on (DBGR.SYSCLK_AON).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief DBGCLKR DLL field mask for a DLL instance index.
+ * @note DLL2 fields sit exactly 8 bits above the DLL1 fields in DBGCLKR,
+ *       so shifting the DLL1 mask covers both instances.
+ * @param[in] idx       DLL instance index (LL_RCC_DLL_INDEX_x).
+ * @param[in] dll1_mask DLL1 field mask (e.g. HPSYS_RCC_DBGCLKR_DLL1_DBG).
+ * @return Mask for the selected DLL instance.
  */
-static inline void ll_rcc_dbg_sysclk_aon_enable(HPSYS_RCC_TypeDef *rcc)
+static inline uint32_t ll_rcc_dbgclkr_dll_field(uint32_t idx, uint32_t dll1_mask)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+	return (idx == LL_RCC_DLL_INDEX_2) ? (dll1_mask << 8U) : dll1_mask;
 }
 
 /**
- * @brief Allow the system clock to gate (DBGR.SYSCLK_AON = 0).
+ * @brief Set the DLL output strength (DBGCLKR.DLLx_OUT_STR[1:0]).
  * @param[in] rcc RCC peripheral pointer.
+ * @param[in] idx DLL instance index (LL_RCC_DLL_INDEX_x).
+ * @param[in] str Output strength (2 bits).
  */
-static inline void ll_rcc_dbg_sysclk_aon_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_set_dll_out_strength(HPSYS_RCC_TypeDef *rcc, uint32_t idx,
+					       uint32_t str)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+	MODIFY_REG(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
+		   MAKE_REG_VAL(str, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
+				HPSYS_RCC_DBGCLKR_DLL1_OUT_STR_Pos +
+					((idx == LL_RCC_DLL_INDEX_2) ? 8U : 0U)));
 }
 
 /**
- * @brief Switch the system clock to CLK_LP during LS/DS (DBGR.SYSCLK_SWLP).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Enable the DLL clock gating (DBGCLKR.DLLx_CG_EN).
  */
-static inline void ll_rcc_dbg_sysclk_swlp_enable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_clock_gate_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
 }
 
 /**
- * @brief Keep the system clock on HXT during LS/DS (DBGR.SYSCLK_SWLP = 0).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Disable the DLL clock gating (DBGCLKR.DLLx_CG_EN = 0).
  */
-static inline void ll_rcc_dbg_sysclk_swlp_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_clock_gate_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
 }
 
 /**
- * @brief Force hclk_bus and hclk_hpbus on (DBGR.FORCE_BUS).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Assert the DLL output reset (DBGCLKR.DLLx_OUT_RSTB = 0).
  */
-static inline void ll_rcc_dbg_force_bus_enable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_out_assert_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
 }
 
 /**
- * @brief Allow hclk_bus and hclk_hpbus to gate (DBGR.FORCE_BUS = 0).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Release the DLL output reset (DBGCLKR.DLLx_OUT_RSTB = 1).
  */
-static inline void ll_rcc_dbg_force_bus_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_out_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
 }
 
 /**
- * @brief Keep GPIO on HXT during LS/DS (DBGR.FORCE_GPIO).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Enable the DLL loopback (DBGCLKR.DLLx_LOOP_EN).
  */
-static inline void ll_rcc_dbg_force_gpio_enable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_loop_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
 }
 
 /**
- * @brief Allow GPIO to switch to LPCLK during LS/DS (DBGR.FORCE_GPIO = 0).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Disable the DLL loopback (DBGCLKR.DLLx_LOOP_EN = 0).
  */
-static inline void ll_rcc_dbg_force_gpio_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_loop_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
 }
 
 /**
- * @brief Force hclk_hp and pclk_hp on (DBGR.FORCE_HP).
- * @param[in] rcc RCC peripheral pointer.
+ * @brief Enable the DLL output (DBGCLKR.DLLx_OUT_EN).
  */
-static inline void ll_rcc_dbg_force_hp_enable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
 }
 
 /**
- * @brief Allow hclk_hp and pclk_hp to gate (DBGR.FORCE_HP = 0).
+ * @brief Disable the DLL output (DBGCLKR.DLLx_OUT_EN = 0).
+ */
+static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
+}
+
+/**
+ * @brief Enable the DLL LDO (DBGCLKR.DLLx_LDO_EN).
+ */
+static inline void ll_rcc_dll_ldo_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
+}
+
+/**
+ * @brief Disable the DLL LDO (DBGCLKR.DLLx_LDO_EN = 0).
+ */
+static inline void ll_rcc_dll_ldo_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
+}
+
+/**
+ * @brief Enable DLL debug access (DBGCLKR.DLLx_DBG).
+ * @param[in] rcc RCC peripheral pointer.
+ * @param[in] idx DLL instance index (LL_RCC_DLL_INDEX_x).
+ */
+static inline void ll_rcc_dll_dbg_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
+}
+
+/**
+ * @brief Disable DLL debug access (DBGCLKR.DLLx_DBG = 0).
+ */
+static inline void ll_rcc_dll_dbg_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+{
+	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
+}
+
+/**
+ * @brief Enable the debug clock (DBGCLKR.CLK_EN).
  * @param[in] rcc RCC peripheral pointer.
  */
-static inline void ll_rcc_dbg_force_hp_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_debug_clock_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
+	SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+}
+
+/**
+ * @brief Disable the debug clock (DBGCLKR.CLK_EN = 0).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_debug_clock_disable(HPSYS_RCC_TypeDef *rcc)
+{
+	CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
 }
 
 /**
@@ -952,147 +1037,93 @@ static inline uint32_t ll_rcc_get_debug_clock_source(HPSYS_RCC_TypeDef *rcc)
 }
 
 /**
- * @brief Enable the debug clock (DBGCLKR.CLK_EN).
+ * @brief Force hclk_hp and pclk_hp on (DBGR.FORCE_HP).
  * @param[in] rcc RCC peripheral pointer.
  */
-static inline void ll_rcc_debug_clock_enable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dbg_force_hp_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
 }
 
 /**
- * @brief Disable the debug clock (DBGCLKR.CLK_EN = 0).
+ * @brief Allow hclk_hp and pclk_hp to gate (DBGR.FORCE_HP = 0).
  * @param[in] rcc RCC peripheral pointer.
  */
-static inline void ll_rcc_debug_clock_disable(HPSYS_RCC_TypeDef *rcc)
+static inline void ll_rcc_dbg_force_hp_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
 }
 
 /**
- * @brief DBGCLKR DLL field mask for a DLL instance index.
- * @note DLL2 fields sit exactly 8 bits above the DLL1 fields in DBGCLKR,
- *       so shifting the DLL1 mask covers both instances.
- * @param[in] idx       DLL instance index (LL_RCC_DLL_INDEX_x).
- * @param[in] dll1_mask DLL1 field mask (e.g. HPSYS_RCC_DBGCLKR_DLL1_DBG).
- * @return Mask for the selected DLL instance.
- */
-static inline uint32_t ll_rcc_dbgclkr_dll_field(uint32_t idx, uint32_t dll1_mask)
-{
-	return (idx == LL_RCC_DLL_INDEX_2) ? (dll1_mask << 8U) : dll1_mask;
-}
-
-/**
- * @brief Enable DLL debug access (DBGCLKR.DLLx_DBG).
+ * @brief Keep GPIO on HXT during LS/DS (DBGR.FORCE_GPIO).
  * @param[in] rcc RCC peripheral pointer.
- * @param[in] idx DLL instance index (LL_RCC_DLL_INDEX_x).
  */
-static inline void ll_rcc_dll_dbg_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
+static inline void ll_rcc_dbg_force_gpio_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
+	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
 }
 
 /**
- * @brief Disable DLL debug access (DBGCLKR.DLLx_DBG = 0).
- */
-static inline void ll_rcc_dll_dbg_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
-}
-
-/**
- * @brief Enable the DLL LDO (DBGCLKR.DLLx_LDO_EN).
- */
-static inline void ll_rcc_dll_ldo_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
-}
-
-/**
- * @brief Disable the DLL LDO (DBGCLKR.DLLx_LDO_EN = 0).
- */
-static inline void ll_rcc_dll_ldo_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
-}
-
-/**
- * @brief Enable the DLL output (DBGCLKR.DLLx_OUT_EN).
- */
-static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
-}
-
-/**
- * @brief Disable the DLL output (DBGCLKR.DLLx_OUT_EN = 0).
- */
-static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
-}
-
-/**
- * @brief Enable the DLL loopback (DBGCLKR.DLLx_LOOP_EN).
- */
-static inline void ll_rcc_dll_loop_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
-}
-
-/**
- * @brief Disable the DLL loopback (DBGCLKR.DLLx_LOOP_EN = 0).
- */
-static inline void ll_rcc_dll_loop_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
-}
-
-/**
- * @brief Assert the DLL output reset (DBGCLKR.DLLx_OUT_RSTB = 0).
- */
-static inline void ll_rcc_dll_out_assert_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
-}
-
-/**
- * @brief Release the DLL output reset (DBGCLKR.DLLx_OUT_RSTB = 1).
- */
-static inline void ll_rcc_dll_out_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
-}
-
-/**
- * @brief Enable the DLL clock gating (DBGCLKR.DLLx_CG_EN).
- */
-static inline void ll_rcc_dll_clock_gate_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
-}
-
-/**
- * @brief Disable the DLL clock gating (DBGCLKR.DLLx_CG_EN = 0).
- */
-static inline void ll_rcc_dll_clock_gate_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
-{
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
-}
-
-/**
- * @brief Set the DLL output strength (DBGCLKR.DLLx_OUT_STR[1:0]).
+ * @brief Allow GPIO to switch to LPCLK during LS/DS (DBGR.FORCE_GPIO = 0).
  * @param[in] rcc RCC peripheral pointer.
- * @param[in] idx DLL instance index (LL_RCC_DLL_INDEX_x).
- * @param[in] str Output strength (2 bits).
  */
-static inline void ll_rcc_set_dll_out_strength(HPSYS_RCC_TypeDef *rcc, uint32_t idx,
-					       uint32_t str)
+static inline void ll_rcc_dbg_force_gpio_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	MODIFY_REG(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
-		   MAKE_REG_VAL(str, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
-				HPSYS_RCC_DBGCLKR_DLL1_OUT_STR_Pos +
-					((idx == LL_RCC_DLL_INDEX_2) ? 8U : 0U)));
+	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
+}
+
+/**
+ * @brief Force hclk_bus and hclk_hpbus on (DBGR.FORCE_BUS).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_force_bus_enable(HPSYS_RCC_TypeDef *rcc)
+{
+	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+}
+
+/**
+ * @brief Allow hclk_bus and hclk_hpbus to gate (DBGR.FORCE_BUS = 0).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_force_bus_disable(HPSYS_RCC_TypeDef *rcc)
+{
+	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+}
+
+/**
+ * @brief Switch the system clock to CLK_LP during LS/DS (DBGR.SYSCLK_SWLP).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_sysclk_swlp_enable(HPSYS_RCC_TypeDef *rcc)
+{
+	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+}
+
+/**
+ * @brief Keep the system clock on HXT during LS/DS (DBGR.SYSCLK_SWLP = 0).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_sysclk_swlp_disable(HPSYS_RCC_TypeDef *rcc)
+{
+	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+}
+
+/**
+ * @brief Force the system clock always on (DBGR.SYSCLK_AON).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_sysclk_aon_enable(HPSYS_RCC_TypeDef *rcc)
+{
+	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+}
+
+/**
+ * @brief Allow the system clock to gate (DBGR.SYSCLK_AON = 0).
+ * @param[in] rcc RCC peripheral pointer.
+ */
+static inline void ll_rcc_dbg_sysclk_aon_disable(HPSYS_RCC_TypeDef *rcc)
+{
+	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
 }
 
 /**

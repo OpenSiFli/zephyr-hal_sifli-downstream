@@ -8,12 +8,106 @@
 #define __LL_PDM_H
 
 #include <stdint.h>
-#include "regs/pdm.h"
+#include "pdm.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief Swap the right and left channels (CFG0.SWAP_EN).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_swap_channels(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
+}
+
+/**
+ * @brief Disable channel swap (CFG0.SWAP_EN = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_disable_swap(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
+}
+
+/**
+ * @brief Enable stereo (dual channel) mode (CFG0.STEREO_EN).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_enable_stereo(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
+}
+
+/**
+ * @brief Disable stereo mode (CFG0.STEREO_EN = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_disable_stereo(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
+}
+
+/**
+ * @brief Enable the right PDM channel (CFG0.RIGHT_EN).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_enable_right(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
+}
+
+/**
+ * @brief Disable the right PDM channel (CFG0.RIGHT_EN = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_disable_right(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
+}
+
+/**
+ * @brief Enable the left PDM channel (CFG0.LEFT_EN).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_enable_left(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
+}
+
+/**
+ * @brief Disable the left PDM channel (CFG0.LEFT_EN = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_disable_left(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
+}
+
+/**
+ * @brief Set the PDM clock frequency division ratio (CFG0.CLK_DIV).
+ * @param[in] PDMx PDM instance pointer.
+ * @param[in] div  Clock division ratio (4 bits).
+ */
+static inline void ll_pdm_set_clock_div(PDM_TypeDef *PDMx, uint32_t div)
+{
+	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_DIV,
+		   MAKE_REG_VAL(div, PDM_CFG0_CLK_DIV_Msk, PDM_CFG0_CLK_DIV_Pos));
+}
+
+/**
+ * @brief Select the PDM reference clock source (CFG0.CLK_SEL).
+ * @param[in] PDMx    PDM instance pointer.
+ * @param[in] use_dll Non-zero selects DLL 3.072 MHz, zero selects XTAL 9.6 MHz.
+ */
+static inline void ll_pdm_select_clock(PDM_TypeDef *PDMx, uint32_t use_dll)
+{
+	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_SEL,
+		   use_dll ? PDM_CFG0_CLK_SEL : 0U);
+}
 
 /**
  * @file ll_pdm.h
@@ -47,97 +141,25 @@ static inline void ll_pdm_disable(PDM_TypeDef *PDMx)
 }
 
 /**
- * @brief Select the PDM reference clock source (CFG0.CLK_SEL).
- * @param[in] PDMx    PDM instance pointer.
- * @param[in] use_dll Non-zero selects DLL 3.072 MHz, zero selects XTAL 9.6 MHz.
+ * @brief Set the sample delay of the right data stream (CFG1.SAMPLE_DLY_R).
+ * @param[in] PDMx PDM instance pointer.
+ * @param[in] dly  Delay count (3 bits).
  */
-static inline void ll_pdm_select_clock(PDM_TypeDef *PDMx, uint32_t use_dll)
+static inline void ll_pdm_set_right_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_SEL,
-		   use_dll ? PDM_CFG0_CLK_SEL : 0U);
+	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_R,
+		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_R_Msk, PDM_CFG1_SAMPLE_DLY_R_Pos));
 }
 
 /**
- * @brief Set the PDM clock frequency division ratio (CFG0.CLK_DIV).
+ * @brief Set the sample delay of the left data stream (CFG1.SAMPLE_DLY_L).
  * @param[in] PDMx PDM instance pointer.
- * @param[in] div  Clock division ratio (4 bits).
+ * @param[in] dly  Delay count (3 bits).
  */
-static inline void ll_pdm_set_clock_div(PDM_TypeDef *PDMx, uint32_t div)
+static inline void ll_pdm_set_left_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_DIV,
-		   MAKE_REG_VAL(div, PDM_CFG0_CLK_DIV_Msk, PDM_CFG0_CLK_DIV_Pos));
-}
-
-/**
- * @brief Enable the left PDM channel (CFG0.LEFT_EN).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_enable_left(PDM_TypeDef *PDMx)
-{
-	SET_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
-}
-
-/**
- * @brief Disable the left PDM channel (CFG0.LEFT_EN = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_disable_left(PDM_TypeDef *PDMx)
-{
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
-}
-
-/**
- * @brief Enable the right PDM channel (CFG0.RIGHT_EN).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_enable_right(PDM_TypeDef *PDMx)
-{
-	SET_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
-}
-
-/**
- * @brief Disable the right PDM channel (CFG0.RIGHT_EN = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_disable_right(PDM_TypeDef *PDMx)
-{
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
-}
-
-/**
- * @brief Enable stereo (dual channel) mode (CFG0.STEREO_EN).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_enable_stereo(PDM_TypeDef *PDMx)
-{
-	SET_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
-}
-
-/**
- * @brief Disable stereo mode (CFG0.STEREO_EN = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_disable_stereo(PDM_TypeDef *PDMx)
-{
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
-}
-
-/**
- * @brief Swap the right and left channels (CFG0.SWAP_EN).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_swap_channels(PDM_TypeDef *PDMx)
-{
-	SET_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
-}
-
-/**
- * @brief Disable channel swap (CFG0.SWAP_EN = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_disable_swap(PDM_TypeDef *PDMx)
-{
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
+	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_L,
+		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_L_Msk, PDM_CFG1_SAMPLE_DLY_L_Pos));
 }
 
 /*==============================================================================
@@ -156,25 +178,14 @@ static inline void ll_pdm_set_buf_delay(PDM_TypeDef *PDMx, uint32_t dly)
 }
 
 /**
- * @brief Set the sample delay of the left data stream (CFG1.SAMPLE_DLY_L).
- * @param[in] PDMx PDM instance pointer.
- * @param[in] dly  Delay count (3 bits).
+ * @brief Select the SINC filter order (SINC_CFG.SINC_ORDER_SEL).
+ * @param[in] PDMx  PDM instance pointer.
+ * @param[in] order SINC order select (1 bit).
  */
-static inline void ll_pdm_set_left_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
+static inline void ll_pdm_set_sinc_order(PDM_TypeDef *PDMx, uint32_t order)
 {
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_L,
-		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_L_Msk, PDM_CFG1_SAMPLE_DLY_L_Pos));
-}
-
-/**
- * @brief Set the sample delay of the right data stream (CFG1.SAMPLE_DLY_R).
- * @param[in] PDMx PDM instance pointer.
- * @param[in] dly  Delay count (3 bits).
- */
-static inline void ll_pdm_set_right_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
-{
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_R,
-		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_R_Msk, PDM_CFG1_SAMPLE_DLY_R_Pos));
+	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_ORDER_SEL,
+		   order ? PDM_SINC_CFG_SINC_ORDER_SEL : 0U);
 }
 
 /*==============================================================================
@@ -190,50 +201,6 @@ static inline void ll_pdm_set_sinc_rate(PDM_TypeDef *PDMx, uint32_t rate)
 {
 	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_RATE,
 		   MAKE_REG_VAL(rate, PDM_SINC_CFG_SINC_RATE_Msk, PDM_SINC_CFG_SINC_RATE_Pos));
-}
-
-/**
- * @brief Select the SINC filter order (SINC_CFG.SINC_ORDER_SEL).
- * @param[in] PDMx  PDM instance pointer.
- * @param[in] order SINC order select (1 bit).
- */
-static inline void ll_pdm_set_sinc_order(PDM_TypeDef *PDMx, uint32_t order)
-{
-	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_ORDER_SEL,
-		   order ? PDM_SINC_CFG_SINC_ORDER_SEL : 0U);
-}
-
-/*==============================================================================
- * High-Pass Filter (HPF_CFG)
- *============================================================================*/
-
-/**
- * @brief Set the HPF coefficient (HPF_CFG.HPF_COEFF).
- * @param[in] PDMx PDM instance pointer.
- * @param[in] coeff HPF coefficient (4 bits).
- */
-static inline void ll_pdm_set_hpf_coeff(PDM_TypeDef *PDMx, uint32_t coeff)
-{
-	MODIFY_REG(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_COEFF,
-		   MAKE_REG_VAL(coeff, PDM_HPF_CFG_HPF_COEFF_Msk, PDM_HPF_CFG_HPF_COEFF_Pos));
-}
-
-/**
- * @brief Bypass the high-pass filter (HPF_CFG.HPF_BYPASS).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_hpf_bypass(PDM_TypeDef *PDMx)
-{
-	SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
-}
-
-/**
- * @brief Enable the high-pass filter (HPF_CFG.HPF_BYPASS = 0).
- * @param[in] PDMx PDM instance pointer.
- */
-static inline void ll_pdm_hpf_enable(PDM_TypeDef *PDMx)
-{
-	CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
 }
 
 /**
@@ -254,6 +221,50 @@ static inline void ll_pdm_hpf_release_reset(PDM_TypeDef *PDMx)
 	CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_RST);
 }
 
+/**
+ * @brief Bypass the high-pass filter (HPF_CFG.HPF_BYPASS).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_hpf_bypass(PDM_TypeDef *PDMx)
+{
+	SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
+}
+
+/**
+ * @brief Enable the high-pass filter (HPF_CFG.HPF_BYPASS = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_hpf_enable(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
+}
+
+/*==============================================================================
+ * High-Pass Filter (HPF_CFG)
+ *============================================================================*/
+
+/**
+ * @brief Set the HPF coefficient (HPF_CFG.HPF_COEFF).
+ * @param[in] PDMx PDM instance pointer.
+ * @param[in] coeff HPF coefficient (4 bits).
+ */
+static inline void ll_pdm_set_hpf_coeff(PDM_TypeDef *PDMx, uint32_t coeff)
+{
+	MODIFY_REG(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_COEFF,
+		   MAKE_REG_VAL(coeff, PDM_HPF_CFG_HPF_COEFF_Msk, PDM_HPF_CFG_HPF_COEFF_Pos));
+}
+
+/**
+ * @brief Set the right-channel PGA gain (PGA_CFG.PGA_GAIN_R).
+ * @param[in] PDMx PDM instance pointer.
+ * @param[in] gain Right-channel gain (7 bits).
+ */
+static inline void ll_pdm_set_pga_gain_r(PDM_TypeDef *PDMx, uint32_t gain)
+{
+	MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_R,
+		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_R_Msk, PDM_PGA_CFG_PGA_GAIN_R_Pos));
+}
+
 /*==============================================================================
  * PGA Gain (PGA_CFG)
  *============================================================================*/
@@ -267,17 +278,6 @@ static inline void ll_pdm_set_pga_gain_l(PDM_TypeDef *PDMx, uint32_t gain)
 {
 	MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_L,
 		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_L_Msk, PDM_PGA_CFG_PGA_GAIN_L_Pos));
-}
-
-/**
- * @brief Set the right-channel PGA gain (PGA_CFG.PGA_GAIN_R).
- * @param[in] PDMx PDM instance pointer.
- * @param[in] gain Right-channel gain (7 bits).
- */
-static inline void ll_pdm_set_pga_gain_r(PDM_TypeDef *PDMx, uint32_t gain)
-{
-	MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_R,
-		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_R_Msk, PDM_PGA_CFG_PGA_GAIN_R_Pos));
 }
 
 /*==============================================================================
@@ -320,49 +320,22 @@ static inline void ll_pdm_lpf_ds_disable(PDM_TypeDef *PDMx)
 	CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
 }
 
-/*==============================================================================
- * FIFO Configuration & Data (FIFO_CFG / DATA_L / DATA_R)
- *============================================================================*/
-
 /**
- * @brief Combine left and right channels into one FIFO word (FIFO_CFG.BYTE_CON).
+ * @brief Exchange the left/right FIFO data order (FIFO_CFG.LR_CHG).
  * @param[in] PDMx PDM instance pointer.
  */
-static inline void ll_pdm_fifo_combine_enable(PDM_TypeDef *PDMx)
+static inline void ll_pdm_fifo_lr_exchange(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
+	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
 }
 
 /**
- * @brief Keep left and right channels separate (FIFO_CFG.BYTE_CON = 0).
+ * @brief Disable the left/right FIFO order exchange (FIFO_CFG.LR_CHG = 0).
  * @param[in] PDMx PDM instance pointer.
  */
-static inline void ll_pdm_fifo_combine_disable(PDM_TypeDef *PDMx)
+static inline void ll_pdm_fifo_lr_exchange_disable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
-}
-
-/**
- * @brief Select the output sample width (FIFO_CFG.BYTE_TRUNC).
- * @param[in] PDMx  PDM instance pointer.
- * @param[in] trunc Byte truncation mode (2 bits):
- *                  0 = 24 bits, 1 = 16 bits, 2 = 8 bits, 3 = 32 bits.
- */
-static inline void ll_pdm_set_byte_trunc(PDM_TypeDef *PDMx, uint32_t trunc)
-{
-	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_TRUNC,
-		   MAKE_REG_VAL(trunc, PDM_FIFO_CFG_BYTE_TRUNC_Msk, PDM_FIFO_CFG_BYTE_TRUNC_Pos));
-}
-
-/**
- * @brief Set the PCM sample shift (FIFO_CFG.PDM_SHIFT).
- * @param[in] PDMx   PDM instance pointer.
- * @param[in] shift  Sample shift (3 bits).
- */
-static inline void ll_pdm_set_shift(PDM_TypeDef *PDMx, uint32_t shift)
-{
-	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_PDM_SHIFT,
-		   MAKE_REG_VAL(shift, PDM_FIFO_CFG_PDM_SHIFT_Msk, PDM_FIFO_CFG_PDM_SHIFT_Pos));
+	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
 }
 
 /**
@@ -402,21 +375,48 @@ static inline void ll_pdm_unmask_dma_r(PDM_TypeDef *PDMx)
 }
 
 /**
- * @brief Exchange the left/right FIFO data order (FIFO_CFG.LR_CHG).
- * @param[in] PDMx PDM instance pointer.
+ * @brief Set the PCM sample shift (FIFO_CFG.PDM_SHIFT).
+ * @param[in] PDMx   PDM instance pointer.
+ * @param[in] shift  Sample shift (3 bits).
  */
-static inline void ll_pdm_fifo_lr_exchange(PDM_TypeDef *PDMx)
+static inline void ll_pdm_set_shift(PDM_TypeDef *PDMx, uint32_t shift)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
+	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_PDM_SHIFT,
+		   MAKE_REG_VAL(shift, PDM_FIFO_CFG_PDM_SHIFT_Msk, PDM_FIFO_CFG_PDM_SHIFT_Pos));
 }
 
 /**
- * @brief Disable the left/right FIFO order exchange (FIFO_CFG.LR_CHG = 0).
+ * @brief Select the output sample width (FIFO_CFG.BYTE_TRUNC).
+ * @param[in] PDMx  PDM instance pointer.
+ * @param[in] trunc Byte truncation mode (2 bits):
+ *                  0 = 24 bits, 1 = 16 bits, 2 = 8 bits, 3 = 32 bits.
+ */
+static inline void ll_pdm_set_byte_trunc(PDM_TypeDef *PDMx, uint32_t trunc)
+{
+	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_TRUNC,
+		   MAKE_REG_VAL(trunc, PDM_FIFO_CFG_BYTE_TRUNC_Msk, PDM_FIFO_CFG_BYTE_TRUNC_Pos));
+}
+
+/*==============================================================================
+ * FIFO Configuration & Data (FIFO_CFG / DATA_L / DATA_R)
+ *============================================================================*/
+
+/**
+ * @brief Combine left and right channels into one FIFO word (FIFO_CFG.BYTE_CON).
  * @param[in] PDMx PDM instance pointer.
  */
-static inline void ll_pdm_fifo_lr_exchange_disable(PDM_TypeDef *PDMx)
+static inline void ll_pdm_fifo_combine_enable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
+	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
+}
+
+/**
+ * @brief Keep left and right channels separate (FIFO_CFG.BYTE_CON = 0).
+ * @param[in] PDMx PDM instance pointer.
+ */
+static inline void ll_pdm_fifo_combine_disable(PDM_TypeDef *PDMx)
+{
+	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
 }
 
 /**

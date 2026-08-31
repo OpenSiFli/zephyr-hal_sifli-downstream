@@ -8,7 +8,7 @@
 #define __LL_PTC_H
 
 #include <stdint.h>
-#include "regs/ptc.h"
+#include "ptc.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
@@ -25,49 +25,6 @@ extern "C" {
  * triggered; task 0 is a minimal trigger task with its own repetition counter.
  */
 
-/*==============================================================================
- * Task Operation (TCRx.OP)
- *============================================================================*/
-
-/** @defgroup LL_PTC_OP Task Operation Mode */
-/** @{ */
-#define LL_PTC_OP_DIRECT_WRITE (0x0UL) /**< Direct write data to address. */
-#define LL_PTC_OP_XOR          (0x4UL) /**< Read, XOR with data, write back. */
-#define LL_PTC_OP_OR           (0x5UL) /**< Read, OR with data, write back. */
-#define LL_PTC_OP_AND          (0x6UL) /**< Read, AND with data, write back. */
-#define LL_PTC_OP_ADD          (0x7UL) /**< Read, add data, write back. */
-/** @} */
-
-/*==============================================================================
- * Basic Control (TCR0 / TCRx.SWTRIG)
- *============================================================================*/
-
-/**
- * @brief Trigger task 0 by software (TCR0.SWTRIG, write 1 to trigger).
- * @param[in] PTCx PTC instance pointer.
- */
-static inline void ll_ptc_trigger_task0(PTC_TypeDef *PTCx)
-{
-	SET_BIT(PTCx->TCR0, PTC_TCR0_SWTRIG);
-}
-
-/**
- * @brief Set the task 0 repetition counter (TCR0.REP).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] rep  Repetition count (4 bits).
- * @note The task only fires while REP is non-zero; REP is decremented
- *       automatically after each trigger.
- */
-static inline void ll_ptc_set_task0_rep(PTC_TypeDef *PTCx, uint32_t rep)
-{
-	MODIFY_REG(PTCx->TCR0, PTC_TCR0_REP,
-		   MAKE_REG_VAL(rep, PTC_TCR0_REP_Msk, PTC_TCR0_REP_Pos));
-}
-
-/*==============================================================================
- * Task Registers (TCRx / TARx / TDRx / RCRx)
- *============================================================================*/
-
 /**
  * @brief Get the task register index mapping for tasks 1..8 (TCR1..TCR8).
  * @param[in] task Task index in range 1..8.
@@ -78,187 +35,30 @@ static inline uint32_t ll_ptc_task_index(uint32_t task)
 	return ((task >= 1U) && (task <= 8U)) ? (task - 1U) : 8U;
 }
 
-/**
- * @brief Set the task trigger source (TCRx.TRIGSEL).
- * @param[in] PTCx    PTC instance pointer.
- * @param[in] task    Task index in range 1..8.
- * @param[in] trigsel Trigger source select (8 bits); 0 = software only.
- */
-static inline void ll_ptc_set_task_trig_sel(PTC_TypeDef *PTCx, uint32_t task,
-					    uint32_t trigsel)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
+/*==============================================================================
+ * Task Operation (TCRx.OP)
+ *============================================================================*/
 
-	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_TRIGSEL,
-		   MAKE_REG_VAL(trigsel, PTC_TCR1_TRIGSEL_Msk, PTC_TCR1_TRIGSEL_Pos));
-}
-
-/**
- * @brief Set the task operation mode (TCRx.OP).
+/** @defgroup LL_PTC_OP Task Operation Mode */
+/** @{ */
+#define LL_PTC_OP_DIRECT_WRITE (0x0UL) /**< Direct write data to address. */
+#define LL_PTC_OP_XOR          (0x4UL) /**< Read, XOR with data, write back. */
+#define LL_PTC_OP_OR           (0x5UL) /**< Read, OR with data, write back. */
+#define LL_PTC_OP_AND          (0x6UL) /**< Read, AND with data, write back. */
+#define LL_PTC_OP_ADD          (0x7UL) /**
+ * @brief Get the transfer-error flag of a task (ISR.TEIFx).
  * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @param[in] op   Operation, use @ref LL_PTC_OP_DIRECT_WRITE to @ref LL_PTC_OP_ADD.
+ * @param[in] task Task index in range 0..8.
+ * @return Non-zero when the transfer-error flag is set.
  */
-static inline void ll_ptc_set_task_op(PTC_TypeDef *PTCx, uint32_t task, uint32_t op)
+static inline uint32_t ll_ptc_is_active_flag_te(PTC_TypeDef *PTCx, uint32_t task)
 {
-	volatile uint32_t *tcr = &PTCx->TCR1;
+	volatile uint32_t *isr = &PTCx->ISR;
 
-	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_OP,
-		   MAKE_REG_VAL(op, PTC_TCR1_OP_Msk, PTC_TCR1_OP_Pos));
-}
-
-/**
- * @brief Set the task trigger polarity (TCRx.TRIGPOL).
- * @param[in] PTCx    PTC instance pointer.
- * @param[in] task    Task index in range 1..8.
- * @param[in] neg_pol Non-zero selects negative edge, zero positive edge.
- */
-static inline void ll_ptc_set_task_trig_polarity(PTC_TypeDef *PTCx, uint32_t task,
-						 uint32_t neg_pol)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_TRIGPOL,
-		   neg_pol ? PTC_TCR1_TRIGPOL : 0U);
-}
-
-/**
- * @brief Trigger a task by software (TCRx.SWTRIG, auto-cleared).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_software_trigger_task(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_SWTRIG);
-}
-
-/**
- * @brief Enable task repetition gating (TCRx.REPEN).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @note When enabled the task only fires while RCRx.REP is non-zero.
- */
-static inline void ll_ptc_enable_task_rep(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPEN);
-}
-
-/**
- * @brief Disable task repetition gating (TCRx.REPEN = 0).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_disable_task_rep(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPEN);
-}
-
-/**
- * @brief Make the task output a trigger every REP operations (TCRx.REPTRIG).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_enable_task_rep_trigger(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPTRIG);
-}
-
-/**
- * @brief Make the task output a trigger on every operation (TCRx.REPTRIG = 0).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_disable_task_rep_trigger(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPTRIG);
-}
-
-/**
- * @brief Interrupt after each operation (TCRx.REPIRQ = 0).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_set_task_irq_each(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPIRQ);
-}
-
-/**
- * @brief Interrupt after REP operations (TCRx.REPIRQ).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- */
-static inline void ll_ptc_set_task_irq_rep(PTC_TypeDef *PTCx, uint32_t task)
-{
-	volatile uint32_t *tcr = &PTCx->TCR1;
-
-	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPIRQ);
-}
-
-/**
- * @brief Set the task peripheral address (TARx.ADDR).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @param[in] addr Peripheral address to access.
- */
-static inline void ll_ptc_set_task_addr(PTC_TypeDef *PTCx, uint32_t task, uint32_t addr)
-{
-	volatile uint32_t *tar = &PTCx->TAR1;
-
-	WRITE_REG(tar[ll_ptc_task_index(task)], addr);
-}
-
-/**
- * @brief Set the task data value (TDRx.DATA).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @param[in] data Data value for the task operation.
- */
-static inline void ll_ptc_set_task_data(PTC_TypeDef *PTCx, uint32_t task, uint32_t data)
-{
-	volatile uint32_t *tdr = &PTCx->TDR1;
-
-	WRITE_REG(tdr[ll_ptc_task_index(task)], data);
-}
-
-/**
- * @brief Set the task repetition count (RCRx.REP).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @param[in] rep  Repetition count (10 bits).
- */
-static inline void ll_ptc_set_task_rep(PTC_TypeDef *PTCx, uint32_t task, uint32_t rep)
-{
-	volatile uint32_t *rcr = &PTCx->RCR1;
-
-	MODIFY_REG(rcr[ll_ptc_task_index(task)], PTC_RCR1_REP,
-		   MAKE_REG_VAL(rep, PTC_RCR1_REP_Msk, PTC_RCR1_REP_Pos));
-}
-
-/**
- * @brief Set the task pre-trigger delay (RCRx.DLY).
- * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 1..8.
- * @param[in] dly  Delay in HCLK cycles (16 bits); 0 = no delay.
- */
-static inline void ll_ptc_set_task_delay(PTC_TypeDef *PTCx, uint32_t task, uint32_t dly)
-{
-	volatile uint32_t *rcr = &PTCx->RCR1;
-
-	MODIFY_REG(rcr[ll_ptc_task_index(task)], PTC_RCR1_DLY,
-		   MAKE_REG_VAL(dly, PTC_RCR1_DLY_Msk, PTC_RCR1_DLY_Pos));
+	if (task == 0U) {
+		return READ_BIT(*isr, PTC_ISR_TEIF0);
+	}
+	return READ_BIT(*isr, (1UL << (task - 1U + 16U)));
 }
 
 /*==============================================================================
@@ -282,19 +82,12 @@ static inline uint32_t ll_ptc_is_active_flag_tc(PTC_TypeDef *PTCx, uint32_t task
 }
 
 /**
- * @brief Get the transfer-error flag of a task (ISR.TEIFx).
+ * @brief Clear the transfer-error flag (ICR.CTEIF, write 1 to clear).
  * @param[in] PTCx PTC instance pointer.
- * @param[in] task Task index in range 0..8.
- * @return Non-zero when the transfer-error flag is set.
  */
-static inline uint32_t ll_ptc_is_active_flag_te(PTC_TypeDef *PTCx, uint32_t task)
+static inline void ll_ptc_clear_flag_te(PTC_TypeDef *PTCx)
 {
-	volatile uint32_t *isr = &PTCx->ISR;
-
-	if (task == 0U) {
-		return READ_BIT(*isr, PTC_ISR_TEIF0);
-	}
-	return READ_BIT(*isr, (1UL << (task - 1U + 16U)));
+	SET_BIT(PTCx->ICR, PTC_ICR_CTEIF);
 }
 
 /**
@@ -314,12 +107,21 @@ static inline void ll_ptc_clear_flag_tc(PTC_TypeDef *PTCx, uint32_t task)
 }
 
 /**
- * @brief Clear the transfer-error flag (ICR.CTEIF, write 1 to clear).
+ * @brief Enable the transfer-error interrupt (IER.TEIE).
  * @param[in] PTCx PTC instance pointer.
  */
-static inline void ll_ptc_clear_flag_te(PTC_TypeDef *PTCx)
+static inline void ll_ptc_enable_it_te(PTC_TypeDef *PTCx)
 {
-	SET_BIT(PTCx->ICR, PTC_ICR_CTEIF);
+	SET_BIT(PTCx->IER, PTC_IER_TEIE);
+}
+
+/**
+ * @brief Disable the transfer-error interrupt (IER.TEIE = 0).
+ * @param[in] PTCx PTC instance pointer.
+ */
+static inline void ll_ptc_disable_it_te(PTC_TypeDef *PTCx)
+{
+	CLEAR_BIT(PTCx->IER, PTC_IER_TEIE);
 }
 
 /**
@@ -355,21 +157,186 @@ static inline void ll_ptc_disable_it_tc(PTC_TypeDef *PTCx, uint32_t task)
 }
 
 /**
- * @brief Enable the transfer-error interrupt (IER.TEIE).
+ * @brief Interrupt after each operation (TCRx.REPIRQ = 0).
  * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
  */
-static inline void ll_ptc_enable_it_te(PTC_TypeDef *PTCx)
+static inline void ll_ptc_set_task_irq_each(PTC_TypeDef *PTCx, uint32_t task)
 {
-	SET_BIT(PTCx->IER, PTC_IER_TEIE);
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPIRQ);
 }
 
 /**
- * @brief Disable the transfer-error interrupt (IER.TEIE = 0).
+ * @brief Interrupt after REP operations (TCRx.REPIRQ).
  * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
  */
-static inline void ll_ptc_disable_it_te(PTC_TypeDef *PTCx)
+static inline void ll_ptc_set_task_irq_rep(PTC_TypeDef *PTCx, uint32_t task)
 {
-	CLEAR_BIT(PTCx->IER, PTC_IER_TEIE);
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPIRQ);
+}
+
+/**
+ * @brief Make the task output a trigger every REP operations (TCRx.REPTRIG).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ */
+static inline void ll_ptc_enable_task_rep_trigger(PTC_TypeDef *PTCx, uint32_t task)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPTRIG);
+}
+
+/**
+ * @brief Make the task output a trigger on every operation (TCRx.REPTRIG = 0).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ */
+static inline void ll_ptc_disable_task_rep_trigger(PTC_TypeDef *PTCx, uint32_t task)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPTRIG);
+}
+
+/**
+ * @brief Enable task repetition gating (TCRx.REPEN).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @note When enabled the task only fires while RCRx.REP is non-zero.
+ */
+static inline void ll_ptc_enable_task_rep(PTC_TypeDef *PTCx, uint32_t task)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPEN);
+}
+
+/**
+ * @brief Disable task repetition gating (TCRx.REPEN = 0).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ */
+static inline void ll_ptc_disable_task_rep(PTC_TypeDef *PTCx, uint32_t task)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	CLEAR_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_REPEN);
+}
+
+/**
+ * @brief Trigger a task by software (TCRx.SWTRIG, auto-cleared).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ */
+static inline void ll_ptc_software_trigger_task(PTC_TypeDef *PTCx, uint32_t task)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	SET_BIT(tcr[ll_ptc_task_index(task)], PTC_TCR1_SWTRIG);
+}
+
+/**
+ * @brief Set the task trigger polarity (TCRx.TRIGPOL).
+ * @param[in] PTCx    PTC instance pointer.
+ * @param[in] task    Task index in range 1..8.
+ * @param[in] neg_pol Non-zero selects negative edge, zero positive edge.
+ */
+static inline void ll_ptc_set_task_trig_polarity(PTC_TypeDef *PTCx, uint32_t task,
+						 uint32_t neg_pol)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_TRIGPOL,
+		   neg_pol ? PTC_TCR1_TRIGPOL : 0U);
+}
+
+/**
+ * @brief Set the task operation mode (TCRx.OP).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @param[in] op   Operation, use @ref LL_PTC_OP_DIRECT_WRITE to @ref LL_PTC_OP_ADD.
+ */
+static inline void ll_ptc_set_task_op(PTC_TypeDef *PTCx, uint32_t task, uint32_t op)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_OP,
+		   MAKE_REG_VAL(op, PTC_TCR1_OP_Msk, PTC_TCR1_OP_Pos));
+}
+
+/**
+ * @brief Set the task trigger source (TCRx.TRIGSEL).
+ * @param[in] PTCx    PTC instance pointer.
+ * @param[in] task    Task index in range 1..8.
+ * @param[in] trigsel Trigger source select (8 bits); 0 = software only.
+ */
+static inline void ll_ptc_set_task_trig_sel(PTC_TypeDef *PTCx, uint32_t task,
+					    uint32_t trigsel)
+{
+	volatile uint32_t *tcr = &PTCx->TCR1;
+
+	MODIFY_REG(tcr[ll_ptc_task_index(task)], PTC_TCR1_TRIGSEL,
+		   MAKE_REG_VAL(trigsel, PTC_TCR1_TRIGSEL_Msk, PTC_TCR1_TRIGSEL_Pos));
+}
+
+/**
+ * @brief Set the task peripheral address (TARx.ADDR).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @param[in] addr Peripheral address to access.
+ */
+static inline void ll_ptc_set_task_addr(PTC_TypeDef *PTCx, uint32_t task, uint32_t addr)
+{
+	volatile uint32_t *tar = &PTCx->TAR1;
+
+	WRITE_REG(tar[ll_ptc_task_index(task)], addr);
+}
+
+/**
+ * @brief Set the task data value (TDRx.DATA).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @param[in] data Data value for the task operation.
+ */
+static inline void ll_ptc_set_task_data(PTC_TypeDef *PTCx, uint32_t task, uint32_t data)
+{
+	volatile uint32_t *tdr = &PTCx->TDR1;
+
+	WRITE_REG(tdr[ll_ptc_task_index(task)], data);
+}
+
+/**
+ * @brief Set the task pre-trigger delay (RCRx.DLY).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @param[in] dly  Delay in HCLK cycles (16 bits); 0 = no delay.
+ */
+static inline void ll_ptc_set_task_delay(PTC_TypeDef *PTCx, uint32_t task, uint32_t dly)
+{
+	volatile uint32_t *rcr = &PTCx->RCR1;
+
+	MODIFY_REG(rcr[ll_ptc_task_index(task)], PTC_RCR1_DLY,
+		   MAKE_REG_VAL(dly, PTC_RCR1_DLY_Msk, PTC_RCR1_DLY_Pos));
+}
+
+/**
+ * @brief Set the task repetition count (RCRx.REP).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] task Task index in range 1..8.
+ * @param[in] rep  Repetition count (10 bits).
+ */
+static inline void ll_ptc_set_task_rep(PTC_TypeDef *PTCx, uint32_t task, uint32_t rep)
+{
+	volatile uint32_t *rcr = &PTCx->RCR1;
+
+	MODIFY_REG(rcr[ll_ptc_task_index(task)], PTC_RCR1_REP,
+		   MAKE_REG_VAL(rep, PTC_RCR1_REP_Msk, PTC_RCR1_REP_Pos));
 }
 
 /*==============================================================================
@@ -405,12 +372,12 @@ static inline void ll_ptc_set_mem(PTC_TypeDef *PTCx, uint32_t idx, uint32_t valu
 }
 
 /**
- * @brief Select the GPIO trigger A source (GPIO31_0.SELA).
+ * @brief Select the GPIO trigger D source (GPIO31_0.SELD).
  * @param[in] PTCx  PTC instance pointer.
  * @param[in] group GPIO group (0 = GPIO31_0, 1 = GPIO63_32, 2 = GPIO95_64).
  * @param[in] gpio  GPIO index to select (0..31).
  */
-static inline void ll_ptc_set_gpio_trig_a(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
+static inline void ll_ptc_set_gpio_trig_d(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
 {
 	volatile uint32_t *gpio_reg;
 
@@ -421,29 +388,8 @@ static inline void ll_ptc_set_gpio_trig_a(PTC_TypeDef *PTCx, uint32_t group, uin
 	} else {
 		gpio_reg = &PTCx->GPIO95_64;
 	}
-	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELA,
-		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELA_Msk, PTC_GPIO31_0_SELA_Pos));
-}
-
-/**
- * @brief Select the GPIO trigger B source (GPIO31_0.SELB).
- * @param[in] PTCx  PTC instance pointer.
- * @param[in] group GPIO group (0 = GPIO31_0, 1 = GPIO63_32, 2 = GPIO95_64).
- * @param[in] gpio  GPIO index to select (0..31).
- */
-static inline void ll_ptc_set_gpio_trig_b(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
-{
-	volatile uint32_t *gpio_reg;
-
-	if (group == 0U) {
-		gpio_reg = &PTCx->GPIO31_0;
-	} else if (group == 1U) {
-		gpio_reg = &PTCx->GPIO63_32;
-	} else {
-		gpio_reg = &PTCx->GPIO95_64;
-	}
-	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELB,
-		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELB_Msk, PTC_GPIO31_0_SELB_Pos));
+	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELD,
+		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELD_Msk, PTC_GPIO31_0_SELD_Pos));
 }
 
 /**
@@ -468,12 +414,12 @@ static inline void ll_ptc_set_gpio_trig_c(PTC_TypeDef *PTCx, uint32_t group, uin
 }
 
 /**
- * @brief Select the GPIO trigger D source (GPIO31_0.SELD).
+ * @brief Select the GPIO trigger B source (GPIO31_0.SELB).
  * @param[in] PTCx  PTC instance pointer.
  * @param[in] group GPIO group (0 = GPIO31_0, 1 = GPIO63_32, 2 = GPIO95_64).
  * @param[in] gpio  GPIO index to select (0..31).
  */
-static inline void ll_ptc_set_gpio_trig_d(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
+static inline void ll_ptc_set_gpio_trig_b(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
 {
 	volatile uint32_t *gpio_reg;
 
@@ -484,9 +430,63 @@ static inline void ll_ptc_set_gpio_trig_d(PTC_TypeDef *PTCx, uint32_t group, uin
 	} else {
 		gpio_reg = &PTCx->GPIO95_64;
 	}
-	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELD,
-		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELD_Msk, PTC_GPIO31_0_SELD_Pos));
+	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELB,
+		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELB_Msk, PTC_GPIO31_0_SELB_Pos));
 }
+
+/**
+ * @brief Select the GPIO trigger A source (GPIO31_0.SELA).
+ * @param[in] PTCx  PTC instance pointer.
+ * @param[in] group GPIO group (0 = GPIO31_0, 1 = GPIO63_32, 2 = GPIO95_64).
+ * @param[in] gpio  GPIO index to select (0..31).
+ */
+static inline void ll_ptc_set_gpio_trig_a(PTC_TypeDef *PTCx, uint32_t group, uint32_t gpio)
+{
+	volatile uint32_t *gpio_reg;
+
+	if (group == 0U) {
+		gpio_reg = &PTCx->GPIO31_0;
+	} else if (group == 1U) {
+		gpio_reg = &PTCx->GPIO63_32;
+	} else {
+		gpio_reg = &PTCx->GPIO95_64;
+	}
+	MODIFY_REG(*gpio_reg, PTC_GPIO31_0_SELA,
+		   MAKE_REG_VAL(gpio, PTC_GPIO31_0_SELA_Msk, PTC_GPIO31_0_SELA_Pos));
+}
+
+/**< Read, add data, write back. */
+/** @} */
+
+/*==============================================================================
+ * Basic Control (TCR0 / TCRx.SWTRIG)
+ *============================================================================*/
+
+/**
+ * @brief Trigger task 0 by software (TCR0.SWTRIG, write 1 to trigger).
+ * @param[in] PTCx PTC instance pointer.
+ */
+static inline void ll_ptc_trigger_task0(PTC_TypeDef *PTCx)
+{
+	SET_BIT(PTCx->TCR0, PTC_TCR0_SWTRIG);
+}
+
+/**
+ * @brief Set the task 0 repetition counter (TCR0.REP).
+ * @param[in] PTCx PTC instance pointer.
+ * @param[in] rep  Repetition count (4 bits).
+ * @note The task only fires while REP is non-zero; REP is decremented
+ *       automatically after each trigger.
+ */
+static inline void ll_ptc_set_task0_rep(PTC_TypeDef *PTCx, uint32_t rep)
+{
+	MODIFY_REG(PTCx->TCR0, PTC_TCR0_REP,
+		   MAKE_REG_VAL(rep, PTC_TCR0_REP_Msk, PTC_TCR0_REP_Pos));
+}
+
+/*==============================================================================
+ * Task Registers (TCRx / TARx / TDRx / RCRx)
+ *============================================================================*/
 
 #ifdef __cplusplus
 }

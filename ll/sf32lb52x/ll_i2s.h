@@ -8,7 +8,7 @@
 #define __LL_I2S_H
 
 #include <stdint.h>
-#include "regs/i2s.h"
+#include "i2s.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
@@ -187,21 +187,6 @@ typedef struct
 } ll_i2s_tx_pcm_format_config_t;
 
 /**
- * @brief Configure TX serial timing (AUDIO_SERIAL_TIMING).
- * @param[in] I2Sx I2S instance pointer.
- * @param[in] cfg  Pointer to TX timing configuration.
- */
-static inline void ll_i2s_config_tx_timing(I2S_TypeDef *I2Sx,
-                                           const ll_i2s_tx_timing_config_t *cfg)
-{
-    MODIFY_REG(I2Sx->AUDIO_SERIAL_TIMING,
-               I2S_AUDIO_SERIAL_TIMING_TIMING |
-                   I2S_AUDIO_SERIAL_TIMING_SLAVE_EN |
-                   I2S_AUDIO_SERIAL_TIMING_LRCK_POL,
-               cfg->timing | cfg->role | cfg->lrck_pol);
-}
-
-/**
  * @brief Configure TX PCM format (TX_PCM_FORMAT).
  * @param[in] I2Sx I2S instance pointer.
  * @param[in] cfg  Pointer to TX PCM format configuration.
@@ -229,45 +214,20 @@ static inline void ll_i2s_set_tx_sample_clk(I2S_TypeDef *I2Sx, uint32_t fs_duty)
 }
 
 /**
- * @brief Set TX LRCK divider (AUDIO_TX_LRCK_DIV).
- * @param[in] I2Sx       I2S instance pointer.
- * @param[in] duty_low   LRCK low duty.
- * @param[in] duty_high  LRCK high duty.
+ * @brief Enable/disable TX re-sample smooth (TX_RS_SMOOTH).
+ * @param[in] I2Sx    I2S instance pointer.
+ * @param[in] enable  Non-zero to enable.
  */
-static inline void ll_i2s_set_tx_lrck_div(I2S_TypeDef *I2Sx,
-                                          uint32_t duty_low,
-                                          uint32_t duty_high)
+static inline void ll_i2s_set_tx_rs_smooth(I2S_TypeDef *I2Sx, uint32_t enable)
 {
-    WRITE_REG(I2Sx->AUDIO_TX_LRCK_DIV,
-              ((duty_low << I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW_Pos) &
-               I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW) |
-                  ((duty_high << I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH_Pos) &
-                   I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH));
-}
-
-/**
- * @brief Set TX BCLK divider (AUDIO_TX_BCLK_DIV).
- * @param[in] I2Sx  I2S instance pointer.
- * @param[in] duty  BCLK duty.
- */
-static inline void ll_i2s_set_tx_bclk_div(I2S_TypeDef *I2Sx, uint32_t duty)
-{
-    MODIFY_REG(I2Sx->AUDIO_TX_BCLK_DIV, I2S_AUDIO_TX_BCLK_DIV_DUTY,
-               ((duty << I2S_AUDIO_TX_BCLK_DIV_DUTY_Pos) &
-                I2S_AUDIO_TX_BCLK_DIV_DUTY));
-}
-
-/**
- * @brief Set TX audio format data width (AUDIO_TX_FORMAT).
- * @param[in] I2Sx       I2S instance pointer.
- * @param[in] data_width PCM data width.
- */
-static inline void ll_i2s_set_tx_audio_data_width(I2S_TypeDef *I2Sx,
-                                                   uint32_t data_width)
-{
-    MODIFY_REG(I2Sx->AUDIO_TX_FORMAT, I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH,
-               ((data_width << I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH_Pos) &
-                I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH));
+    if (enable)
+    {
+        SET_BIT(I2Sx->TX_RS_SMOOTH, I2S_TX_RS_SMOOTH_EN);
+    }
+    else
+    {
+        CLEAR_BIT(I2Sx->TX_RS_SMOOTH, I2S_TX_RS_SMOOTH_EN);
+    }
 }
 
 /**
@@ -320,20 +280,69 @@ static inline void ll_i2s_set_tx_balance(I2S_TypeDef *I2Sx,
 }
 
 /**
- * @brief Enable/disable TX re-sample smooth (TX_RS_SMOOTH).
- * @param[in] I2Sx    I2S instance pointer.
- * @param[in] enable  Non-zero to enable.
+ * @brief Set TX LRCK divider (AUDIO_TX_LRCK_DIV).
+ * @param[in] I2Sx       I2S instance pointer.
+ * @param[in] duty_low   LRCK low duty.
+ * @param[in] duty_high  LRCK high duty.
  */
-static inline void ll_i2s_set_tx_rs_smooth(I2S_TypeDef *I2Sx, uint32_t enable)
+static inline void ll_i2s_set_tx_lrck_div(I2S_TypeDef *I2Sx,
+                                          uint32_t duty_low,
+                                          uint32_t duty_high)
 {
-    if (enable)
-    {
-        SET_BIT(I2Sx->TX_RS_SMOOTH, I2S_TX_RS_SMOOTH_EN);
-    }
-    else
-    {
-        CLEAR_BIT(I2Sx->TX_RS_SMOOTH, I2S_TX_RS_SMOOTH_EN);
-    }
+    WRITE_REG(I2Sx->AUDIO_TX_LRCK_DIV,
+              ((duty_low << I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW_Pos) &
+               I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW) |
+                  ((duty_high << I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH_Pos) &
+                   I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH));
+}
+
+/**
+ * @brief Set TX BCLK divider (AUDIO_TX_BCLK_DIV).
+ * @param[in] I2Sx  I2S instance pointer.
+ * @param[in] duty  BCLK duty.
+ */
+static inline void ll_i2s_set_tx_bclk_div(I2S_TypeDef *I2Sx, uint32_t duty)
+{
+    MODIFY_REG(I2Sx->AUDIO_TX_BCLK_DIV, I2S_AUDIO_TX_BCLK_DIV_DUTY,
+               ((duty << I2S_AUDIO_TX_BCLK_DIV_DUTY_Pos) &
+                I2S_AUDIO_TX_BCLK_DIV_DUTY));
+}
+
+/**
+ * @brief Set TX audio format data width (AUDIO_TX_FORMAT).
+ * @param[in] I2Sx       I2S instance pointer.
+ * @param[in] data_width PCM data width.
+ */
+static inline void ll_i2s_set_tx_audio_data_width(I2S_TypeDef *I2Sx,
+                                                   uint32_t data_width)
+{
+    MODIFY_REG(I2Sx->AUDIO_TX_FORMAT, I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH,
+               ((data_width << I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH_Pos) &
+                I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH));
+}
+
+/**
+ * @brief Configure TX serial timing (AUDIO_SERIAL_TIMING).
+ * @param[in] I2Sx I2S instance pointer.
+ * @param[in] cfg  Pointer to TX timing configuration.
+ */
+static inline void ll_i2s_config_tx_timing(I2S_TypeDef *I2Sx,
+                                           const ll_i2s_tx_timing_config_t *cfg)
+{
+    MODIFY_REG(I2Sx->AUDIO_SERIAL_TIMING,
+               I2S_AUDIO_SERIAL_TIMING_TIMING |
+                   I2S_AUDIO_SERIAL_TIMING_SLAVE_EN |
+                   I2S_AUDIO_SERIAL_TIMING_LRCK_POL,
+               cfg->timing | cfg->role | cfg->lrck_pol);
+}
+
+/**
+ * @brief Disable TX function.
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_disable_tx(I2S_TypeDef *I2Sx)
+{
+    CLEAR_REG(I2Sx->AUDIO_TX_FUNC_EN);
 }
 
 /**
@@ -345,15 +354,6 @@ static inline void ll_i2s_enable_tx(I2S_TypeDef *I2Sx, uint32_t intf_sel)
 {
     WRITE_REG(I2Sx->AUDIO_TX_FUNC_EN,
               I2S_AUDIO_TX_FUNC_EN_TX_EN | intf_sel);
-}
-
-/**
- * @brief Disable TX function.
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_disable_tx(I2S_TypeDef *I2Sx)
-{
-    CLEAR_REG(I2Sx->AUDIO_TX_FUNC_EN);
 }
 
 /**
@@ -398,6 +398,45 @@ typedef struct
     uint32_t role;      /**< Master/slave, use @ref LL_I2S_MASTER or @ref LL_I2S_SLAVE. */
     uint32_t lrck_pol;  /**< LRCK polarity, use @ref LL_I2S_LRCK_POL_NORMAL or @ref LL_I2S_LRCK_POL_INVERT. */
 } ll_i2s_rx_timing_config_t;
+
+/**
+ * @brief Disable RX function.
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_disable_rx(I2S_TypeDef *I2Sx)
+{
+    CLEAR_REG(I2Sx->AUDIO_RX_FUNC_EN);
+}
+
+/**
+ * @brief Enable RX function (AUDIO_RX_FUNC_EN).
+ * @param[in] I2Sx     I2S instance pointer.
+ * @param[in] intf_sel Interface select, use @ref LL_I2S_INTF_I2S or @ref LL_I2S_INTF_PCM.
+ */
+static inline void ll_i2s_enable_rx(I2S_TypeDef *I2Sx, uint32_t intf_sel)
+{
+    WRITE_REG(I2Sx->AUDIO_RX_FUNC_EN,
+              I2S_AUDIO_RX_FUNC_EN_RX_EN |
+                  (intf_sel & I2S_AUDIO_RX_FUNC_EN_RX_INTF_SEL));
+}
+
+/**
+ * @brief Pause RX (AUDIO_RX_PAUSE).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_pause_rx(I2S_TypeDef *I2Sx)
+{
+    SET_BIT(I2Sx->AUDIO_RX_PAUSE, I2S_AUDIO_RX_PAUSE_RX_PAUSE);
+}
+
+/**
+ * @brief Resume RX (AUDIO_RX_PAUSE).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_resume_rx(I2S_TypeDef *I2Sx)
+{
+    CLEAR_BIT(I2Sx->AUDIO_RX_PAUSE, I2S_AUDIO_RX_PAUSE_RX_PAUSE);
+}
 
 /**
  * @brief Configure RX serial timing (AUDIO_RX_SERIAL_TIMING).
@@ -535,44 +574,6 @@ static inline void ll_i2s_set_rx_ch_sel(I2S_TypeDef *I2Sx,
                     I2S_RX_CH_SEL_LEFT_CHANNEL_SEL));
 }
 
-/**
- * @brief Enable RX function (AUDIO_RX_FUNC_EN).
- * @param[in] I2Sx     I2S instance pointer.
- * @param[in] intf_sel Interface select, use @ref LL_I2S_INTF_I2S or @ref LL_I2S_INTF_PCM.
- */
-static inline void ll_i2s_enable_rx(I2S_TypeDef *I2Sx, uint32_t intf_sel)
-{
-    WRITE_REG(I2Sx->AUDIO_RX_FUNC_EN,
-              I2S_AUDIO_RX_FUNC_EN_RX_EN | intf_sel);
-}
-
-/**
- * @brief Disable RX function.
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_disable_rx(I2S_TypeDef *I2Sx)
-{
-    CLEAR_REG(I2Sx->AUDIO_RX_FUNC_EN);
-}
-
-/**
- * @brief Pause RX (AUDIO_RX_PAUSE).
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_pause_rx(I2S_TypeDef *I2Sx)
-{
-    SET_BIT(I2Sx->AUDIO_RX_PAUSE, I2S_AUDIO_RX_PAUSE_RX_PAUSE);
-}
-
-/**
- * @brief Resume RX (AUDIO_RX_PAUSE).
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_resume_rx(I2S_TypeDef *I2Sx)
-{
-    CLEAR_BIT(I2Sx->AUDIO_RX_PAUSE, I2S_AUDIO_RX_PAUSE_RX_PAUSE);
-}
-
 /*==============================================================================
  * BT Phone Path
  *============================================================================*/
@@ -590,6 +591,15 @@ typedef struct
 } ll_i2s_bt_phone_config_t;
 
 /**
+ * @brief Disable BT phone path.
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_disable_bt_phone(I2S_TypeDef *I2Sx)
+{
+    CLEAR_REG(I2Sx->BT_PHONE_CTRL);
+}
+
+/**
  * @brief Enable BT phone path (BT_PHONE_CTRL).
  * @param[in] I2Sx I2S instance pointer.
  * @param[in] cfg  Pointer to BT phone configuration.
@@ -600,15 +610,6 @@ static inline void ll_i2s_enable_bt_phone(I2S_TypeDef *I2Sx,
     WRITE_REG(I2Sx->BT_PHONE_CTRL,
               I2S_BT_PHONE_CTRL_BT_PH_EN | cfg->back_mix | cfg->mix_smooth |
                   cfg->path | cfg->pcm_bps | cfg->bb_bps_to_cdc);
-}
-
-/**
- * @brief Disable BT phone path.
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_disable_bt_phone(I2S_TypeDef *I2Sx)
-{
-    CLEAR_REG(I2Sx->BT_PHONE_CTRL);
 }
 
 /**
@@ -707,70 +708,25 @@ static inline void ll_i2s_set_bt_volume(I2S_TypeDef *I2Sx,
                    adj_en);
 }
 
-/*==============================================================================
- * DMA
- *============================================================================*/
-
 /**
- * @brief Set TX DMA entry address (TX_DMA_ENTRY).
- * @param[in] I2Sx  I2S instance pointer.
- * @param[in] addr  DMA entry address.
- */
-static inline void ll_i2s_set_tx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
-{
-    WRITE_REG(I2Sx->TX_DMA_ENTRY, addr);
-}
-
-/**
- * @brief Set RX DMA entry address (RX_DMA_ENTRY).
- * @param[in] I2Sx  I2S instance pointer.
- * @param[in] addr  DMA entry address.
- */
-static inline void ll_i2s_set_rx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
-{
-    WRITE_REG(I2Sx->RX_DMA_ENTRY, addr);
-}
-
-/**
- * @brief Enable RX DMA (DMA_MASK.rx_dma_mask).
- * @note The mask bit is active-high: 1 = masked (DMA disabled), 0 = unmasked.
- *       Clearing it enables RX DMA (reference manual 11.2).
+ * @brief Enable TX FIFO interrupt (INT_MASK.tx_fifo_int_mask).
+ * @note The mask bit is active-high: 1 = masked/disabled, 0 = enabled. Clearing
+ *       it enables the interrupt (reference manual 11.2).
  * @param[in] I2Sx I2S instance pointer.
  */
-static inline void ll_i2s_enable_dma_rx(I2S_TypeDef *I2Sx)
+static inline void ll_i2s_enable_it_tx_fifo(I2S_TypeDef *I2Sx)
 {
-    CLEAR_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_RX_DMA_MASK);
+    CLEAR_BIT(I2Sx->INT_MASK, I2S_INT_MASK_TX_FIFO_INT_MASK);
 }
 
 /**
- * @brief Disable RX DMA (DMA_MASK.rx_dma_mask).
- * @note The mask bit is active-high: 1 = masked (DMA disabled).
+ * @brief Disable TX FIFO interrupt (INT_MASK.tx_fifo_int_mask).
+ * @note The mask bit is active-high: 1 = masked/disabled.
  * @param[in] I2Sx I2S instance pointer.
  */
-static inline void ll_i2s_disable_dma_rx(I2S_TypeDef *I2Sx)
+static inline void ll_i2s_disable_it_tx_fifo(I2S_TypeDef *I2Sx)
 {
-    SET_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_RX_DMA_MASK);
-}
-
-/**
- * @brief Enable TX DMA (DMA_MASK.tx_dma_mask).
- * @note The mask bit is active-high: 1 = masked (DMA disabled), 0 = unmasked.
- *       Clearing it enables TX DMA (reference manual 11.2).
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_enable_dma_tx(I2S_TypeDef *I2Sx)
-{
-    CLEAR_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_TX_DMA_MASK);
-}
-
-/**
- * @brief Disable TX DMA (DMA_MASK.tx_dma_mask).
- * @note The mask bit is active-high: 1 = masked (DMA disabled).
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_disable_dma_tx(I2S_TypeDef *I2Sx)
-{
-    SET_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_TX_DMA_MASK);
+    SET_BIT(I2Sx->INT_MASK, I2S_INT_MASK_TX_FIFO_INT_MASK);
 }
 
 /*==============================================================================
@@ -799,27 +755,6 @@ static inline void ll_i2s_disable_it_rx_fifo(I2S_TypeDef *I2Sx)
 }
 
 /**
- * @brief Enable TX FIFO interrupt (INT_MASK.tx_fifo_int_mask).
- * @note The mask bit is active-high: 1 = masked/disabled, 0 = enabled. Clearing
- *       it enables the interrupt (reference manual 11.2).
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_enable_it_tx_fifo(I2S_TypeDef *I2Sx)
-{
-    CLEAR_BIT(I2Sx->INT_MASK, I2S_INT_MASK_TX_FIFO_INT_MASK);
-}
-
-/**
- * @brief Disable TX FIFO interrupt (INT_MASK.tx_fifo_int_mask).
- * @note The mask bit is active-high: 1 = masked/disabled.
- * @param[in] I2Sx I2S instance pointer.
- */
-static inline void ll_i2s_disable_it_tx_fifo(I2S_TypeDef *I2Sx)
-{
-    SET_BIT(I2Sx->INT_MASK, I2S_INT_MASK_TX_FIFO_INT_MASK);
-}
-
-/**
  * @brief Get interrupt status (INT_STATUS).
  * @param[in] I2Sx I2S instance pointer.
  * @return INT_STATUS register value.
@@ -827,6 +762,16 @@ static inline void ll_i2s_disable_it_tx_fifo(I2S_TypeDef *I2Sx)
 static inline uint32_t ll_i2s_get_irq_status(I2S_TypeDef *I2Sx)
 {
     return READ_REG(I2Sx->INT_STATUS);
+}
+
+/**
+ * @brief Check TX FIFO underflow flag.
+ * @param[in] I2Sx I2S instance pointer.
+ * @return Non-zero if TX FIFO underflow occurred.
+ */
+static inline uint32_t ll_i2s_is_active_flag_tx_underflow(I2S_TypeDef *I2Sx)
+{
+    return READ_BIT(I2Sx->INT_STATUS, I2S_INT_STATUS_TX_FIFO_UNDERFLOW);
 }
 
 /**
@@ -839,14 +784,90 @@ static inline uint32_t ll_i2s_is_active_flag_rx_overflow(I2S_TypeDef *I2Sx)
     return READ_BIT(I2Sx->INT_STATUS, I2S_INT_STATUS_RX_FIFO_OVERFLOW);
 }
 
+/*==============================================================================
+ * DMA
+ *============================================================================*/
+
 /**
- * @brief Check TX FIFO underflow flag.
- * @param[in] I2Sx I2S instance pointer.
- * @return Non-zero if TX FIFO underflow occurred.
+ * @brief Set TX DMA entry address (TX_DMA_ENTRY).
+ * @param[in] I2Sx  I2S instance pointer.
+ * @param[in] addr  DMA entry address.
  */
-static inline uint32_t ll_i2s_is_active_flag_tx_underflow(I2S_TypeDef *I2Sx)
+static inline void ll_i2s_set_tx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
 {
-    return READ_BIT(I2Sx->INT_STATUS, I2S_INT_STATUS_TX_FIFO_UNDERFLOW);
+    WRITE_REG(I2Sx->TX_DMA_ENTRY, addr);
+}
+
+/**
+ * @brief Set RX DMA entry address (RX_DMA_ENTRY).
+ * @param[in] I2Sx  I2S instance pointer.
+ * @param[in] addr  DMA entry address.
+ */
+static inline void ll_i2s_set_rx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
+{
+    WRITE_REG(I2Sx->RX_DMA_ENTRY, addr);
+}
+
+/**
+ * @brief Enable TX DMA (DMA_MASK.tx_dma_mask).
+ * @note The mask bit is active-high: 1 = masked (DMA disabled), 0 = unmasked.
+ *       Clearing it enables TX DMA (reference manual 11.2).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_enable_dma_tx(I2S_TypeDef *I2Sx)
+{
+    CLEAR_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_TX_DMA_MASK);
+}
+
+/**
+ * @brief Disable TX DMA (DMA_MASK.tx_dma_mask).
+ * @note The mask bit is active-high: 1 = masked (DMA disabled).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_disable_dma_tx(I2S_TypeDef *I2Sx)
+{
+    SET_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_TX_DMA_MASK);
+}
+
+/**
+ * @brief Enable RX DMA (DMA_MASK.rx_dma_mask).
+ * @note The mask bit is active-high: 1 = masked (DMA disabled), 0 = unmasked.
+ *       Clearing it enables RX DMA (reference manual 11.2).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_enable_dma_rx(I2S_TypeDef *I2Sx)
+{
+    CLEAR_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_RX_DMA_MASK);
+}
+
+/**
+ * @brief Disable RX DMA (DMA_MASK.rx_dma_mask).
+ * @note The mask bit is active-high: 1 = masked (DMA disabled).
+ * @param[in] I2Sx I2S instance pointer.
+ */
+static inline void ll_i2s_disable_dma_rx(I2S_TypeDef *I2Sx)
+{
+    SET_BIT(I2Sx->DMA_MASK, I2S_DMA_MASK_RX_DMA_MASK);
+}
+
+/**
+ * @brief Write debug loop control (DEBUG_LOOP).
+ * @param[in] I2Sx    I2S instance pointer.
+ * @param[in] loops   Loop mode bits, use @ref LL_I2S_LOOP_DA2AD and/or @ref LL_I2S_LOOP_AD2DA.
+ * @param[in] clk_sel SP clock select.
+ * @param[in] clk_div SP clock divider.
+ */
+static inline void ll_i2s_set_debug_loop(I2S_TypeDef *I2Sx,
+                                         uint32_t loops,
+                                         uint32_t clk_sel,
+                                         uint32_t clk_div)
+{
+    WRITE_REG(I2Sx->DEBUG_LOOP,
+              loops | ((clk_sel << I2S_DEBUG_LOOP_SP_CLK_SEL_Pos) &
+                        I2S_DEBUG_LOOP_SP_CLK_SEL) |
+                  I2S_DEBUG_LOOP_SP_CLK_DIV_UPDATE |
+                  ((clk_div << I2S_DEBUG_LOOP_SP_CLK_DIV_Pos) &
+                   I2S_DEBUG_LOOP_SP_CLK_DIV));
 }
 
 /*==============================================================================
@@ -932,26 +953,6 @@ static inline void ll_i2s_set_tx_eq_gain2(I2S_TypeDef *I2Sx,
                    I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN) |
                   ((g10 << I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN_Pos) &
                    I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN));
-}
-
-/**
- * @brief Write debug loop control (DEBUG_LOOP).
- * @param[in] I2Sx    I2S instance pointer.
- * @param[in] loops   Loop mode bits, use @ref LL_I2S_LOOP_DA2AD and/or @ref LL_I2S_LOOP_AD2DA.
- * @param[in] clk_sel SP clock select.
- * @param[in] clk_div SP clock divider.
- */
-static inline void ll_i2s_set_debug_loop(I2S_TypeDef *I2Sx,
-                                         uint32_t loops,
-                                         uint32_t clk_sel,
-                                         uint32_t clk_div)
-{
-    WRITE_REG(I2Sx->DEBUG_LOOP,
-              loops | ((clk_sel << I2S_DEBUG_LOOP_SP_CLK_SEL_Pos) &
-                        I2S_DEBUG_LOOP_SP_CLK_SEL) |
-                  I2S_DEBUG_LOOP_SP_CLK_DIV_UPDATE |
-                  ((clk_div << I2S_DEBUG_LOOP_SP_CLK_DIV_Pos) &
-                   I2S_DEBUG_LOOP_SP_CLK_DIV));
 }
 
 #ifdef __cplusplus

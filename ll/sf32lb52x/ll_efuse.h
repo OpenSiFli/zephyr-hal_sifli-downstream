@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "regs/efusec.h"
+#include "efusec.h"
 #include "cmsis_utils.h"
 
 #ifdef __cplusplus
@@ -40,6 +40,33 @@ extern "C" {
 
 #define LL_EFUSE_BANK_COUNT      (4UL)
 #define LL_EFUSE_BANK_WORD_COUNT (8UL)
+static inline void ll_efuse_enable_interrupt(EFUSEC_TypeDef *efuse)
+{
+	SET_BIT(efuse->CR, EFUSEC_CR_IE);
+}
+
+static inline void ll_efuse_disable_interrupt(EFUSEC_TypeDef *efuse)
+{
+	CLEAR_BIT(efuse->CR, EFUSEC_CR_IE);
+}
+
+/**
+ * @brief Select target bank
+ */
+static inline void ll_efuse_set_bank(EFUSEC_TypeDef *efuse, uint32_t bank)
+{
+	MODIFY_REG(efuse->CR, EFUSEC_CR_BANKSEL,
+		   MAKE_REG_VAL(bank, EFUSEC_CR_BANKSEL_Msk, EFUSEC_CR_BANKSEL_Pos));
+}
+
+/**
+ * @brief Set operation mode
+ */
+static inline void ll_efuse_set_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
+{
+	MODIFY_REG(efuse->CR, EFUSEC_CR_MODE,
+		   MAKE_REG_VAL(mode, EFUSEC_CR_MODE_Msk, EFUSEC_CR_MODE_Pos));
+}
 
 /*==============================================================================
  * Basic Control
@@ -55,22 +82,75 @@ static inline void ll_efuse_start(EFUSEC_TypeDef *efuse)
 	SET_BIT(efuse->CR, EFUSEC_CR_EN);
 }
 
+/*==============================================================================
+ * Timing Configuration
+ *============================================================================*/
+
 /**
- * @brief Set operation mode
+ * @brief Configure eFuse timing parameters
+ * @param thrck  Read clock timing
+ * @param thpck  Program clock timing
+ * @param tckhp  Clock high pulse
  */
-static inline void ll_efuse_set_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
+static inline void ll_efuse_set_timing(EFUSEC_TypeDef *efuse, uint32_t thrck, uint32_t thpck,
+				       uint32_t tckhp)
 {
-	MODIFY_REG(efuse->CR, EFUSEC_CR_MODE,
-		   MAKE_REG_VAL(mode, EFUSEC_CR_MODE_Msk, EFUSEC_CR_MODE_Pos));
+	WRITE_REG(efuse->TIMR,
+		  MAKE_REG_VAL(thrck, EFUSEC_TIMR_THRCK_Msk, EFUSEC_TIMR_THRCK_Pos) |
+		  MAKE_REG_VAL(thpck, EFUSEC_TIMR_THPCK_Msk, EFUSEC_TIMR_THPCK_Pos) |
+		  MAKE_REG_VAL(tckhp, EFUSEC_TIMR_TCKHP_Msk, EFUSEC_TIMR_TCKHP_Pos));
+}
+
+/*==============================================================================
+ * Status & Interrupt
+ *============================================================================*/
+
+static inline uint32_t ll_efuse_is_done(EFUSEC_TypeDef *efuse)
+{
+	return READ_BIT(efuse->SR, EFUSEC_SR_DONE) ? 1UL : 0UL;
 }
 
 /**
- * @brief Select target bank
+ * @brief Clear the operation done flag.
+ * @note SR.DONE is cleared by writing one.
  */
-static inline void ll_efuse_set_bank(EFUSEC_TypeDef *efuse, uint32_t bank)
+static inline void ll_efuse_clear_done(EFUSEC_TypeDef *efuse)
 {
-	MODIFY_REG(efuse->CR, EFUSEC_CR_BANKSEL,
-		   MAKE_REG_VAL(bank, EFUSEC_CR_BANKSEL_Msk, EFUSEC_CR_BANKSEL_Pos));
+	WRITE_REG(efuse->SR, EFUSEC_SR_DONE);
+}
+
+/*==============================================================================
+ * Program (Write) Data
+ *============================================================================*/
+
+/**
+ * @brief Write program data into PGM_DATA registers
+ * @param idx  Word index (0..7)
+ * @param val  32-bit value to program
+ */
+static inline void ll_efuse_set_program_data(EFUSEC_TypeDef *efuse, uint32_t idx, uint32_t val)
+{
+	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
+	if (idx < 8U) {
+		pgm_regs[idx] = val;
+	}
+}
+
+/**
+ * @brief Write all 8 program data words
+ */
+static inline void ll_efuse_set_program_data_all(EFUSEC_TypeDef *efuse, const uint32_t *data)
+{
+	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
+	uint32_t idx;
+
+	if (data == NULL) {
+		return;
+	}
+
+	for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++) {
+		pgm_regs[idx] = data[idx];
+	}
 }
 
 /*==============================================================================
@@ -140,106 +220,49 @@ static inline uint32_t ll_efuse_read_word_at(EFUSEC_TypeDef *efuse, uint32_t off
         return READ_REG(*data_reg);
 }
 
-/*==============================================================================
- * Program (Write) Data
- *============================================================================*/
-
 /**
- * @brief Write program data into PGM_DATA registers
- * @param idx  Word index (0..7)
- * @param val  32-bit value to program
- */
-static inline void ll_efuse_set_program_data(EFUSEC_TypeDef *efuse, uint32_t idx, uint32_t val)
-{
-	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
-	if (idx < 8U) {
-		pgm_regs[idx] = val;
-	}
-}
-
-/**
- * @brief Write all 8 program data words
- */
-static inline void ll_efuse_set_program_data_all(EFUSEC_TypeDef *efuse, const uint32_t *data)
-{
-	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
-	uint32_t idx;
-
-	if (data == NULL) {
-		return;
-	}
-
-	for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++) {
-		pgm_regs[idx] = data[idx];
-	}
-}
-
-/*==============================================================================
- * Timing Configuration
- *============================================================================*/
-
-/**
- * @brief Configure eFuse timing parameters
- * @param thrck  Read clock timing
- * @param thpck  Program clock timing
- * @param tckhp  Clock high pulse
- */
-static inline void ll_efuse_set_timing(EFUSEC_TypeDef *efuse, uint32_t thrck, uint32_t thpck,
-				       uint32_t tckhp)
-{
-	WRITE_REG(efuse->TIMR,
-		  MAKE_REG_VAL(thrck, EFUSEC_TIMR_THRCK_Msk, EFUSEC_TIMR_THRCK_Pos) |
-		  MAKE_REG_VAL(thpck, EFUSEC_TIMR_THPCK_Msk, EFUSEC_TIMR_THPCK_Pos) |
-		  MAKE_REG_VAL(tckhp, EFUSEC_TIMR_TCKHP_Msk, EFUSEC_TIMR_TCKHP_Pos));
-}
-
-/*==============================================================================
- * Status & Interrupt
- *============================================================================*/
-
-static inline uint32_t ll_efuse_is_done(EFUSEC_TypeDef *efuse)
-{
-	return READ_BIT(efuse->SR, EFUSEC_SR_DONE) ? 1UL : 0UL;
-}
-
-/**
- * @brief Clear the operation done flag.
- * @note SR.DONE is cleared by writing one.
- */
-static inline void ll_efuse_clear_done(EFUSEC_TypeDef *efuse)
-{
-	WRITE_REG(efuse->SR, EFUSEC_SR_DONE);
-}
-
-static inline void ll_efuse_enable_interrupt(EFUSEC_TypeDef *efuse)
-{
-	SET_BIT(efuse->CR, EFUSEC_CR_IE);
-}
-
-static inline void ll_efuse_disable_interrupt(EFUSEC_TypeDef *efuse)
-{
-	CLEAR_BIT(efuse->CR, EFUSEC_CR_IE);
-}
-
-/**
- * @brief Set the eFuse analog LDO enable (ANACR.LDO_EN).
+ * @brief Read the ANACR RESERVE1 field.
  * @param[in] efuse eFuse controller instance pointer.
- * @param[in] en    1 to enable, 0 to disable.
+ * @return RESERVE1 field value.
  */
-static inline void ll_efuse_set_anacr_ldo_enable(EFUSEC_TypeDef *efuse, uint32_t en)
+static inline uint32_t ll_efuse_get_anacr_reserve1(EFUSEC_TypeDef *efuse)
 {
-	en ? SET_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN) : CLEAR_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN);
+	return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE1) >>
+	       EFUSEC_ANACR_RESERVE1_Pos;
 }
 
 /**
- * @brief Set the eFuse analog LDO reference voltage select (ANACR.LDO_VREF_SEL).
+ * @brief Set the writable ANACR reserve field (ANACR.RESERVE0).
  * @param[in] efuse eFuse controller instance pointer.
- * @param[in] sel   Reference voltage select (3 bits).
+ * @param[in] value Reserve field value (8 bits).
  */
-static inline void ll_efuse_set_anacr_ldo_vref(EFUSEC_TypeDef *efuse, uint32_t sel)
+static inline void ll_efuse_set_anacr_reserve0(EFUSEC_TypeDef *efuse, uint32_t value)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_VREF_SEL,
-		   MAKE_REG_VAL(sel, EFUSEC_ANACR_LDO_VREF_SEL_Msk, EFUSEC_ANACR_LDO_VREF_SEL_Pos));
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_RESERVE0,
+		   MAKE_REG_VAL(value, EFUSEC_ANACR_RESERVE0_Msk,
+				EFUSEC_ANACR_RESERVE0_Pos));
+}
+
+/**
+ * @brief Read the ANACR RESERVE0 field.
+ * @param[in] efuse eFuse controller instance pointer.
+ * @return RESERVE0 field value.
+ */
+static inline uint32_t ll_efuse_get_anacr_reserve0(EFUSEC_TypeDef *efuse)
+{
+	return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE0) >>
+	       EFUSEC_ANACR_RESERVE0_Pos;
+}
+
+/**
+ * @brief Set the eFuse analog LDO DC trimming (ANACR.LDO_DC_TR).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] tr    DC trimming value (3 bits).
+ */
+static inline void ll_efuse_set_anacr_ldo_dc_trim(EFUSEC_TypeDef *efuse, uint32_t tr)
+{
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_DC_TR,
+		   MAKE_REG_VAL(tr, EFUSEC_ANACR_LDO_DC_TR_Msk, EFUSEC_ANACR_LDO_DC_TR_Pos));
 }
 
 /**
@@ -254,14 +277,24 @@ static inline void ll_efuse_set_anacr_ldo_mode(EFUSEC_TypeDef *efuse, uint32_t m
 }
 
 /**
- * @brief Set the eFuse analog LDO DC trimming (ANACR.LDO_DC_TR).
+ * @brief Set the eFuse analog LDO reference voltage select (ANACR.LDO_VREF_SEL).
  * @param[in] efuse eFuse controller instance pointer.
- * @param[in] tr    DC trimming value (3 bits).
+ * @param[in] sel   Reference voltage select (3 bits).
  */
-static inline void ll_efuse_set_anacr_ldo_dc_trim(EFUSEC_TypeDef *efuse, uint32_t tr)
+static inline void ll_efuse_set_anacr_ldo_vref(EFUSEC_TypeDef *efuse, uint32_t sel)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_DC_TR,
-		   MAKE_REG_VAL(tr, EFUSEC_ANACR_LDO_DC_TR_Msk, EFUSEC_ANACR_LDO_DC_TR_Pos));
+	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_VREF_SEL,
+		   MAKE_REG_VAL(sel, EFUSEC_ANACR_LDO_VREF_SEL_Msk, EFUSEC_ANACR_LDO_VREF_SEL_Pos));
+}
+
+/**
+ * @brief Set the eFuse analog LDO enable (ANACR.LDO_EN).
+ * @param[in] efuse eFuse controller instance pointer.
+ * @param[in] en    1 to enable, 0 to disable.
+ */
+static inline void ll_efuse_set_anacr_ldo_enable(EFUSEC_TypeDef *efuse, uint32_t en)
+{
+	en ? SET_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN) : CLEAR_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN);
 }
 
 #ifdef __cplusplus
