@@ -8,8 +8,7 @@
 #define __LL_I2C_H
 
 #include <stdint.h>
-#include "regs/i2c.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -8,8 +8,7 @@
 #define __LL_PINMUX_H
 
 #include <stdint.h>
-#include "regs/hpsys_pinmux.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"

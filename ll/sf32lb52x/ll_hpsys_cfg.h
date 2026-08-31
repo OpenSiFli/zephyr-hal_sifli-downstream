@@ -8,8 +8,7 @@
 #define __LL_HPSYS_CFG_H
 
 #include <stdint.h>
-#include "regs/hpsys_cfg.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"

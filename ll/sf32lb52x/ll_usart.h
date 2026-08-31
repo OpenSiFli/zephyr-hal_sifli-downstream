@@ -8,8 +8,7 @@
 #define __LL_USART_H
 
 #include <stdint.h>
-#include "usart.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
