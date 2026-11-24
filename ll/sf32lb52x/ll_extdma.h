@@ -8,8 +8,7 @@
 #define __LL_EXTDMA_H
 
 #include <stdint.h>
-#include "extdma.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -204,15 +203,15 @@ static inline void ll_extdma_software_reset(EXTDMA_TypeDef *EXTDMAx)
  * @note SRCSIZE and DSTSIZE are always forced to 32-bit word.
  */
 static inline void ll_extdma_config_ctrl(EXTDMA_TypeDef *EXTDMAx,
-                                         const ll_extdma_ctrl_config_t *cfg)
+        const ll_extdma_ctrl_config_t *cfg)
 {
     MODIFY_REG(EXTDMAx->CCR,
                EXTDMA_CCR_SRCBURST | EXTDMA_CCR_DSTBURST | EXTDMA_CCR_SRCSIZE |
-                   EXTDMA_CCR_DSTSIZE | EXTDMA_CCR_SRCINC | EXTDMA_CCR_DSTINC |
-                   EXTDMA_CCR_TCIE | EXTDMA_CCR_HTIE | EXTDMA_CCR_TEIE,
+               EXTDMA_CCR_DSTSIZE | EXTDMA_CCR_SRCINC | EXTDMA_CCR_DSTINC |
+               EXTDMA_CCR_TCIE | EXTDMA_CCR_HTIE | EXTDMA_CCR_TEIE,
                cfg->src_burst | cfg->dst_burst | LL_EXTDMA_SRCSIZE_WORD |
-                   LL_EXTDMA_DSTSIZE_WORD | cfg->src_inc | cfg->dst_inc |
-                   cfg->it_tc | cfg->it_ht | cfg->it_te);
+               LL_EXTDMA_DSTSIZE_WORD | cfg->src_inc | cfg->dst_inc |
+               cfg->it_tc | cfg->it_ht | cfg->it_te);
 }
 
 /**
@@ -257,7 +256,7 @@ static inline void ll_extdma_disable(EXTDMA_TypeDef *EXTDMAx)
  * @param[in] ndt_words Number of 32-bit words.
  */
 static inline void ll_extdma_set_ndt_words(EXTDMA_TypeDef *EXTDMAx,
-                                           uint32_t ndt_words)
+        uint32_t ndt_words)
 {
     MODIFY_REG(EXTDMAx->CNDTR, EXTDMA_CNDTR_NDT,
                (ndt_words << EXTDMA_CNDTR_NDT_Pos) & EXTDMA_CNDTR_NDT_Msk);
@@ -269,7 +268,7 @@ static inline void ll_extdma_set_ndt_words(EXTDMA_TypeDef *EXTDMAx,
  * @param[in] src_addr Source address (word aligned).
  */
 static inline void ll_extdma_set_src_addr(EXTDMA_TypeDef *EXTDMAx,
-                                          uint32_t src_addr)
+        uint32_t src_addr)
 {
     WRITE_REG(EXTDMAx->SRCAR, src_addr);
 }
@@ -280,7 +279,7 @@ static inline void ll_extdma_set_src_addr(EXTDMA_TypeDef *EXTDMAx,
  * @param[in] dst_addr Destination address (word aligned).
  */
 static inline void ll_extdma_set_dst_addr(EXTDMA_TypeDef *EXTDMAx,
-                                          uint32_t dst_addr)
+        uint32_t dst_addr)
 {
     WRITE_REG(EXTDMAx->DSTAR, dst_addr);
 }
@@ -305,8 +304,7 @@ static inline void ll_extdma_cmpr_set_src_pos(EXTDMA_TypeDef *EXTDMAx, uint32_t 
  */
 static inline void ll_extdma_cmpr_set_src_fmt(EXTDMA_TypeDef *EXTDMAx, uint32_t fmt)
 {
-    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCFMT,
-               MAKE_REG_VAL(fmt, EXTDMA_CMPRCR_SRCFMT_Msk, EXTDMA_CMPRCR_SRCFMT_Pos));
+    MODIFY_REG(EXTDMAx->CMPRCR, EXTDMA_CMPRCR_SRCFMT, fmt & EXTDMA_CMPRCR_SRCFMT_Msk);
 }
 
 /*==============================================================================

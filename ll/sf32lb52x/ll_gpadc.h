@@ -9,8 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "gpadc.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -101,7 +100,7 @@ typedef struct
     uint32_t data_samp_dly; /**< DATA_SAMP_DLY field value for
                                ADC_CTRL_REG[20:17]. */
     uint32_t
-        conv_width; /**< CONV_WIDTH field value for ADC_CTRL_REG2[31:24]. */
+    conv_width; /**< CONV_WIDTH field value for ADC_CTRL_REG2[31:24]. */
     uint32_t samp_width; /**< SAMP_WIDTH field value for ADC_CTRL_REG2[23:0]. */
 } ll_gpadc_clock_config_t;
 
@@ -116,7 +115,7 @@ typedef struct
                               LL_GPADC_TRIGSRC_GPTIM1_TRGO to @ref
                               LL_GPADC_TRIGSRC_GPTIM1_CH2. */
     uint32_t
-        timer_type; /**< Timer trigger type, use @ref LL_GPADC_TIMER_TRIG_PULSE
+    timer_type; /**< Timer trigger type, use @ref LL_GPADC_TIMER_TRIG_PULSE
                        or @ref LL_GPADC_TIMER_TRIG_LEVEL. */
 } ll_gpadc_trigger_config_t;
 
@@ -138,9 +137,9 @@ typedef struct
     uint32_t slot_enable; /**< Non-zero to enable slot conversion. */
     uint32_t acc_num; /**< Accumulation count exponent for slot conversion. */
     uint32_t
-        p_channel; /**< Positive channel field value for PCHNL_SEL[10:8]. */
+    p_channel; /**< Positive channel field value for PCHNL_SEL[10:8]. */
     uint32_t
-        n_channel; /**< Negative channel field value for NCHNL_SEL[13:11]. */
+    n_channel; /**< Negative channel field value for NCHNL_SEL[13:11]. */
 } ll_gpadc_slot_config_t;
 
 /**
@@ -149,40 +148,40 @@ typedef struct
  * @param[in] cfg Pointer to analog configuration.
  */
 static inline void ll_gpadc_config_analog(GPADC_TypeDef *GPADCx,
-                                          const ll_gpadc_analog_config_t *cfg)
+        const ll_gpadc_analog_config_t *cfg)
 {
     MODIFY_REG(GPADCx->ADC_CFG_REG1,
                GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_MUTE |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_SE |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_EN_V18 |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_P_INT_EN |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_CMREF_FAST_EN,
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_MUTE |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_SE |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_EN_V18 |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_P_INT_EN |
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_CMREF_FAST_EN,
                ((cfg->cmm << GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM_Pos) &
                 GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM) |
-                   ((cfg->cmpcl << GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL) |
-                   ((cfg->vsp << GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP) |
-                   ((cfg->ldovref_sel
-                     << GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL) |
-                   ((cfg->force_p_channel
-                     << GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH) |
-                   ((cfg->force_n_channel
-                     << GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH) |
-                   cfg->mute | cfg->input_mode | cfg->en_v18 |
-                   ((cfg->cl_dly << GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY_Pos) &
-                    GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY) |
-                   cfg->p_int_en | cfg->cmref_fast_en);
+               ((cfg->cmpcl << GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_CMPCL) |
+               ((cfg->vsp << GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_VSP) |
+               ((cfg->ldovref_sel
+                 << GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_LDOVREF_SEL) |
+               ((cfg->force_p_channel
+                 << GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_PCH) |
+               ((cfg->force_n_channel
+                 << GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_SEL_NCH) |
+               cfg->mute | cfg->input_mode | cfg->en_v18 |
+               ((cfg->cl_dly << GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY_Pos) &
+                GPADC_ADC_CFG_REG1_ANAU_GPADC_CL_DLY) |
+               cfg->p_int_en | cfg->cmref_fast_en);
 }
 
 /**
@@ -192,11 +191,11 @@ static inline void ll_gpadc_config_analog(GPADC_TypeDef *GPADCx,
  * @param[in] se     Single-ended enable (1 bit).
  */
 static inline void ll_gpadc_config_analog_cfg1(GPADC_TypeDef *GPADCx,
-                                               uint32_t cmm, uint32_t se)
+        uint32_t cmm, uint32_t se)
 {
     MODIFY_REG(GPADCx->ADC_CFG_REG1,
                GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM |
-                   GPADC_ADC_CFG_REG1_ANAU_GPADC_SE,
+               GPADC_ADC_CFG_REG1_ANAU_GPADC_SE,
                MAKE_REG_VAL(cmm, GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM_Msk,
                             GPADC_ADC_CFG_REG1_ANAU_GPADC_CMM_Pos) |
                (se ? GPADC_ADC_CFG_REG1_ANAU_GPADC_SE : 0U));
@@ -243,21 +242,22 @@ static inline void ll_gpadc_config_slot(GPADC_TypeDef *GPADCx,
 {
     volatile uint32_t *slot_reg;
 
-    if ((slot_index >= 8U) || (cfg == NULL)) {
+    if ((slot_index >= 8U) || (cfg == NULL))
+    {
         return;
     }
 
     slot_reg = (&GPADCx->ADC_SLOT0_REG) + slot_index;
     MODIFY_REG(*slot_reg,
                GPADC_ADC_SLOT0_REG_ACC_NUM | GPADC_ADC_SLOT0_REG_NCHNL_SEL |
-                   GPADC_ADC_SLOT0_REG_PCHNL_SEL | GPADC_ADC_SLOT0_REG_SLOT_EN,
+               GPADC_ADC_SLOT0_REG_PCHNL_SEL | GPADC_ADC_SLOT0_REG_SLOT_EN,
                MAKE_REG_VAL(cfg->acc_num, GPADC_ADC_SLOT0_REG_ACC_NUM_Msk,
                             GPADC_ADC_SLOT0_REG_ACC_NUM_Pos) |
-                   MAKE_REG_VAL(cfg->n_channel, GPADC_ADC_SLOT0_REG_NCHNL_SEL_Msk,
-                                GPADC_ADC_SLOT0_REG_NCHNL_SEL_Pos) |
-                   MAKE_REG_VAL(cfg->p_channel, GPADC_ADC_SLOT0_REG_PCHNL_SEL_Msk,
-                                GPADC_ADC_SLOT0_REG_PCHNL_SEL_Pos) |
-                   ((cfg->slot_enable != 0U) ? GPADC_ADC_SLOT0_REG_SLOT_EN : 0U));
+               MAKE_REG_VAL(cfg->n_channel, GPADC_ADC_SLOT0_REG_NCHNL_SEL_Msk,
+                            GPADC_ADC_SLOT0_REG_NCHNL_SEL_Pos) |
+               MAKE_REG_VAL(cfg->p_channel, GPADC_ADC_SLOT0_REG_PCHNL_SEL_Msk,
+                            GPADC_ADC_SLOT0_REG_PCHNL_SEL_Pos) |
+               ((cfg->slot_enable != 0U) ? GPADC_ADC_SLOT0_REG_SLOT_EN : 0U));
 }
 
 
@@ -278,9 +278,10 @@ static inline uint32_t ll_gpadc_read_rdata0(GPADC_TypeDef *GPADCx)
  * @return 12-bit slot sample data.
  */
 static inline uint32_t ll_gpadc_get_slot_data(GPADC_TypeDef *GPADCx,
-                                              uint32_t slot_index)
+        uint32_t slot_index)
 {
-    switch (slot_index) {
+    switch (slot_index)
+    {
     case 0U:
         return GET_REG_VAL(READ_REG(GPADCx->ADC_RDATA0),
                            GPADC_ADC_RDATA0_SLOT0_RDATA_Msk,
@@ -377,7 +378,7 @@ static inline uint32_t ll_gpadc_read_dma_data(GPADC_TypeDef *GPADCx)
  * @param[in] cfg Pointer to clock configuration.
  */
 static inline void ll_gpadc_config_clock(GPADC_TypeDef *GPADCx,
-                                         const ll_gpadc_clock_config_t *cfg)
+        const ll_gpadc_clock_config_t *cfg)
 {
     MODIFY_REG(GPADCx->ADC_CTRL_REG, GPADC_ADC_CTRL_REG_DATA_SAMP_DLY,
                ((cfg->data_samp_dly << GPADC_ADC_CTRL_REG_DATA_SAMP_DLY_Pos) &
@@ -387,8 +388,8 @@ static inline void ll_gpadc_config_clock(GPADC_TypeDef *GPADCx,
                GPADC_ADC_CTRL_REG2_CONV_WIDTH | GPADC_ADC_CTRL_REG2_SAMP_WIDTH,
                ((cfg->conv_width << GPADC_ADC_CTRL_REG2_CONV_WIDTH_Pos) &
                 GPADC_ADC_CTRL_REG2_CONV_WIDTH) |
-                   ((cfg->samp_width << GPADC_ADC_CTRL_REG2_SAMP_WIDTH_Pos) &
-                    GPADC_ADC_CTRL_REG2_SAMP_WIDTH));
+               ((cfg->samp_width << GPADC_ADC_CTRL_REG2_SAMP_WIDTH_Pos) &
+                GPADC_ADC_CTRL_REG2_SAMP_WIDTH));
 }
 
 /**
@@ -415,7 +416,7 @@ static inline void ll_gpadc_select_dma_raw_data(GPADC_TypeDef *GPADCx)
  * @param[in] cfg Pointer to trigger configuration.
  */
 static inline void ll_gpadc_config_trigger(GPADC_TypeDef *GPADCx,
-                                           const ll_gpadc_trigger_config_t *cfg)
+        const ll_gpadc_trigger_config_t *cfg)
 {
     uint32_t val;
 
@@ -424,8 +425,8 @@ static inline void ll_gpadc_config_trigger(GPADC_TypeDef *GPADCx,
 
     MODIFY_REG(GPADCx->ADC_CTRL_REG,
                GPADC_ADC_CTRL_REG_TIMER_TRIG_EN |
-                   GPADC_ADC_CTRL_REG_TIMER_TRIG_SRC_SEL |
-                   GPADC_ADC_CTRL_REG_TIMER_TRIG_TYP,
+               GPADC_ADC_CTRL_REG_TIMER_TRIG_SRC_SEL |
+               GPADC_ADC_CTRL_REG_TIMER_TRIG_TYP,
                val);
 }
 
@@ -532,8 +533,8 @@ static inline void ll_gpadc_config_mode(GPADC_TypeDef *GPADCx,
     MODIFY_REG(GPADCx->ADC_CTRL_REG,
                GPADC_ADC_CTRL_REG_ADC_OP_MODE | GPADC_ADC_CTRL_REG_INIT_TIME,
                cfg->op_mode |
-                   ((cfg->init_time << GPADC_ADC_CTRL_REG_INIT_TIME_Pos) &
-                    GPADC_ADC_CTRL_REG_INIT_TIME));
+               ((cfg->init_time << GPADC_ADC_CTRL_REG_INIT_TIME_Pos) &
+                GPADC_ADC_CTRL_REG_INIT_TIME));
 }
 
 /**

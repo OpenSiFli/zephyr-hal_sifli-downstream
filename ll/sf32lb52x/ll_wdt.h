@@ -8,8 +8,7 @@
 #define __LL_WDT_H
 
 #include <stdint.h>
-#include "wdt.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,8 +73,8 @@ extern "C" {
  */
 static inline void ll_wdt_set_timeout1(WDT_TypeDef *wdt, uint32_t cnt)
 {
-	MODIFY_REG(wdt->WDT_CVR0, WDT_WDT_CVR0_COUNT_VALUE_0,
-		   MAKE_REG_VAL(cnt, WDT_WDT_CVR0_COUNT_VALUE_0_Msk, WDT_WDT_CVR0_COUNT_VALUE_0_Pos));
+    MODIFY_REG(wdt->WDT_CVR0, WDT_WDT_CVR0_COUNT_VALUE_0,
+               MAKE_REG_VAL(cnt, WDT_WDT_CVR0_COUNT_VALUE_0_Msk, WDT_WDT_CVR0_COUNT_VALUE_0_Pos));
 }
 
 /**
@@ -87,7 +86,7 @@ static inline void ll_wdt_set_timeout1(WDT_TypeDef *wdt, uint32_t cnt)
  */
 static inline uint32_t ll_wdt_get_timeout1(WDT_TypeDef *wdt)
 {
-	return READ_REG(wdt->WDT_CVR0) & WDT_WDT_CVR0_COUNT_VALUE_0;
+    return READ_REG(wdt->WDT_CVR0) & WDT_WDT_CVR0_COUNT_VALUE_0;
 }
 
 /**
@@ -98,8 +97,8 @@ static inline uint32_t ll_wdt_get_timeout1(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_set_timeout2(WDT_TypeDef *wdt, uint32_t cnt)
 {
-	MODIFY_REG(wdt->WDT_CVR1, WDT_WDT_CVR1_COUNT_VALUE_1,
-		   MAKE_REG_VAL(cnt, WDT_WDT_CVR1_COUNT_VALUE_1_Msk, WDT_WDT_CVR1_COUNT_VALUE_1_Pos));
+    MODIFY_REG(wdt->WDT_CVR1, WDT_WDT_CVR1_COUNT_VALUE_1,
+               MAKE_REG_VAL(cnt, WDT_WDT_CVR1_COUNT_VALUE_1_Msk, WDT_WDT_CVR1_COUNT_VALUE_1_Pos));
 }
 
 /**
@@ -109,7 +108,7 @@ static inline void ll_wdt_set_timeout2(WDT_TypeDef *wdt, uint32_t cnt)
  */
 static inline uint32_t ll_wdt_get_timeout2(WDT_TypeDef *wdt)
 {
-	return READ_REG(wdt->WDT_CVR1) & WDT_WDT_CVR1_COUNT_VALUE_1;
+    return READ_REG(wdt->WDT_CVR1) & WDT_WDT_CVR1_COUNT_VALUE_1;
 }
 
 /**
@@ -119,8 +118,8 @@ static inline uint32_t ll_wdt_get_timeout2(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_set_response_mode(WDT_TypeDef *wdt, uint32_t mode)
 {
-	MODIFY_REG(wdt->WDT_CR, WDT_WDT_CR_RESPONSE_MODE,
-		   MAKE_REG_VAL(mode, WDT_WDT_CR_RESPONSE_MODE_Msk, WDT_WDT_CR_RESPONSE_MODE_Pos));
+    MODIFY_REG(wdt->WDT_CR, WDT_WDT_CR_RESPONSE_MODE,
+               MAKE_REG_VAL(mode, WDT_WDT_CR_RESPONSE_MODE_Msk, WDT_WDT_CR_RESPONSE_MODE_Pos));
 }
 
 /**
@@ -130,8 +129,8 @@ static inline void ll_wdt_set_response_mode(WDT_TypeDef *wdt, uint32_t mode)
  */
 static inline void ll_wdt_set_reset_length(WDT_TypeDef *wdt, uint32_t len)
 {
-	MODIFY_REG(wdt->WDT_CR, WDT_WDT_CR_RESET_LENGTH,
-		   MAKE_REG_VAL(len, WDT_WDT_CR_RESET_LENGTH_Msk, WDT_WDT_CR_RESET_LENGTH_Pos));
+    MODIFY_REG(wdt->WDT_CR, WDT_WDT_CR_RESET_LENGTH,
+               MAKE_REG_VAL(len, WDT_WDT_CR_RESET_LENGTH_Msk, WDT_WDT_CR_RESET_LENGTH_Pos));
 }
 
 /** @} */
@@ -148,7 +147,7 @@ static inline void ll_wdt_set_reset_length(WDT_TypeDef *wdt, uint32_t len)
  */
 static inline void ll_wdt_enable(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_FEED_VALUE);
+    WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_FEED_VALUE);
 }
 
 /**
@@ -157,7 +156,7 @@ static inline void ll_wdt_enable(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_disable(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_STOP_VALUE);
+    WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_STOP_VALUE);
 }
 
 /*==============================================================================
@@ -172,7 +171,7 @@ static inline void ll_wdt_disable(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_feed(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_FEED_VALUE);
+    WRITE_REG(wdt->WDT_CCR, LL_WDT_CCR_FEED_VALUE);
 }
 
 /*==============================================================================
@@ -187,7 +186,7 @@ static inline void ll_wdt_feed(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_clear_interrupt(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_ICR, WDT_WDT_ICR_INT_CLR);
+    WRITE_REG(wdt->WDT_ICR, WDT_WDT_ICR_INT_CLR);
 }
 
 /**
@@ -197,7 +196,7 @@ static inline void ll_wdt_clear_interrupt(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_is_active(WDT_TypeDef *wdt)
 {
-	return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_WDT_ACTIVE) ? 1UL : 0UL;
+    return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_WDT_ACTIVE) ? 1UL : 0UL;
 }
 
 /**
@@ -207,7 +206,7 @@ static inline uint32_t ll_wdt_is_active(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_get_interrupt_status(WDT_TypeDef *wdt)
 {
-	return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_INT_ASSERT) ? 1UL : 0UL;
+    return READ_BIT(wdt->WDT_SR, WDT_WDT_SR_INT_ASSERT) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -222,7 +221,7 @@ static inline uint32_t ll_wdt_get_interrupt_status(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_lock(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_WP, LL_WDT_WP_LOCK_VALUE);
+    WRITE_REG(wdt->WDT_WP, LL_WDT_WP_LOCK_VALUE);
 }
 
 /**
@@ -231,7 +230,7 @@ static inline void ll_wdt_lock(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_unlock(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_WP, LL_WDT_WP_UNLOCK_VALUE);
+    WRITE_REG(wdt->WDT_WP, LL_WDT_WP_UNLOCK_VALUE);
 }
 
 /**
@@ -241,7 +240,7 @@ static inline void ll_wdt_unlock(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_is_write_protected(WDT_TypeDef *wdt)
 {
-	return READ_BIT(wdt->WDT_WP, WDT_WDT_WP_WRPT_ST) ? 1UL : 0UL;
+    return READ_BIT(wdt->WDT_WP, WDT_WDT_WP_WRPT_ST) ? 1UL : 0UL;
 }
 
 /**
@@ -251,7 +250,7 @@ static inline uint32_t ll_wdt_is_write_protected(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_get_write_protection_value(WDT_TypeDef *wdt)
 {
-	return GET_REG_VAL2(wdt->WDT_WP, WDT_WDT_WP_WRPT);
+    return GET_REG_VAL2(wdt->WDT_WP, WDT_WDT_WP_WRPT);
 }
 
 /**
@@ -262,7 +261,7 @@ static inline uint32_t ll_wdt_get_write_protection_value(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_is_sync_done(WDT_TypeDef *wdt)
 {
-	return READ_BIT(wdt->WDT_FG, WDT_WDT_FG_SYNC_FG) ? 1UL : 0UL;
+    return READ_BIT(wdt->WDT_FG, WDT_WDT_FG_SYNC_FG) ? 1UL : 0UL;
 }
 
 /**
@@ -271,7 +270,7 @@ static inline uint32_t ll_wdt_is_sync_done(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_clear_sync_flag(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_FG, WDT_WDT_FG_SYNC_FG_CLR);
+    WRITE_REG(wdt->WDT_FG, WDT_WDT_FG_SYNC_FG_CLR);
 }
 
 /*==============================================================================
@@ -286,7 +285,7 @@ static inline void ll_wdt_clear_sync_flag(WDT_TypeDef *wdt)
  */
 static inline uint32_t ll_wdt_is_reset_source(WDT_TypeDef *wdt)
 {
-	return READ_BIT(wdt->WDT_FG, WDT_WDT_FG_RST_FG) ? 1UL : 0UL;
+    return READ_BIT(wdt->WDT_FG, WDT_WDT_FG_RST_FG) ? 1UL : 0UL;
 }
 
 /**
@@ -295,7 +294,7 @@ static inline uint32_t ll_wdt_is_reset_source(WDT_TypeDef *wdt)
  */
 static inline void ll_wdt_clear_reset_flag(WDT_TypeDef *wdt)
 {
-	WRITE_REG(wdt->WDT_FG, WDT_WDT_FG_RST_FG_CLR);
+    WRITE_REG(wdt->WDT_FG, WDT_WDT_FG_RST_FG_CLR);
 }
 
 #ifdef __cplusplus

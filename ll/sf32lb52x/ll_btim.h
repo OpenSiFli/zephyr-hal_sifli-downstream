@@ -8,8 +8,7 @@
 #define __LL_BTIM_H
 
 #include <stdint.h>
-#include "btim.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,22 +52,22 @@ extern "C" {
 #define LL_BTIM_GATING_POLARITY_LOW  (0x1UL)
 static inline void ll_btim_enable_auto_reload_preload(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, BTIM_CR1_ARPE);
+    SET_BIT(tim->CR1, BTIM_CR1_ARPE);
 }
 
 static inline void ll_btim_disable_auto_reload_preload(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, BTIM_CR1_ARPE);
+    CLEAR_BIT(tim->CR1, BTIM_CR1_ARPE);
 }
 
 static inline void ll_btim_enable_one_pulse(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, BTIM_CR1_OPM);
+    SET_BIT(tim->CR1, BTIM_CR1_OPM);
 }
 
 static inline void ll_btim_disable_one_pulse(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, BTIM_CR1_OPM);
+    CLEAR_BIT(tim->CR1, BTIM_CR1_OPM);
 }
 
 /**
@@ -78,12 +77,12 @@ static inline void ll_btim_disable_one_pulse(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_set_update_request_overflow_only(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, BTIM_CR1_URS);
+    SET_BIT(tim->CR1, BTIM_CR1_URS);
 }
 
 static inline void ll_btim_set_update_request_any_event(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, BTIM_CR1_URS);
+    CLEAR_BIT(tim->CR1, BTIM_CR1_URS);
 }
 
 /**
@@ -93,12 +92,12 @@ static inline void ll_btim_set_update_request_any_event(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_disable_update_event(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, BTIM_CR1_UDIS);
+    SET_BIT(tim->CR1, BTIM_CR1_UDIS);
 }
 
 static inline void ll_btim_enable_update_event(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, BTIM_CR1_UDIS);
+    CLEAR_BIT(tim->CR1, BTIM_CR1_UDIS);
 }
 
 /** @} */
@@ -108,7 +107,7 @@ static inline void ll_btim_enable_update_event(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_enable(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, BTIM_CR1_CEN);
+    SET_BIT(tim->CR1, BTIM_CR1_CEN);
 }
 
 /**
@@ -116,12 +115,12 @@ static inline void ll_btim_enable(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_disable(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, BTIM_CR1_CEN);
+    CLEAR_BIT(tim->CR1, BTIM_CR1_CEN);
 }
 
 static inline uint32_t ll_btim_is_enabled(BTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->CR1, BTIM_CR1_CEN) ? 1UL : 0UL;
+    return READ_BIT(tim->CR1, BTIM_CR1_CEN) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -130,7 +129,7 @@ static inline uint32_t ll_btim_is_enabled(BTIM_TypeDef *tim)
 
 static inline void ll_btim_set_master_mode(BTIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CR2, BTIM_CR2_MMS, mode << BTIM_CR2_MMS_Pos);
+    MODIFY_REG(tim->CR2, BTIM_CR2_MMS, MAKE_REG_VAL(mode, BTIM_CR2_MMS, BTIM_CR2_MMS_Pos));
 }
 
 /**
@@ -139,87 +138,87 @@ static inline void ll_btim_set_master_mode(BTIM_TypeDef *tim, uint32_t mode)
  */
 static inline void ll_btim_enable_gated_mode(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, BTIM_SMCR_GM);
+    SET_BIT(tim->SMCR, BTIM_SMCR_GM);
 }
 
 static inline void ll_btim_disable_gated_mode(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, BTIM_SMCR_GM);
+    CLEAR_BIT(tim->SMCR, BTIM_SMCR_GM);
 }
 
 static inline void ll_btim_set_gating_trigger_polarity(BTIM_TypeDef *tim, uint32_t polarity)
 {
-	MODIFY_REG(tim->SMCR, BTIM_SMCR_GTP, polarity << BTIM_SMCR_GTP_Pos);
+    MODIFY_REG(tim->SMCR, BTIM_SMCR_GTP, MAKE_REG_VAL(polarity, BTIM_SMCR_GTP, BTIM_SMCR_GTP_Pos));
 }
 
 static inline void ll_btim_set_gating_trigger_source(BTIM_TypeDef *tim, uint32_t source)
 {
-	MODIFY_REG(tim->SMCR, BTIM_SMCR_GTS, source << BTIM_SMCR_GTS_Pos);
+    MODIFY_REG(tim->SMCR, BTIM_SMCR_GTS, MAKE_REG_VAL(source, BTIM_SMCR_GTS, BTIM_SMCR_GTS_Pos));
 }
 
 static inline void ll_btim_set_slave_mode(BTIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->SMCR, BTIM_SMCR_SMS, mode << BTIM_SMCR_SMS_Pos);
+    MODIFY_REG(tim->SMCR, BTIM_SMCR_SMS, MAKE_REG_VAL(mode, BTIM_SMCR_SMS, BTIM_SMCR_SMS_Pos));
 }
 
 static inline void ll_btim_enable_master_slave_mode(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, BTIM_SMCR_MSM);
+    SET_BIT(tim->SMCR, BTIM_SMCR_MSM);
 }
 
 static inline void ll_btim_disable_master_slave_mode(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, BTIM_SMCR_MSM);
+    CLEAR_BIT(tim->SMCR, BTIM_SMCR_MSM);
 }
 
 static inline void ll_btim_set_trigger_source(BTIM_TypeDef *tim, uint32_t source)
 {
-	MODIFY_REG(tim->SMCR, BTIM_SMCR_TS, source << BTIM_SMCR_TS_Pos);
+    MODIFY_REG(tim->SMCR, BTIM_SMCR_TS, MAKE_REG_VAL(source, BTIM_SMCR_TS, BTIM_SMCR_TS_Pos));
 }
 
 static inline void ll_btim_enable_update_dma(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, BTIM_DIER_UDE);
+    SET_BIT(tim->DIER, BTIM_DIER_UDE);
 }
 
 static inline void ll_btim_disable_update_dma(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, BTIM_DIER_UDE);
+    CLEAR_BIT(tim->DIER, BTIM_DIER_UDE);
 }
 
 static inline void ll_btim_enable_update_interrupt(BTIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, BTIM_DIER_UIE);
+    SET_BIT(tim->DIER, BTIM_DIER_UIE);
 }
 
 static inline void ll_btim_disable_update_interrupt(BTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, BTIM_DIER_UIE);
+    CLEAR_BIT(tim->DIER, BTIM_DIER_UIE);
 }
 
 static inline void ll_btim_clear_update_flag(BTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, 0U);
+    WRITE_REG(tim->SR, 0U);
 }
 
 static inline uint32_t ll_btim_get_update_flag(BTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, BTIM_SR_UIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, BTIM_SR_UIF) ? 1UL : 0UL;
 }
 
 static inline void ll_btim_generate_update(BTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, BTIM_EGR_UG);
+    WRITE_REG(tim->EGR, BTIM_EGR_UG);
 }
 
 static inline void ll_btim_set_counter(BTIM_TypeDef *tim, uint32_t cnt)
 {
-	WRITE_REG(tim->CNT, cnt);
+    WRITE_REG(tim->CNT, cnt);
 }
 
 static inline uint32_t ll_btim_get_counter(BTIM_TypeDef *tim)
 {
-	return READ_REG(tim->CNT);
+    return READ_REG(tim->CNT);
 }
 
 /**
@@ -227,12 +226,12 @@ static inline uint32_t ll_btim_get_counter(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_set_prescaler(BTIM_TypeDef *tim, uint16_t psc)
 {
-	WRITE_REG(tim->PSC, psc);
+    WRITE_REG(tim->PSC, psc);
 }
 
 static inline uint16_t ll_btim_get_prescaler(BTIM_TypeDef *tim)
 {
-	return (uint16_t)READ_REG(tim->PSC);
+    return (uint16_t)READ_REG(tim->PSC);
 }
 
 /**
@@ -240,12 +239,12 @@ static inline uint16_t ll_btim_get_prescaler(BTIM_TypeDef *tim)
  */
 static inline void ll_btim_set_auto_reload(BTIM_TypeDef *tim, uint32_t arr)
 {
-	WRITE_REG(tim->ARR, arr);
+    WRITE_REG(tim->ARR, arr);
 }
 
 static inline uint32_t ll_btim_get_auto_reload(BTIM_TypeDef *tim)
 {
-	return READ_REG(tim->ARR);
+    return READ_REG(tim->ARR);
 }
 
 /**
@@ -257,11 +256,12 @@ static inline uint32_t ll_btim_get_auto_reload(BTIM_TypeDef *tim)
  */
 static inline uint32_t ll_btim_calc_update_freq(uint32_t clk_freq, uint16_t psc, uint32_t arr)
 {
-	if (arr == 0U) {
-		return 0U;
-	}
+    if (arr == 0U)
+    {
+        return 0U;
+    }
 
-	return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
+    return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
 }
 
 #ifdef __cplusplus

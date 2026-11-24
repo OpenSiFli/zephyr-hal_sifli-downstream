@@ -8,8 +8,7 @@
 #define __LL_PDM_H
 
 #include <stdint.h>
-#include "pdm.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +20,7 @@ extern "C" {
  */
 static inline void ll_pdm_swap_channels(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
+    SET_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
 }
 
 /**
@@ -30,7 +29,7 @@ static inline void ll_pdm_swap_channels(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_disable_swap(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
+    CLEAR_BIT(PDMx->CFG0, PDM_CFG0_SWAP_EN);
 }
 
 /**
@@ -39,7 +38,7 @@ static inline void ll_pdm_disable_swap(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_enable_stereo(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
+    SET_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
 }
 
 /**
@@ -48,7 +47,7 @@ static inline void ll_pdm_enable_stereo(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_disable_stereo(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
+    CLEAR_BIT(PDMx->CFG0, PDM_CFG0_STEREO_EN);
 }
 
 /**
@@ -57,7 +56,7 @@ static inline void ll_pdm_disable_stereo(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_enable_right(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
+    SET_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
 }
 
 /**
@@ -66,7 +65,7 @@ static inline void ll_pdm_enable_right(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_disable_right(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
+    CLEAR_BIT(PDMx->CFG0, PDM_CFG0_RIGHT_EN);
 }
 
 /**
@@ -75,7 +74,7 @@ static inline void ll_pdm_disable_right(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_enable_left(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
+    SET_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
 }
 
 /**
@@ -84,7 +83,7 @@ static inline void ll_pdm_enable_left(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_disable_left(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
+    CLEAR_BIT(PDMx->CFG0, PDM_CFG0_LEFT_EN);
 }
 
 /**
@@ -94,8 +93,8 @@ static inline void ll_pdm_disable_left(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_set_clock_div(PDM_TypeDef *PDMx, uint32_t div)
 {
-	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_DIV,
-		   MAKE_REG_VAL(div, PDM_CFG0_CLK_DIV_Msk, PDM_CFG0_CLK_DIV_Pos));
+    MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_DIV,
+               MAKE_REG_VAL(div, PDM_CFG0_CLK_DIV_Msk, PDM_CFG0_CLK_DIV_Pos));
 }
 
 /**
@@ -105,8 +104,8 @@ static inline void ll_pdm_set_clock_div(PDM_TypeDef *PDMx, uint32_t div)
  */
 static inline void ll_pdm_select_clock(PDM_TypeDef *PDMx, uint32_t use_dll)
 {
-	MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_SEL,
-		   use_dll ? PDM_CFG0_CLK_SEL : 0U);
+    MODIFY_REG(PDMx->CFG0, PDM_CFG0_CLK_SEL,
+               use_dll ? PDM_CFG0_CLK_SEL : 0U);
 }
 
 /**
@@ -128,7 +127,7 @@ static inline void ll_pdm_select_clock(PDM_TypeDef *PDMx, uint32_t use_dll)
  */
 static inline void ll_pdm_enable(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->CFG0, PDM_CFG0_PDMCOREEN);
+    SET_BIT(PDMx->CFG0, PDM_CFG0_PDMCOREEN);
 }
 
 /**
@@ -137,7 +136,7 @@ static inline void ll_pdm_enable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_disable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->CFG0, PDM_CFG0_PDMCOREEN);
+    CLEAR_BIT(PDMx->CFG0, PDM_CFG0_PDMCOREEN);
 }
 
 /**
@@ -147,8 +146,8 @@ static inline void ll_pdm_disable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_set_right_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_R,
-		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_R_Msk, PDM_CFG1_SAMPLE_DLY_R_Pos));
+    MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_R,
+               MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_R_Msk, PDM_CFG1_SAMPLE_DLY_R_Pos));
 }
 
 /**
@@ -158,8 +157,8 @@ static inline void ll_pdm_set_right_sample_delay(PDM_TypeDef *PDMx, uint32_t dly
  */
 static inline void ll_pdm_set_left_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_L,
-		   MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_L_Msk, PDM_CFG1_SAMPLE_DLY_L_Pos));
+    MODIFY_REG(PDMx->CFG1, PDM_CFG1_SAMPLE_DLY_L,
+               MAKE_REG_VAL(dly, PDM_CFG1_SAMPLE_DLY_L_Msk, PDM_CFG1_SAMPLE_DLY_L_Pos));
 }
 
 /*==============================================================================
@@ -173,8 +172,8 @@ static inline void ll_pdm_set_left_sample_delay(PDM_TypeDef *PDMx, uint32_t dly)
  */
 static inline void ll_pdm_set_buf_delay(PDM_TypeDef *PDMx, uint32_t dly)
 {
-	MODIFY_REG(PDMx->CFG1, PDM_CFG1_BUF_DLY,
-		   MAKE_REG_VAL(dly, PDM_CFG1_BUF_DLY_Msk, PDM_CFG1_BUF_DLY_Pos));
+    MODIFY_REG(PDMx->CFG1, PDM_CFG1_BUF_DLY,
+               MAKE_REG_VAL(dly, PDM_CFG1_BUF_DLY_Msk, PDM_CFG1_BUF_DLY_Pos));
 }
 
 /**
@@ -184,8 +183,8 @@ static inline void ll_pdm_set_buf_delay(PDM_TypeDef *PDMx, uint32_t dly)
  */
 static inline void ll_pdm_set_sinc_order(PDM_TypeDef *PDMx, uint32_t order)
 {
-	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_ORDER_SEL,
-		   order ? PDM_SINC_CFG_SINC_ORDER_SEL : 0U);
+    MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_ORDER_SEL,
+               order ? PDM_SINC_CFG_SINC_ORDER_SEL : 0U);
 }
 
 /*==============================================================================
@@ -199,8 +198,8 @@ static inline void ll_pdm_set_sinc_order(PDM_TypeDef *PDMx, uint32_t order)
  */
 static inline void ll_pdm_set_sinc_rate(PDM_TypeDef *PDMx, uint32_t rate)
 {
-	MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_RATE,
-		   MAKE_REG_VAL(rate, PDM_SINC_CFG_SINC_RATE_Msk, PDM_SINC_CFG_SINC_RATE_Pos));
+    MODIFY_REG(PDMx->SINC_CFG, PDM_SINC_CFG_SINC_RATE,
+               MAKE_REG_VAL(rate, PDM_SINC_CFG_SINC_RATE_Msk, PDM_SINC_CFG_SINC_RATE_Pos));
 }
 
 /**
@@ -209,7 +208,7 @@ static inline void ll_pdm_set_sinc_rate(PDM_TypeDef *PDMx, uint32_t rate)
  */
 static inline void ll_pdm_hpf_reset(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_RST);
+    SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_RST);
 }
 
 /**
@@ -218,7 +217,7 @@ static inline void ll_pdm_hpf_reset(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_hpf_release_reset(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_RST);
+    CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_RST);
 }
 
 /**
@@ -227,7 +226,7 @@ static inline void ll_pdm_hpf_release_reset(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_hpf_bypass(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
+    SET_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
 }
 
 /**
@@ -236,7 +235,7 @@ static inline void ll_pdm_hpf_bypass(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_hpf_enable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
+    CLEAR_BIT(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_BYPASS);
 }
 
 /*==============================================================================
@@ -250,8 +249,8 @@ static inline void ll_pdm_hpf_enable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_set_hpf_coeff(PDM_TypeDef *PDMx, uint32_t coeff)
 {
-	MODIFY_REG(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_COEFF,
-		   MAKE_REG_VAL(coeff, PDM_HPF_CFG_HPF_COEFF_Msk, PDM_HPF_CFG_HPF_COEFF_Pos));
+    MODIFY_REG(PDMx->HPF_CFG, PDM_HPF_CFG_HPF_COEFF,
+               MAKE_REG_VAL(coeff, PDM_HPF_CFG_HPF_COEFF_Msk, PDM_HPF_CFG_HPF_COEFF_Pos));
 }
 
 /**
@@ -261,8 +260,8 @@ static inline void ll_pdm_set_hpf_coeff(PDM_TypeDef *PDMx, uint32_t coeff)
  */
 static inline void ll_pdm_set_pga_gain_r(PDM_TypeDef *PDMx, uint32_t gain)
 {
-	MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_R,
-		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_R_Msk, PDM_PGA_CFG_PGA_GAIN_R_Pos));
+    MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_R,
+               MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_R_Msk, PDM_PGA_CFG_PGA_GAIN_R_Pos));
 }
 
 /*==============================================================================
@@ -276,8 +275,8 @@ static inline void ll_pdm_set_pga_gain_r(PDM_TypeDef *PDMx, uint32_t gain)
  */
 static inline void ll_pdm_set_pga_gain_l(PDM_TypeDef *PDMx, uint32_t gain)
 {
-	MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_L,
-		   MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_L_Msk, PDM_PGA_CFG_PGA_GAIN_L_Pos));
+    MODIFY_REG(PDMx->PGA_CFG, PDM_PGA_CFG_PGA_GAIN_L,
+               MAKE_REG_VAL(gain, PDM_PGA_CFG_PGA_GAIN_L_Msk, PDM_PGA_CFG_PGA_GAIN_L_Pos));
 }
 
 /*==============================================================================
@@ -290,7 +289,7 @@ static inline void ll_pdm_set_pga_gain_l(PDM_TypeDef *PDMx, uint32_t gain)
  */
 static inline void ll_pdm_lpf_bypass(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
+    SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
 }
 
 /**
@@ -299,7 +298,7 @@ static inline void ll_pdm_lpf_bypass(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_lpf_enable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
+    CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_BYPASS);
 }
 
 /**
@@ -308,7 +307,7 @@ static inline void ll_pdm_lpf_enable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_lpf_ds_enable(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
+    SET_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
 }
 
 /**
@@ -317,7 +316,7 @@ static inline void ll_pdm_lpf_ds_enable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_lpf_ds_disable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
+    CLEAR_BIT(PDMx->LPF_CFG6, PDM_LPF_CFG6_LPF_DS);
 }
 
 /**
@@ -326,7 +325,7 @@ static inline void ll_pdm_lpf_ds_disable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_fifo_lr_exchange(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
+    SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
 }
 
 /**
@@ -335,7 +334,7 @@ static inline void ll_pdm_fifo_lr_exchange(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_fifo_lr_exchange_disable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
+    CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_LR_CHG);
 }
 
 /**
@@ -344,7 +343,7 @@ static inline void ll_pdm_fifo_lr_exchange_disable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_mask_dma_l(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_L);
+    SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_L);
 }
 
 /**
@@ -353,7 +352,7 @@ static inline void ll_pdm_mask_dma_l(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_unmask_dma_l(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_L);
+    CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_L);
 }
 
 /**
@@ -362,7 +361,7 @@ static inline void ll_pdm_unmask_dma_l(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_mask_dma_r(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_R);
+    SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_R);
 }
 
 /**
@@ -371,7 +370,7 @@ static inline void ll_pdm_mask_dma_r(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_unmask_dma_r(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_R);
+    CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_RX_DMA_MSK_R);
 }
 
 /**
@@ -381,8 +380,8 @@ static inline void ll_pdm_unmask_dma_r(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_set_shift(PDM_TypeDef *PDMx, uint32_t shift)
 {
-	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_PDM_SHIFT,
-		   MAKE_REG_VAL(shift, PDM_FIFO_CFG_PDM_SHIFT_Msk, PDM_FIFO_CFG_PDM_SHIFT_Pos));
+    MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_PDM_SHIFT,
+               MAKE_REG_VAL(shift, PDM_FIFO_CFG_PDM_SHIFT_Msk, PDM_FIFO_CFG_PDM_SHIFT_Pos));
 }
 
 /**
@@ -393,8 +392,8 @@ static inline void ll_pdm_set_shift(PDM_TypeDef *PDMx, uint32_t shift)
  */
 static inline void ll_pdm_set_byte_trunc(PDM_TypeDef *PDMx, uint32_t trunc)
 {
-	MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_TRUNC,
-		   MAKE_REG_VAL(trunc, PDM_FIFO_CFG_BYTE_TRUNC_Msk, PDM_FIFO_CFG_BYTE_TRUNC_Pos));
+    MODIFY_REG(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_TRUNC,
+               MAKE_REG_VAL(trunc, PDM_FIFO_CFG_BYTE_TRUNC_Msk, PDM_FIFO_CFG_BYTE_TRUNC_Pos));
 }
 
 /*==============================================================================
@@ -407,7 +406,7 @@ static inline void ll_pdm_set_byte_trunc(PDM_TypeDef *PDMx, uint32_t trunc)
  */
 static inline void ll_pdm_fifo_combine_enable(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
+    SET_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
 }
 
 /**
@@ -416,7 +415,7 @@ static inline void ll_pdm_fifo_combine_enable(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_fifo_combine_disable(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
+    CLEAR_BIT(PDMx->FIFO_CFG, PDM_FIFO_CFG_BYTE_CON);
 }
 
 /**
@@ -426,7 +425,7 @@ static inline void ll_pdm_fifo_combine_disable(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_read_data_l(PDM_TypeDef *PDMx)
 {
-	return READ_REG(PDMx->DATA_L);
+    return READ_REG(PDMx->DATA_L);
 }
 
 /**
@@ -436,7 +435,7 @@ static inline uint32_t ll_pdm_read_data_l(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_read_data_r(PDM_TypeDef *PDMx)
 {
-	return READ_REG(PDMx->DATA_R);
+    return READ_REG(PDMx->DATA_R);
 }
 
 /*==============================================================================
@@ -450,7 +449,7 @@ static inline uint32_t ll_pdm_read_data_r(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_left_fifo_full(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_FULL_L);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_FULL_L);
 }
 
 /**
@@ -460,7 +459,7 @@ static inline uint32_t ll_pdm_is_left_fifo_full(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_left_fifo_empty(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_EMPTY_L);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_EMPTY_L);
 }
 
 /**
@@ -470,7 +469,7 @@ static inline uint32_t ll_pdm_is_left_fifo_empty(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_left_fifo_almost_full(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_FULL_L);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_FULL_L);
 }
 
 /**
@@ -480,7 +479,7 @@ static inline uint32_t ll_pdm_is_left_fifo_almost_full(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_left_fifo_almost_empty(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_EMPTY_L);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_EMPTY_L);
 }
 
 /**
@@ -490,7 +489,7 @@ static inline uint32_t ll_pdm_is_left_fifo_almost_empty(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_right_fifo_full(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_FULL_R);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_FULL_R);
 }
 
 /**
@@ -500,7 +499,7 @@ static inline uint32_t ll_pdm_is_right_fifo_full(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_right_fifo_empty(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_EMPTY_R);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_EMPTY_R);
 }
 
 /**
@@ -510,7 +509,7 @@ static inline uint32_t ll_pdm_is_right_fifo_empty(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_right_fifo_almost_full(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_FULL_R);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_FULL_R);
 }
 
 /**
@@ -520,7 +519,7 @@ static inline uint32_t ll_pdm_is_right_fifo_almost_full(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_right_fifo_almost_empty(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_EMPTY_R);
+    return READ_BIT(PDMx->FIFO_ST, PDM_FIFO_ST_ALMOST_EMPTY_R);
 }
 
 /*==============================================================================
@@ -534,7 +533,7 @@ static inline uint32_t ll_pdm_is_right_fifo_almost_empty(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_active_flag_overflow_l(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->INT_ST, PDM_INT_ST_OVERFLOW_L);
+    return READ_BIT(PDMx->INT_ST, PDM_INT_ST_OVERFLOW_L);
 }
 
 /**
@@ -544,7 +543,7 @@ static inline uint32_t ll_pdm_is_active_flag_overflow_l(PDM_TypeDef *PDMx)
  */
 static inline uint32_t ll_pdm_is_active_flag_overflow_r(PDM_TypeDef *PDMx)
 {
-	return READ_BIT(PDMx->INT_ST, PDM_INT_ST_OVERFLOW_R);
+    return READ_BIT(PDMx->INT_ST, PDM_INT_ST_OVERFLOW_R);
 }
 
 /**
@@ -553,7 +552,7 @@ static inline uint32_t ll_pdm_is_active_flag_overflow_r(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_mask_it_overflow_l(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_L);
+    SET_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_L);
 }
 
 /**
@@ -562,7 +561,7 @@ static inline void ll_pdm_mask_it_overflow_l(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_unmask_it_overflow_l(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_L);
+    CLEAR_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_L);
 }
 
 /**
@@ -571,7 +570,7 @@ static inline void ll_pdm_unmask_it_overflow_l(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_mask_it_overflow_r(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_R);
+    SET_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_R);
 }
 
 /**
@@ -580,7 +579,7 @@ static inline void ll_pdm_mask_it_overflow_r(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_unmask_it_overflow_r(PDM_TypeDef *PDMx)
 {
-	CLEAR_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_R);
+    CLEAR_BIT(PDMx->INT_MSK, PDM_INT_MSK_INT_MASK_R);
 }
 
 /**
@@ -589,7 +588,7 @@ static inline void ll_pdm_unmask_it_overflow_r(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_clear_flag_overflow_l(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->INT_CLR, PDM_INT_CLR_INT_CLR_L);
+    SET_BIT(PDMx->INT_CLR, PDM_INT_CLR_INT_CLR_L);
 }
 
 /**
@@ -598,7 +597,7 @@ static inline void ll_pdm_clear_flag_overflow_l(PDM_TypeDef *PDMx)
  */
 static inline void ll_pdm_clear_flag_overflow_r(PDM_TypeDef *PDMx)
 {
-	SET_BIT(PDMx->INT_CLR, PDM_INT_CLR_INT_CLR_R);
+    SET_BIT(PDMx->INT_CLR, PDM_INT_CLR_INT_CLR_R);
 }
 
 #ifdef __cplusplus

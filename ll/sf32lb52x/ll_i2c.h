@@ -8,8 +8,7 @@
 #define __LL_I2C_H
 
 #include <stdint.h>
-#include "i2c.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -44,7 +43,7 @@ typedef struct
                       @ref LL_I2C_MODE_HS_FAST_FALLBK. */
     uint32_t dnf;  /**< Digital filter value for CR.DNF[14:12], range 0..7. */
     uint32_t
-        lcr_slv; /**< Standard-mode low/high timing count for LCR.SLV[8:0]. */
+    lcr_slv; /**< Standard-mode low/high timing count for LCR.SLV[8:0]. */
     uint32_t lcr_flv;  /**< Fast/Fast+-mode timing count for LCR.FLV[17:9]. */
     uint32_t lcr_hlvl; /**< High-speed low-period timing count for
                           LCR.HLVL[26:18]. */
@@ -142,7 +141,7 @@ static inline void ll_i2c_config_timing(I2C_TypeDef *I2Cx,
 
     MODIFY_REG(I2Cx->CR, I2C_CR_MODE | I2C_CR_DNF,
                (cfg->mode & I2C_CR_MODE) |
-                   ((cfg->dnf << I2C_CR_DNF_Pos) & I2C_CR_DNF));
+               ((cfg->dnf << I2C_CR_DNF_Pos) & I2C_CR_DNF));
 
     lcr = ((cfg->lcr_slv << I2C_LCR_SLV_Pos) & I2C_LCR_SLV) |
           ((cfg->lcr_flv << I2C_LCR_FLV_Pos) & I2C_LCR_FLV) |
@@ -269,7 +268,7 @@ static inline uint32_t ll_i2c_is_general_call_enabled(I2C_TypeDef *I2Cx)
  * @param[in] last_nack Non-zero to send NACK after last DMA read transfer.
  */
 static inline void ll_i2c_config_dma_last(I2C_TypeDef *I2Cx, uint32_t last_stop,
-                                          uint32_t last_nack)
+        uint32_t last_nack)
 {
     uint32_t val;
 
@@ -959,7 +958,7 @@ static inline uint32_t ll_i2c_get_rw_mode(I2C_TypeDef *I2Cx)
  * LL_I2C_ADDR_DIR_READ.
  */
 static inline void ll_i2c_transmit_address7(I2C_TypeDef *I2Cx, uint32_t addr7,
-                                            uint32_t dir)
+        uint32_t dir)
 {
     WRITE_REG(I2Cx->DBR,
               (((addr7 << 1U) | (dir & LL_I2C_ADDR_DIR_READ)) & I2C_DBR_DATA));

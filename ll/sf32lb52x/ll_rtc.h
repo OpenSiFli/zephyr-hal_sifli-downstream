@@ -9,8 +9,7 @@
 
 #include <stdint.h>
 #include "hpsys_cfg.h"
-#include "rtc.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +23,7 @@ extern "C" {
  */
 static inline uint32_t ll_rtc_get_time(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->TR);
+    return READ_REG(rtc->TR);
 }
 
 /**
@@ -35,7 +34,7 @@ static inline uint32_t ll_rtc_get_time(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_time_shadow(HPSYS_CFG_TypeDef *cfg)
 {
-	return READ_REG(cfg->RTC_TR);
+    return READ_REG(cfg->RTC_TR);
 }
 
 /*==============================================================================
@@ -50,12 +49,12 @@ static inline uint32_t ll_rtc_get_time_shadow(HPSYS_CFG_TypeDef *cfg)
  */
 static inline void ll_rtc_set_time(RTC_TypeDef *rtc, uint8_t hh, uint8_t mm, uint8_t ss)
 {
-	uint32_t tr =
-		((uint32_t)(hh / 10U) << RTC_TR_HT_Pos) | ((uint32_t)(hh % 10U) << RTC_TR_HU_Pos) |
-		((uint32_t)(mm / 10U) << RTC_TR_MNT_Pos) |
-		((uint32_t)(mm % 10U) << RTC_TR_MNU_Pos) | ((uint32_t)(ss / 10U) << RTC_TR_ST_Pos) |
-		((uint32_t)(ss % 10U) << RTC_TR_SU_Pos);
-	WRITE_REG(rtc->TR, tr);
+    uint32_t tr =
+        ((uint32_t)(hh / 10U) << RTC_TR_HT_Pos) | ((uint32_t)(hh % 10U) << RTC_TR_HU_Pos) |
+        ((uint32_t)(mm / 10U) << RTC_TR_MNT_Pos) |
+        ((uint32_t)(mm % 10U) << RTC_TR_MNU_Pos) | ((uint32_t)(ss / 10U) << RTC_TR_ST_Pos) |
+        ((uint32_t)(ss % 10U) << RTC_TR_SU_Pos);
+    WRITE_REG(rtc->TR, tr);
 }
 
 /**
@@ -65,7 +64,7 @@ static inline void ll_rtc_set_time(RTC_TypeDef *rtc, uint8_t hh, uint8_t mm, uin
  */
 static inline uint32_t ll_rtc_get_subsecond(RTC_TypeDef *rtc)
 {
-	return GET_REG_VAL2(rtc->TR, RTC_TR_SS);
+    return GET_REG_VAL2(rtc->TR, RTC_TR_SS);
 }
 
 /**
@@ -76,8 +75,8 @@ static inline uint32_t ll_rtc_get_subsecond(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_subsecond(RTC_TypeDef *rtc, uint32_t subsec)
 {
-	MODIFY_REG(rtc->TR, RTC_TR_SS,
-		   MAKE_REG_VAL(subsec, RTC_TR_SS_Msk, RTC_TR_SS_Pos));
+    MODIFY_REG(rtc->TR, RTC_TR_SS,
+               MAKE_REG_VAL(subsec, RTC_TR_SS_Msk, RTC_TR_SS_Pos));
 }
 
 /**
@@ -87,7 +86,7 @@ static inline void ll_rtc_set_subsecond(RTC_TypeDef *rtc, uint32_t subsec)
  */
 static inline uint32_t ll_rtc_get_date(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->DR);
+    return READ_REG(rtc->DR);
 }
 
 /**
@@ -98,7 +97,7 @@ static inline uint32_t ll_rtc_get_date(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_date_shadow(HPSYS_CFG_TypeDef *cfg)
 {
-	return READ_REG(cfg->RTC_DR);
+    return READ_REG(cfg->RTC_DR);
 }
 
 /**
@@ -107,7 +106,7 @@ static inline uint32_t ll_rtc_get_date_shadow(HPSYS_CFG_TypeDef *cfg)
  */
 static inline void ll_rtc_century_set(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->DR, RTC_DR_CB);
+    SET_BIT(rtc->DR, RTC_DR_CB);
 }
 
 /**
@@ -116,7 +115,7 @@ static inline void ll_rtc_century_set(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_century_clear(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->DR, RTC_DR_CB);
+    CLEAR_BIT(rtc->DR, RTC_DR_CB);
 }
 
 /**
@@ -128,12 +127,17 @@ static inline void ll_rtc_century_clear(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_date(RTC_TypeDef *rtc, uint8_t yy, uint8_t mm, uint8_t dd, uint8_t wd)
 {
-	uint32_t dr =
-		((uint32_t)(yy / 10U) << RTC_DR_YT_Pos) | ((uint32_t)(yy % 10U) << RTC_DR_YU_Pos) |
-		((uint32_t)(wd) << RTC_DR_WD_Pos) | ((uint32_t)(mm / 10U) << RTC_DR_MT_Pos) |
-		((uint32_t)(mm % 10U) << RTC_DR_MU_Pos) | ((uint32_t)(dd / 10U) << RTC_DR_DT_Pos) |
-		((uint32_t)(dd % 10U) << RTC_DR_DU_Pos);
-	WRITE_REG(rtc->DR, dr);
+    uint32_t dr =
+        ((uint32_t)(yy / 10U) << RTC_DR_YT_Pos) | ((uint32_t)(yy % 10U) << RTC_DR_YU_Pos) |
+        ((uint32_t)(wd) << RTC_DR_WD_Pos) | ((uint32_t)(mm / 10U) << RTC_DR_MT_Pos) |
+        ((uint32_t)(mm % 10U) << RTC_DR_MU_Pos) | ((uint32_t)(dd / 10U) << RTC_DR_DT_Pos) |
+        ((uint32_t)(dd % 10U) << RTC_DR_DU_Pos);
+    /* Update only the calendar fields; DR.CB (century) is managed separately
+     * by ll_rtc_century_set/clear and must not be wiped by a full write. */
+    MODIFY_REG(rtc->DR,
+               RTC_DR_YT | RTC_DR_YU | RTC_DR_WD | RTC_DR_MT | RTC_DR_MU |
+               RTC_DR_DT | RTC_DR_DU,
+               dr);
 }
 
 /**
@@ -144,12 +148,12 @@ static inline void ll_rtc_set_date(RTC_TypeDef *rtc, uint8_t yy, uint8_t mm, uin
  */
 static inline void ll_rtc_set_control_config(RTC_TypeDef *rtc, uint32_t value)
 {
-	const uint32_t mask = RTC_CR_COE | RTC_CR_OSEL | RTC_CR_POL |
-			      RTC_CR_COSEL | RTC_CR_BKP | RTC_CR_SUB1H |
-			      RTC_CR_ADD1H | RTC_CR_TSIE | RTC_CR_REFCKON |
-			      RTC_CR_TSEDGE | RTC_CR_WUCKSEL;
+    const uint32_t mask = RTC_CR_COE | RTC_CR_OSEL | RTC_CR_POL |
+                          RTC_CR_COSEL | RTC_CR_BKP | RTC_CR_SUB1H |
+                          RTC_CR_ADD1H | RTC_CR_TSIE | RTC_CR_REFCKON |
+                          RTC_CR_TSEDGE | RTC_CR_WUCKSEL;
 
-	MODIFY_REG(rtc->CR, mask, value & mask);
+    MODIFY_REG(rtc->CR, mask, value & mask);
 }
 
 /**
@@ -158,7 +162,7 @@ static inline void ll_rtc_set_control_config(RTC_TypeDef *rtc, uint32_t value)
  */
 static inline void ll_rtc_enable_wakeup_interrupt(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_WUTIE);
+    SET_BIT(rtc->CR, RTC_CR_WUTIE);
 }
 
 /**
@@ -167,7 +171,7 @@ static inline void ll_rtc_enable_wakeup_interrupt(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_disable_wakeup_interrupt(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_WUTIE);
+    CLEAR_BIT(rtc->CR, RTC_CR_WUTIE);
 }
 
 /**
@@ -176,7 +180,7 @@ static inline void ll_rtc_disable_wakeup_interrupt(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_enable_alarm_interrupt(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_ALRMIE);
+    SET_BIT(rtc->CR, RTC_CR_ALRMIE);
 }
 
 /**
@@ -185,7 +189,7 @@ static inline void ll_rtc_enable_alarm_interrupt(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_disable_alarm_interrupt(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_ALRMIE);
+    CLEAR_BIT(rtc->CR, RTC_CR_ALRMIE);
 }
 
 /**
@@ -195,7 +199,7 @@ static inline void ll_rtc_disable_alarm_interrupt(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_enable_wakeup(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_WUTE);
+    SET_BIT(rtc->CR, RTC_CR_WUTE);
 }
 
 /**
@@ -204,7 +208,7 @@ static inline void ll_rtc_enable_wakeup(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_disable_wakeup(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_WUTE);
+    CLEAR_BIT(rtc->CR, RTC_CR_WUTE);
 }
 
 /**
@@ -214,7 +218,7 @@ static inline void ll_rtc_disable_wakeup(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_enable_alarm(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_ALRME);
+    SET_BIT(rtc->CR, RTC_CR_ALRME);
 }
 
 /**
@@ -223,7 +227,7 @@ static inline void ll_rtc_enable_alarm(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_disable_alarm(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_ALRME);
+    CLEAR_BIT(rtc->CR, RTC_CR_ALRME);
 }
 
 /**
@@ -232,7 +236,7 @@ static inline void ll_rtc_disable_alarm(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_time_format_24h(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_FMT);
+    CLEAR_BIT(rtc->CR, RTC_CR_FMT);
 }
 
 /**
@@ -241,7 +245,7 @@ static inline void ll_rtc_set_time_format_24h(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_time_format_12h(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_FMT);
+    SET_BIT(rtc->CR, RTC_CR_FMT);
 }
 
 /**
@@ -251,7 +255,7 @@ static inline void ll_rtc_set_time_format_12h(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_is_bypass_shadow(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->CR, RTC_CR_BYPSHAD) != 0UL;
+    return READ_BIT(rtc->CR, RTC_CR_BYPSHAD) != 0UL;
 }
 
 /**
@@ -273,9 +277,10 @@ static inline uint32_t ll_rtc_is_bypass_shadow(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_enter_init_mode(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->ISR, RTC_ISR_INIT);
-	while (!READ_BIT(rtc->ISR, RTC_ISR_INITF)) {
-	}
+    SET_BIT(rtc->ISR, RTC_ISR_INIT);
+    while (!READ_BIT(rtc->ISR, RTC_ISR_INITF))
+    {
+    }
 }
 
 /**
@@ -283,12 +288,12 @@ static inline void ll_rtc_enter_init_mode(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_exit_init_mode(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->ISR, RTC_ISR_INIT);
+    CLEAR_BIT(rtc->ISR, RTC_ISR_INIT);
 }
 
 static inline uint32_t ll_rtc_is_initialized(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_INITS) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_INITS) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -301,14 +306,18 @@ static inline uint32_t ll_rtc_is_initialized(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_wait_sync(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->ISR, RTC_ISR_RSF);
-	while (!READ_BIT(rtc->ISR, RTC_ISR_RSF)) {
-	}
+    /* ISR RSF is rw0c: write 0 only to RSF to trigger re-synchronisation,
+     * keep the other pending flags (write 1), preserve the rw INIT bit. */
+    WRITE_REG(rtc->ISR, ~(RTC_ISR_RSF | RTC_ISR_INIT) |
+              (READ_REG(rtc->ISR) & RTC_ISR_INIT));
+    while (!READ_BIT(rtc->ISR, RTC_ISR_RSF))
+    {
+    }
 }
 
 static inline uint32_t ll_rtc_get_shift_pending_flag(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_SHPF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_SHPF) ? 1UL : 0UL;
 }
 
 /**
@@ -318,21 +327,26 @@ static inline uint32_t ll_rtc_get_shift_pending_flag(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_wakeup_flag(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_WUTF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_WUTF) ? 1UL : 0UL;
 }
 
 /**
  * @brief Clear the wakeup timer flag (ISR.WUTF, rw0c: write 0 to clear).
+ * @note ISR pending flags are rw0c: writing 0 clears, writing 1 keeps. To
+ *       avoid dropping a flag that becomes pending between the read and the
+ *       write, write 0 only to WUTF and 1 to every other rw0c flag. The rw
+ *       INIT bit is read back and preserved (mirrors the HAL clear macro).
  * @param[in] rtc RTC instance pointer.
  */
 static inline void ll_rtc_clear_wakeup_flag(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->ISR, RTC_ISR_WUTF);
+    WRITE_REG(rtc->ISR, ~(RTC_ISR_WUTF | RTC_ISR_INIT) |
+              (READ_REG(rtc->ISR) & RTC_ISR_INIT));
 }
 
 static inline uint32_t ll_rtc_is_wakeup_write_allowed(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_WUTWF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_WUTWF) ? 1UL : 0UL;
 }
 
 /**
@@ -342,7 +356,7 @@ static inline uint32_t ll_rtc_is_wakeup_write_allowed(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_alarm_flag(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_ALRMF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_ALRMF) ? 1UL : 0UL;
 }
 
 /**
@@ -351,12 +365,15 @@ static inline uint32_t ll_rtc_get_alarm_flag(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_clear_alarm_flag(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->ISR, RTC_ISR_ALRMF);
+    /* rw0c: 0 clears the target, 1 keeps the other pending flags (see
+     * ll_rtc_clear_wakeup_flag). Preserve the rw INIT bit. */
+    WRITE_REG(rtc->ISR, ~(RTC_ISR_ALRMF | RTC_ISR_INIT) |
+              (READ_REG(rtc->ISR) & RTC_ISR_INIT));
 }
 
 static inline uint32_t ll_rtc_is_alarm_write_allowed(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_ALRMWF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_ALRMWF) ? 1UL : 0UL;
 }
 
 /**
@@ -368,12 +385,12 @@ static inline uint32_t ll_rtc_is_alarm_write_allowed(RTC_TypeDef *rtc)
  * @param[in] sync_prediv  Synchronous prescaler (10 bits, must be <= 0x3FF).
  */
 static inline void ll_rtc_set_prescaler(RTC_TypeDef *rtc, uint8_t async_prediv,
-					uint16_t sync_prediv)
+                                        uint16_t sync_prediv)
 {
-	MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVA_INT,
-		   MAKE_REG_VAL(async_prediv, RTC_PSCLR_DIVA_INT_Msk, RTC_PSCLR_DIVA_INT_Pos));
-	MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVB,
-		   MAKE_REG_VAL(sync_prediv, RTC_PSCLR_DIVB_Msk, RTC_PSCLR_DIVB_Pos));
+    MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVA_INT,
+               MAKE_REG_VAL(async_prediv, RTC_PSCLR_DIVA_INT_Msk, RTC_PSCLR_DIVA_INT_Pos));
+    MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVB,
+               MAKE_REG_VAL(sync_prediv, RTC_PSCLR_DIVB_Msk, RTC_PSCLR_DIVB_Pos));
 }
 
 /**
@@ -385,8 +402,8 @@ static inline void ll_rtc_set_prescaler(RTC_TypeDef *rtc, uint8_t async_prediv,
  */
 static inline void ll_rtc_set_prescaler_frac(RTC_TypeDef *rtc, uint32_t frac)
 {
-	MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVA_FRAC,
-		   MAKE_REG_VAL(frac, RTC_PSCLR_DIVA_FRAC_Msk, RTC_PSCLR_DIVA_FRAC_Pos));
+    MODIFY_REG(rtc->PSCLR, RTC_PSCLR_DIVA_FRAC,
+               MAKE_REG_VAL(frac, RTC_PSCLR_DIVA_FRAC_Msk, RTC_PSCLR_DIVA_FRAC_Pos));
 }
 
 /*==============================================================================
@@ -400,8 +417,8 @@ static inline void ll_rtc_set_prescaler_frac(RTC_TypeDef *rtc, uint32_t frac)
  */
 static inline void ll_rtc_set_wakeup_timer(RTC_TypeDef *rtc, uint32_t wut)
 {
-	MODIFY_REG(rtc->WUTR, RTC_WUTR_WUT,
-		   MAKE_REG_VAL(wut, RTC_WUTR_WUT_Msk, RTC_WUTR_WUT_Pos));
+    MODIFY_REG(rtc->WUTR, RTC_WUTR_WUT,
+               MAKE_REG_VAL(wut, RTC_WUTR_WUT_Msk, RTC_WUTR_WUT_Pos));
 }
 
 /**
@@ -411,7 +428,7 @@ static inline void ll_rtc_set_wakeup_timer(RTC_TypeDef *rtc, uint32_t wut)
  */
 static inline uint32_t ll_rtc_get_wakeup_timer(RTC_TypeDef *rtc)
 {
-	return GET_REG_VAL2(rtc->WUTR, RTC_WUTR_WUT);
+    return GET_REG_VAL2(rtc->WUTR, RTC_WUTR_WUT);
 }
 
 /**
@@ -421,7 +438,7 @@ static inline uint32_t ll_rtc_get_wakeup_timer(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_alarm(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->ALRMTR);
+    return READ_REG(rtc->ALRMTR);
 }
 
 /*==============================================================================
@@ -439,17 +456,17 @@ static inline uint32_t ll_rtc_get_alarm(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_alarm(RTC_TypeDef *rtc, uint8_t hh, uint8_t mm, uint8_t ss)
 {
-	uint32_t tr = ((uint32_t)(hh / 10U) << RTC_ALRMTR_HT_Pos) |
-		      ((uint32_t)(hh % 10U) << RTC_ALRMTR_HU_Pos) |
-		      ((uint32_t)(mm / 10U) << RTC_ALRMTR_MNT_Pos) |
-		      ((uint32_t)(mm % 10U) << RTC_ALRMTR_MNU_Pos) |
-		      ((uint32_t)(ss / 10U) << RTC_ALRMTR_ST_Pos) |
-		      ((uint32_t)(ss % 10U) << RTC_ALRMTR_SU_Pos);
-	WRITE_REG(rtc->ALRMTR, tr);
-	/* Mask the date fields (MSK=1: field ignored) so the alarm is time-only */
-	MODIFY_REG(rtc->ALRMDR,
-		   RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD,
-		   RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD);
+    uint32_t tr = ((uint32_t)(hh / 10U) << RTC_ALRMTR_HT_Pos) |
+                  ((uint32_t)(hh % 10U) << RTC_ALRMTR_HU_Pos) |
+                  ((uint32_t)(mm / 10U) << RTC_ALRMTR_MNT_Pos) |
+                  ((uint32_t)(mm % 10U) << RTC_ALRMTR_MNU_Pos) |
+                  ((uint32_t)(ss / 10U) << RTC_ALRMTR_ST_Pos) |
+                  ((uint32_t)(ss % 10U) << RTC_ALRMTR_SU_Pos);
+    WRITE_REG(rtc->ALRMTR, tr);
+    /* Mask the date fields (MSK=1: field ignored) so the alarm is time-only */
+    MODIFY_REG(rtc->ALRMDR,
+               RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD,
+               RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD);
 }
 
 /**
@@ -459,7 +476,7 @@ static inline void ll_rtc_set_alarm(RTC_TypeDef *rtc, uint8_t hh, uint8_t mm, ui
  */
 static inline uint32_t ll_rtc_get_alarm_date(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->ALRMDR);
+    return READ_REG(rtc->ALRMDR);
 }
 
 /**
@@ -469,10 +486,10 @@ static inline uint32_t ll_rtc_get_alarm_date(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_alarm_mask(RTC_TypeDef *rtc, uint32_t mask)
 {
-	MODIFY_REG(rtc->ALRMDR,
-		   RTC_ALRMDR_MSKSS | RTC_ALRMDR_MSKS | RTC_ALRMDR_MSKMN | RTC_ALRMDR_MSKH |
-			   RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD,
-		   mask);
+    MODIFY_REG(rtc->ALRMDR,
+               RTC_ALRMDR_MSKSS | RTC_ALRMDR_MSKS | RTC_ALRMDR_MSKMN | RTC_ALRMDR_MSKH |
+               RTC_ALRMDR_MSKD | RTC_ALRMDR_MSKM | RTC_ALRMDR_MSKWD,
+               mask);
 }
 
 /**
@@ -486,14 +503,14 @@ static inline void ll_rtc_set_alarm_mask(RTC_TypeDef *rtc, uint32_t mask)
  */
 static inline void ll_rtc_set_alarm_date(RTC_TypeDef *rtc, uint8_t wd, uint8_t mm, uint8_t dd)
 {
-	uint32_t dr = ((uint32_t)(wd) << RTC_ALRMDR_WD_Pos) |
-		      ((uint32_t)(mm / 10U) << RTC_ALRMDR_MT_Pos) |
-		      ((uint32_t)(mm % 10U) << RTC_ALRMDR_MU_Pos) |
-		      ((uint32_t)(dd / 10U) << RTC_ALRMDR_DT_Pos) |
-		      ((uint32_t)(dd % 10U) << RTC_ALRMDR_DU_Pos);
-	MODIFY_REG(rtc->ALRMDR,
-		   RTC_ALRMDR_WD | RTC_ALRMDR_MT | RTC_ALRMDR_MU | RTC_ALRMDR_DT | RTC_ALRMDR_DU,
-		   dr);
+    uint32_t dr = ((uint32_t)(wd) << RTC_ALRMDR_WD_Pos) |
+                  ((uint32_t)(mm / 10U) << RTC_ALRMDR_MT_Pos) |
+                  ((uint32_t)(mm % 10U) << RTC_ALRMDR_MU_Pos) |
+                  ((uint32_t)(dd / 10U) << RTC_ALRMDR_DT_Pos) |
+                  ((uint32_t)(dd % 10U) << RTC_ALRMDR_DU_Pos);
+    MODIFY_REG(rtc->ALRMDR,
+               RTC_ALRMDR_WD | RTC_ALRMDR_MT | RTC_ALRMDR_MU | RTC_ALRMDR_DT | RTC_ALRMDR_DU,
+               dr);
 }
 
 /**
@@ -501,14 +518,14 @@ static inline void ll_rtc_set_alarm_date(RTC_TypeDef *rtc, uint8_t wd, uint8_t m
  */
 static inline void ll_rtc_enable_write_protection(RTC_TypeDef *rtc)
 {
-	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
-	(void)rtc;
+    /* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
+    (void)rtc;
 }
 
 static inline void ll_rtc_disable_write_protection(RTC_TypeDef *rtc)
 {
-	/* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
-	(void)rtc;
+    /* LL gap: SF32LB52x RTC has no WPR register — write protection not available */
+    (void)rtc;
 }
 
 /*==============================================================================
@@ -518,7 +535,10 @@ static inline void ll_rtc_disable_write_protection(RTC_TypeDef *rtc)
 /** @defgroup LL_RTC_LPCLK RTC Low-Power Clock Source */
 /** @{ */
 #define LL_RTC_LPCLK_LRC10 0U /**< clk_rtc = clk_lrc10 (~10kHz) */
-#define LL_RTC_LPCLK_LXT32 1U /*==============================================================================
+#define LL_RTC_LPCLK_LXT32 1U /**< clk_rtc = clk_lxt32 (32.768kHz) */
+/** @} */
+
+/*==============================================================================
  * Timestamp
  *============================================================================*/
 
@@ -528,7 +548,7 @@ static inline void ll_rtc_disable_write_protection(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_enable_timestamp(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->CR, RTC_CR_TSE);
+    SET_BIT(rtc->CR, RTC_CR_TSE);
 }
 
 /**
@@ -537,11 +557,8 @@ static inline void ll_rtc_enable_timestamp(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_disable_timestamp(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->CR, RTC_CR_TSE);
+    CLEAR_BIT(rtc->CR, RTC_CR_TSE);
 }
-
-/**< clk_rtc = clk_lxt32 (32.768kHz) */
-/** @} */
 
 /**
  * @brief Select the clk_rtc low-power clock source (CR.LPCKSEL).
@@ -550,8 +567,8 @@ static inline void ll_rtc_disable_timestamp(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_lpclk_source(RTC_TypeDef *rtc, uint32_t src)
 {
-	MODIFY_REG(rtc->CR, RTC_CR_LPCKSEL,
-		   MAKE_REG_VAL(src, RTC_CR_LPCKSEL_Msk, RTC_CR_LPCKSEL_Pos));
+    MODIFY_REG(rtc->CR, RTC_CR_LPCKSEL,
+               MAKE_REG_VAL(src, RTC_CR_LPCKSEL_Msk, RTC_CR_LPCKSEL_Pos));
 }
 
 /**
@@ -561,7 +578,7 @@ static inline void ll_rtc_set_lpclk_source(RTC_TypeDef *rtc, uint32_t src)
  */
 static inline uint32_t ll_rtc_get_lpclk_source(RTC_TypeDef *rtc)
 {
-	return GET_REG_VAL2(rtc->CR, RTC_CR_LPCKSEL);
+    return GET_REG_VAL2(rtc->CR, RTC_CR_LPCKSEL);
 }
 
 /**
@@ -572,7 +589,7 @@ static inline uint32_t ll_rtc_get_lpclk_source(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_timestamp_overflow_flag(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_TSOVF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_TSOVF) ? 1UL : 0UL;
 }
 
 /**
@@ -582,7 +599,7 @@ static inline uint32_t ll_rtc_get_timestamp_overflow_flag(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_timestamp_flag(RTC_TypeDef *rtc)
 {
-	return READ_BIT(rtc->ISR, RTC_ISR_TSF) ? 1UL : 0UL;
+    return READ_BIT(rtc->ISR, RTC_ISR_TSF) ? 1UL : 0UL;
 }
 
 /**
@@ -591,7 +608,10 @@ static inline uint32_t ll_rtc_get_timestamp_flag(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_clear_timestamp_flag(RTC_TypeDef *rtc)
 {
-	CLEAR_BIT(rtc->ISR, RTC_ISR_TSF);
+    /* rw0c: 0 clears the target, 1 keeps the other pending flags (see
+     * ll_rtc_clear_wakeup_flag). Preserve the rw INIT bit. */
+    WRITE_REG(rtc->ISR, ~(RTC_ISR_TSF | RTC_ISR_INIT) |
+              (READ_REG(rtc->ISR) & RTC_ISR_INIT));
 }
 
 /**
@@ -600,7 +620,7 @@ static inline void ll_rtc_clear_timestamp_flag(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_add_one_second(RTC_TypeDef *rtc)
 {
-	SET_BIT(rtc->SHIFTR, RTC_SHIFTR_ADD1S);
+    SET_BIT(rtc->SHIFTR, RTC_SHIFTR_ADD1S);
 }
 
 /**
@@ -610,8 +630,8 @@ static inline void ll_rtc_add_one_second(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_shift_subsecond(RTC_TypeDef *rtc, uint32_t subfs)
 {
-	MODIFY_REG(rtc->SHIFTR, RTC_SHIFTR_SUBFS,
-		   MAKE_REG_VAL(subfs, RTC_SHIFTR_SUBFS_Msk, RTC_SHIFTR_SUBFS_Pos));
+    MODIFY_REG(rtc->SHIFTR, RTC_SHIFTR_SUBFS,
+               MAKE_REG_VAL(subfs, RTC_SHIFTR_SUBFS_Msk, RTC_SHIFTR_SUBFS_Pos));
 }
 
 /**
@@ -621,7 +641,7 @@ static inline void ll_rtc_shift_subsecond(RTC_TypeDef *rtc, uint32_t subfs)
  */
 static inline uint32_t ll_rtc_get_timestamp_time(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->TSTR);
+    return READ_REG(rtc->TSTR);
 }
 
 /**
@@ -631,7 +651,7 @@ static inline uint32_t ll_rtc_get_timestamp_time(RTC_TypeDef *rtc)
  */
 static inline uint32_t ll_rtc_get_timestamp_date(RTC_TypeDef *rtc)
 {
-	return READ_REG(rtc->TSDR);
+    return READ_REG(rtc->TSDR);
 }
 
 /**
@@ -641,8 +661,8 @@ static inline uint32_t ll_rtc_get_timestamp_date(RTC_TypeDef *rtc)
  */
 static inline void ll_rtc_set_output_remap(RTC_TypeDef *rtc, uint32_t rmp)
 {
-	MODIFY_REG(rtc->OR, RTC_OR_RTC_OUT_RMP,
-		   MAKE_REG_VAL(rmp, RTC_OR_RTC_OUT_RMP_Msk, RTC_OR_RTC_OUT_RMP_Pos));
+    MODIFY_REG(rtc->OR, RTC_OR_RTC_OUT_RMP,
+               MAKE_REG_VAL(rmp, RTC_OR_RTC_OUT_RMP_Msk, RTC_OR_RTC_OUT_RMP_Pos));
 }
 
 /**
@@ -652,8 +672,8 @@ static inline void ll_rtc_set_output_remap(RTC_TypeDef *rtc, uint32_t rmp)
  */
 static inline void ll_rtc_set_alarm_output_type(RTC_TypeDef *rtc, uint32_t type)
 {
-	MODIFY_REG(rtc->OR, RTC_OR_RTC_ALARM_TYPE,
-		   MAKE_REG_VAL(type, RTC_OR_RTC_ALARM_TYPE_Msk, RTC_OR_RTC_ALARM_TYPE_Pos));
+    MODIFY_REG(rtc->OR, RTC_OR_RTC_ALARM_TYPE,
+               MAKE_REG_VAL(type, RTC_OR_RTC_ALARM_TYPE_Msk, RTC_OR_RTC_ALARM_TYPE_Pos));
 }
 
 /*==============================================================================
@@ -668,9 +688,10 @@ static inline void ll_rtc_set_alarm_output_type(RTC_TypeDef *rtc, uint32_t type)
  */
 static inline void ll_rtc_write_backup(RTC_TypeDef *rtc, uint32_t idx, uint32_t val)
 {
-	if (idx < 10U) {
-		(&rtc->BKP0R)[idx] = val;
-	}
+    if (idx < 10U)
+    {
+        (&rtc->BKP0R)[idx] = val;
+    }
 }
 
 /**
@@ -681,7 +702,7 @@ static inline void ll_rtc_write_backup(RTC_TypeDef *rtc, uint32_t idx, uint32_t 
  */
 static inline uint32_t ll_rtc_read_backup(RTC_TypeDef *rtc, uint32_t idx)
 {
-	return (idx < 10U) ? (&rtc->BKP0R)[idx] : 0UL;
+    return (idx < 10U) ? (&rtc->BKP0R)[idx] : 0UL;
 }
 
 /**
@@ -692,12 +713,12 @@ static inline uint32_t ll_rtc_read_backup(RTC_TypeDef *rtc, uint32_t idx)
  * @param[in] dbg_sel Debug select (4 bits).
  */
 static inline void ll_rtc_set_pbr_config(RTC_TypeDef *rtc, uint32_t rto, uint32_t sns,
-					 uint32_t dbg_sel)
+        uint32_t dbg_sel)
 {
-	MODIFY_REG(rtc->PBRCR, RTC_PBRCR_RTO | RTC_PBRCR_SNS | RTC_PBRCR_DBG_SEL,
-		   MAKE_REG_VAL(rto, RTC_PBRCR_RTO_Msk, RTC_PBRCR_RTO_Pos) |
-		   MAKE_REG_VAL(sns, RTC_PBRCR_SNS_Msk, RTC_PBRCR_SNS_Pos) |
-		   MAKE_REG_VAL(dbg_sel, RTC_PBRCR_DBG_SEL_Msk, RTC_PBRCR_DBG_SEL_Pos));
+    MODIFY_REG(rtc->PBRCR, RTC_PBRCR_RTO | RTC_PBRCR_SNS | RTC_PBRCR_DBG_SEL,
+               MAKE_REG_VAL(rto, RTC_PBRCR_RTO_Msk, RTC_PBRCR_RTO_Pos) |
+               MAKE_REG_VAL(sns, RTC_PBRCR_SNS_Msk, RTC_PBRCR_SNS_Pos) |
+               MAKE_REG_VAL(dbg_sel, RTC_PBRCR_DBG_SEL_Msk, RTC_PBRCR_DBG_SEL_Pos));
 }
 
 /**
@@ -708,9 +729,10 @@ static inline void ll_rtc_set_pbr_config(RTC_TypeDef *rtc, uint32_t rto, uint32_
  */
 static inline void ll_rtc_write_pbr(RTC_TypeDef *rtc, uint32_t idx, uint32_t val)
 {
-	if (idx < 4U) {
-		(&rtc->PBR0R)[idx] = val;
-	}
+    if (idx < 4U)
+    {
+        (&rtc->PBR0R)[idx] = val;
+    }
 }
 
 /**
@@ -721,7 +743,7 @@ static inline void ll_rtc_write_pbr(RTC_TypeDef *rtc, uint32_t idx, uint32_t val
  */
 static inline uint32_t ll_rtc_read_pbr(RTC_TypeDef *rtc, uint32_t idx)
 {
-	return (idx < 4U) ? (&rtc->PBR0R)[idx] : 0UL;
+    return (idx < 4U) ? (&rtc->PBR0R)[idx] : 0UL;
 }
 
 /**
@@ -731,7 +753,7 @@ static inline uint32_t ll_rtc_read_pbr(RTC_TypeDef *rtc, uint32_t idx)
  */
 static inline void ll_rtc_set_wkup_pull_down(RTC_TypeDef *rtc, uint32_t mask)
 {
-	WRITE_REG(rtc->PAWK1R, mask);
+    WRITE_REG(rtc->PAWK1R, mask);
 }
 
 /**
@@ -741,7 +763,7 @@ static inline void ll_rtc_set_wkup_pull_down(RTC_TypeDef *rtc, uint32_t mask)
  */
 static inline void ll_rtc_set_wkup_pull_strength(RTC_TypeDef *rtc, uint32_t mask)
 {
-	WRITE_REG(rtc->PAWK2R, mask);
+    WRITE_REG(rtc->PAWK2R, mask);
 }
 
 /**
@@ -751,7 +773,7 @@ static inline void ll_rtc_set_wkup_pull_strength(RTC_TypeDef *rtc, uint32_t mask
  */
 static inline void ll_rtc_set_wkup_input(RTC_TypeDef *rtc, uint32_t mask)
 {
-	WRITE_REG(rtc->PAWK3R, mask);
+    WRITE_REG(rtc->PAWK3R, mask);
 }
 
 #ifdef __cplusplus

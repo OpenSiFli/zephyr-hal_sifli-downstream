@@ -8,8 +8,7 @@
 #define __LL_LPTIM_H
 
 #include <stdint.h>
-#include "lptim.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,37 +33,37 @@ extern "C" {
 #define LL_LPTIM_CLK_SRC_LPCOMP (0x3UL)
 static inline uint32_t ll_lptim_get_compare_wakeup_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_OCWKUP) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_OCWKUP) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_auto_reload_wakeup_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_OFWKUP) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_OFWKUP) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_update_wakeup_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_UEWKUP) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_UEWKUP) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_trigger_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_ET) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_ET) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_compare_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_OC) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_OC) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_auto_reload_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_OF) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_OF) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lptim_get_update_flag(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->ISR, LPTIM_ISR_UE) ? 1UL : 0UL;
+    return READ_BIT(tim->ISR, LPTIM_ISR_UE) ? 1UL : 0UL;
 }
 
 /**
@@ -73,67 +72,67 @@ static inline uint32_t ll_lptim_get_update_flag(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_clear_wakeup_flags(LPTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->ICR, LPTIM_ICR_WKUPCLR);
+    WRITE_REG(tim->ICR, LPTIM_ICR_WKUPCLR);
 }
 
 static inline void ll_lptim_clear_trigger_flag(LPTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->ICR, LPTIM_ICR_ETCLR);
+    WRITE_REG(tim->ICR, LPTIM_ICR_ETCLR);
 }
 
 static inline void ll_lptim_clear_compare_flag(LPTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->ICR, LPTIM_ICR_OCCLR);
+    WRITE_REG(tim->ICR, LPTIM_ICR_OCCLR);
 }
 
 static inline void ll_lptim_clear_auto_reload_flag(LPTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->ICR, LPTIM_ICR_OFCLR);
+    WRITE_REG(tim->ICR, LPTIM_ICR_OFCLR);
 }
 
 static inline void ll_lptim_clear_update_flag(LPTIM_TypeDef *tim)
 {
-	WRITE_REG(tim->ICR, LPTIM_ICR_UECLR);
+    WRITE_REG(tim->ICR, LPTIM_ICR_UECLR);
 }
 
 static inline void ll_lptim_enable_compare_wakeup(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_OCWE);
+    SET_BIT(tim->IER, LPTIM_IER_OCWE);
 }
 
 static inline void ll_lptim_disable_compare_wakeup(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_OCWE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_OCWE);
 }
 
 static inline void ll_lptim_enable_auto_reload_wakeup(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_OFWE);
+    SET_BIT(tim->IER, LPTIM_IER_OFWE);
 }
 
 static inline void ll_lptim_disable_auto_reload_wakeup(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_OFWE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_OFWE);
 }
 
 static inline void ll_lptim_enable_update_wakeup(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_UEWE);
+    SET_BIT(tim->IER, LPTIM_IER_UEWE);
 }
 
 static inline void ll_lptim_disable_update_wakeup(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_UEWE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_UEWE);
 }
 
 static inline void ll_lptim_enable_trigger_interrupt(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_ETIE);
+    SET_BIT(tim->IER, LPTIM_IER_ETIE);
 }
 
 static inline void ll_lptim_disable_trigger_interrupt(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_ETIE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_ETIE);
 }
 
 /*==============================================================================
@@ -142,32 +141,32 @@ static inline void ll_lptim_disable_trigger_interrupt(LPTIM_TypeDef *tim)
 
 static inline void ll_lptim_enable_compare_interrupt(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_OCIE);
+    SET_BIT(tim->IER, LPTIM_IER_OCIE);
 }
 
 static inline void ll_lptim_disable_compare_interrupt(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_OCIE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_OCIE);
 }
 
 static inline void ll_lptim_enable_auto_reload_interrupt(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_OFIE);
+    SET_BIT(tim->IER, LPTIM_IER_OFIE);
 }
 
 static inline void ll_lptim_disable_auto_reload_interrupt(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_OFIE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_OFIE);
 }
 
 static inline void ll_lptim_enable_update_interrupt(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->IER, LPTIM_IER_UEIE);
+    SET_BIT(tim->IER, LPTIM_IER_UEIE);
 }
 
 static inline void ll_lptim_disable_update_interrupt(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->IER, LPTIM_IER_UEIE);
+    CLEAR_BIT(tim->IER, LPTIM_IER_UEIE);
 }
 
 /**
@@ -177,8 +176,8 @@ static inline void ll_lptim_disable_update_interrupt(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_set_count_mode(LPTIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_COUNTMODE,
-		   mode ? LPTIM_CFGR_COUNTMODE : 0UL);
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_COUNTMODE,
+               mode ? LPTIM_CFGR_COUNTMODE : 0UL);
 }
 
 /**
@@ -188,8 +187,8 @@ static inline void ll_lptim_set_count_mode(LPTIM_TypeDef *tim, uint32_t mode)
  */
 static inline void ll_lptim_set_wave_polarity(LPTIM_TypeDef *tim, uint32_t polarity)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_WAVPOL,
-		   polarity ? LPTIM_CFGR_WAVPOL : 0UL);
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_WAVPOL,
+               polarity ? LPTIM_CFGR_WAVPOL : 0UL);
 }
 
 /**
@@ -199,8 +198,8 @@ static inline void ll_lptim_set_wave_polarity(LPTIM_TypeDef *tim, uint32_t polar
  */
 static inline void ll_lptim_set_waveform(LPTIM_TypeDef *tim, uint32_t en)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_WAVE,
-		   en ? LPTIM_CFGR_WAVE : 0UL);
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_WAVE,
+               en ? LPTIM_CFGR_WAVE : 0UL);
 }
 
 /**
@@ -208,7 +207,7 @@ static inline void ll_lptim_set_waveform(LPTIM_TypeDef *tim, uint32_t en)
  */
 static inline void ll_lptim_enable_timeout(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
+    SET_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
 }
 
 /**
@@ -216,7 +215,7 @@ static inline void ll_lptim_enable_timeout(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_disable_timeout(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
+    CLEAR_BIT(tim->CFGR, LPTIM_CFGR_TIMOUT);
 }
 
 /**
@@ -226,8 +225,8 @@ static inline void ll_lptim_disable_timeout(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_set_trigger_edge(LPTIM_TypeDef *tim, uint32_t trigger_en)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRIGEN,
-		   MAKE_REG_VAL(trigger_en, LPTIM_CFGR_TRIGEN_Msk, LPTIM_CFGR_TRIGEN_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRIGEN,
+               MAKE_REG_VAL(trigger_en, LPTIM_CFGR_TRIGEN_Msk, LPTIM_CFGR_TRIGEN_Pos));
 }
 
 /**
@@ -237,8 +236,8 @@ static inline void ll_lptim_set_trigger_edge(LPTIM_TypeDef *tim, uint32_t trigge
  */
 static inline void ll_lptim_set_trigger_source(LPTIM_TypeDef *tim, uint32_t source)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRIGSEL,
-		   MAKE_REG_VAL(source, LPTIM_CFGR_TRIGSEL_Msk, LPTIM_CFGR_TRIGSEL_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRIGSEL,
+               MAKE_REG_VAL(source, LPTIM_CFGR_TRIGSEL_Msk, LPTIM_CFGR_TRIGSEL_Pos));
 }
 
 /**
@@ -247,8 +246,8 @@ static inline void ll_lptim_set_trigger_source(LPTIM_TypeDef *tim, uint32_t sour
  */
 static inline void ll_lptim_set_prescaler(LPTIM_TypeDef *tim, uint32_t div)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_PRESC,
-		   MAKE_REG_VAL(div, LPTIM_CFGR_PRESC_Msk, LPTIM_CFGR_PRESC_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_PRESC,
+               MAKE_REG_VAL(div, LPTIM_CFGR_PRESC_Msk, LPTIM_CFGR_PRESC_Pos));
 }
 
 /*==============================================================================
@@ -260,24 +259,25 @@ static inline void ll_lptim_set_prescaler(LPTIM_TypeDef *tim, uint32_t div)
  */
 static inline void ll_lptim_set_clock_source(LPTIM_TypeDef *tim, uint32_t src)
 {
-	switch (src) {
-	case LL_LPTIM_CLK_SRC_PCLK2:
-		MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
-			   LPTIM_CFGR_INTCKSEL);
-		break;
-	case LL_LPTIM_CLK_SRC_INPUT:
-		MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
-			   LPTIM_CFGR_CKSEL);
-		break;
-	case LL_LPTIM_CLK_SRC_LPCOMP:
-		MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
-			   LPTIM_CFGR_CKSEL | LPTIM_CFGR_EXTCKSEL);
-		break;
-	default:
-		MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
-			   0UL);
-		break;
-	}
+    switch (src)
+    {
+    case LL_LPTIM_CLK_SRC_PCLK2:
+        MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
+                   LPTIM_CFGR_INTCKSEL);
+        break;
+    case LL_LPTIM_CLK_SRC_INPUT:
+        MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
+                   LPTIM_CFGR_CKSEL);
+        break;
+    case LL_LPTIM_CLK_SRC_LPCOMP:
+        MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
+                   LPTIM_CFGR_CKSEL | LPTIM_CFGR_EXTCKSEL);
+        break;
+    default:
+        MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKSEL | LPTIM_CFGR_INTCKSEL | LPTIM_CFGR_EXTCKSEL,
+                   0UL);
+        break;
+    }
 }
 
 /**
@@ -287,8 +287,8 @@ static inline void ll_lptim_set_clock_source(LPTIM_TypeDef *tim, uint32_t src)
  */
 static inline void ll_lptim_set_trigger_filter(LPTIM_TypeDef *tim, uint32_t filter)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRGFLT,
-		   MAKE_REG_VAL(filter, LPTIM_CFGR_TRGFLT_Msk, LPTIM_CFGR_TRGFLT_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_TRGFLT,
+               MAKE_REG_VAL(filter, LPTIM_CFGR_TRGFLT_Msk, LPTIM_CFGR_TRGFLT_Pos));
 }
 
 /**
@@ -298,8 +298,8 @@ static inline void ll_lptim_set_trigger_filter(LPTIM_TypeDef *tim, uint32_t filt
  */
 static inline void ll_lptim_set_clock_filter(LPTIM_TypeDef *tim, uint32_t filter)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKFLT,
-		   MAKE_REG_VAL(filter, LPTIM_CFGR_CKFLT_Msk, LPTIM_CFGR_CKFLT_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKFLT,
+               MAKE_REG_VAL(filter, LPTIM_CFGR_CKFLT_Msk, LPTIM_CFGR_CKFLT_Pos));
 }
 
 /**
@@ -309,8 +309,8 @@ static inline void ll_lptim_set_clock_filter(LPTIM_TypeDef *tim, uint32_t filter
  */
 static inline void ll_lptim_set_clock_polarity(LPTIM_TypeDef *tim, uint32_t polarity)
 {
-	MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKPOL,
-		   MAKE_REG_VAL(polarity, LPTIM_CFGR_CKPOL_Msk, LPTIM_CFGR_CKPOL_Pos));
+    MODIFY_REG(tim->CFGR, LPTIM_CFGR_CKPOL,
+               MAKE_REG_VAL(polarity, LPTIM_CFGR_CKPOL_Msk, LPTIM_CFGR_CKPOL_Pos));
 }
 
 /**
@@ -321,9 +321,10 @@ static inline void ll_lptim_set_clock_polarity(LPTIM_TypeDef *tim, uint32_t pola
  */
 static inline void ll_lptim_reset_counter(LPTIM_TypeDef *tim)
 {
-	if (!READ_BIT(tim->CR, LPTIM_CR_COUNTRST)) {
-		SET_BIT(tim->CR, LPTIM_CR_COUNTRST);
-	}
+    if (!READ_BIT(tim->CR, LPTIM_CR_COUNTRST))
+    {
+        SET_BIT(tim->CR, LPTIM_CR_COUNTRST);
+    }
 }
 
 /**
@@ -332,7 +333,7 @@ static inline void ll_lptim_reset_counter(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_start_continuous(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR, LPTIM_CR_CNTSTRT);
+    SET_BIT(tim->CR, LPTIM_CR_CNTSTRT);
 }
 
 /**
@@ -342,7 +343,7 @@ static inline void ll_lptim_start_continuous(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_start_single(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR, LPTIM_CR_SNGSTRT);
+    SET_BIT(tim->CR, LPTIM_CR_SNGSTRT);
 }
 
 /** @} */
@@ -353,17 +354,17 @@ static inline void ll_lptim_start_single(LPTIM_TypeDef *tim)
 
 static inline void ll_lptim_enable(LPTIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR, LPTIM_CR_ENABLE);
+    SET_BIT(tim->CR, LPTIM_CR_ENABLE);
 }
 
 static inline void ll_lptim_disable(LPTIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR, LPTIM_CR_ENABLE);
+    CLEAR_BIT(tim->CR, LPTIM_CR_ENABLE);
 }
 
 static inline uint32_t ll_lptim_is_enabled(LPTIM_TypeDef *tim)
 {
-	return READ_BIT(tim->CR, LPTIM_CR_ENABLE) ? 1UL : 0UL;
+    return READ_BIT(tim->CR, LPTIM_CR_ENABLE) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -372,13 +373,13 @@ static inline uint32_t ll_lptim_is_enabled(LPTIM_TypeDef *tim)
 
 static inline void ll_lptim_set_compare(LPTIM_TypeDef *tim, uint32_t cmp)
 {
-	MODIFY_REG(tim->CMP, LPTIM_CMP_CMP,
-		   MAKE_REG_VAL(cmp, LPTIM_CMP_CMP_Msk, LPTIM_CMP_CMP_Pos));
+    MODIFY_REG(tim->CMP, LPTIM_CMP_CMP,
+               MAKE_REG_VAL(cmp, LPTIM_CMP_CMP_Msk, LPTIM_CMP_CMP_Pos));
 }
 
 static inline uint32_t ll_lptim_get_compare(LPTIM_TypeDef *tim)
 {
-	return GET_REG_VAL2(tim->CMP, LPTIM_CMP_CMP);
+    return GET_REG_VAL2(tim->CMP, LPTIM_CMP_CMP);
 }
 
 /**
@@ -387,13 +388,13 @@ static inline uint32_t ll_lptim_get_compare(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_set_auto_reload(LPTIM_TypeDef *tim, uint32_t arr)
 {
-	MODIFY_REG(tim->ARR, LPTIM_ARR_ARR,
-		   MAKE_REG_VAL(arr, LPTIM_ARR_ARR_Msk, LPTIM_ARR_ARR_Pos));
+    MODIFY_REG(tim->ARR, LPTIM_ARR_ARR,
+               MAKE_REG_VAL(arr, LPTIM_ARR_ARR_Msk, LPTIM_ARR_ARR_Pos));
 }
 
 static inline uint32_t ll_lptim_get_auto_reload(LPTIM_TypeDef *tim)
 {
-	return GET_REG_VAL2(tim->ARR, LPTIM_ARR_ARR);
+    return GET_REG_VAL2(tim->ARR, LPTIM_ARR_ARR);
 }
 
 /*==============================================================================
@@ -406,7 +407,7 @@ static inline uint32_t ll_lptim_get_auto_reload(LPTIM_TypeDef *tim)
  */
 static inline uint32_t ll_lptim_get_counter(LPTIM_TypeDef *tim)
 {
-	return GET_REG_VAL2(tim->CNT, LPTIM_CNT_CNT);
+    return GET_REG_VAL2(tim->CNT, LPTIM_CNT_CNT);
 }
 
 /*==============================================================================
@@ -420,7 +421,7 @@ static inline uint32_t ll_lptim_get_counter(LPTIM_TypeDef *tim)
  */
 static inline void ll_lptim_set_repetition(LPTIM_TypeDef *tim, uint8_t rep)
 {
-	MODIFY_REG(tim->RCR, LPTIM_RCR_REP, rep);
+    MODIFY_REG(tim->RCR, LPTIM_RCR_REP, rep);
 }
 
 /**
@@ -429,7 +430,7 @@ static inline void ll_lptim_set_repetition(LPTIM_TypeDef *tim, uint8_t rep)
  */
 static inline uint32_t ll_lptim_get_repetition(LPTIM_TypeDef *tim)
 {
-	return GET_REG_VAL2(tim->RCR, LPTIM_RCR_REP);
+    return GET_REG_VAL2(tim->RCR, LPTIM_RCR_REP);
 }
 
 #ifdef __cplusplus

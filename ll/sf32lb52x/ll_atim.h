@@ -8,8 +8,7 @@
 #define __LL_ATIM_H
 
 #include <stdint.h>
-#include "atim.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,22 +93,22 @@ extern "C" {
 #define LL_ATIM_RCR_REP_Msk ATIM_RCR_REP_Msk
 static inline void ll_atim_enable_uif_remap(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_UIFREMAP);
+    SET_BIT(tim->CR1, ATIM_CR1_UIFREMAP);
 }
 
 static inline void ll_atim_disable_uif_remap(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_UIFREMAP);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_UIFREMAP);
 }
 
 static inline void ll_atim_enable_auto_reload_preload(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_ARPE);
+    SET_BIT(tim->CR1, ATIM_CR1_ARPE);
 }
 
 static inline void ll_atim_disable_auto_reload_preload(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_ARPE);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_ARPE);
 }
 
 /*==============================================================================
@@ -118,44 +117,44 @@ static inline void ll_atim_disable_auto_reload_preload(ATIM_TypeDef *tim)
 
 static inline void ll_atim_set_counter_mode(ATIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CR1, ATIM_CR1_CMS,
-		   MAKE_REG_VAL(mode, ATIM_CR1_CMS_Msk, ATIM_CR1_CMS_Pos));
+    MODIFY_REG(tim->CR1, ATIM_CR1_CMS,
+               MAKE_REG_VAL(mode, ATIM_CR1_CMS_Msk, ATIM_CR1_CMS_Pos));
 }
 
 static inline void ll_atim_set_direction(ATIM_TypeDef *tim, uint32_t dir)
 {
-	MODIFY_REG(tim->CR1, ATIM_CR1_DIR,
-		   MAKE_REG_VAL(dir, ATIM_CR1_DIR_Msk, ATIM_CR1_DIR_Pos));
+    MODIFY_REG(tim->CR1, ATIM_CR1_DIR,
+               MAKE_REG_VAL(dir, ATIM_CR1_DIR_Msk, ATIM_CR1_DIR_Pos));
 }
 
 static inline void ll_atim_enable_one_pulse(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_OPM);
+    SET_BIT(tim->CR1, ATIM_CR1_OPM);
 }
 
 static inline void ll_atim_disable_one_pulse(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_OPM);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_OPM);
 }
 
 static inline void ll_atim_set_update_request_overflow_only(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_URS);
+    SET_BIT(tim->CR1, ATIM_CR1_URS);
 }
 
 static inline void ll_atim_set_update_request_any_event(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_URS);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_URS);
 }
 
 static inline void ll_atim_disable_update_event(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_UDIS);
+    SET_BIT(tim->CR1, ATIM_CR1_UDIS);
 }
 
 static inline void ll_atim_enable_update_event(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_UDIS);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_UDIS);
 }
 
 /** @} */
@@ -166,17 +165,17 @@ static inline void ll_atim_enable_update_event(ATIM_TypeDef *tim)
 
 static inline void ll_atim_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, ATIM_CR1_CEN);
+    SET_BIT(tim->CR1, ATIM_CR1_CEN);
 }
 
 static inline void ll_atim_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, ATIM_CR1_CEN);
+    CLEAR_BIT(tim->CR1, ATIM_CR1_CEN);
 }
 
 static inline uint32_t ll_atim_is_enabled(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->CR1, ATIM_CR1_CEN) ? 1UL : 0UL;
+    return READ_BIT(tim->CR1, ATIM_CR1_CEN) ? 1UL : 0UL;
 }
 
 /**
@@ -186,8 +185,8 @@ static inline uint32_t ll_atim_is_enabled(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_master_mode_selection2(ATIM_TypeDef *tim, uint32_t mms2)
 {
-	MODIFY_REG(tim->CR2, ATIM_CR2_MMS2,
-		   MAKE_REG_VAL(mms2, ATIM_CR2_MMS2_Msk, ATIM_CR2_MMS2_Pos));
+    MODIFY_REG(tim->CR2, ATIM_CR2_MMS2,
+               MAKE_REG_VAL(mms2, ATIM_CR2_MMS2_Msk, ATIM_CR2_MMS2_Pos));
 }
 
 /**
@@ -197,33 +196,34 @@ static inline void ll_atim_set_master_mode_selection2(ATIM_TypeDef *tim, uint32_
  * @param[in] idle_high  1 = OCx high on idle, 0 = low.
  */
 static inline void ll_atim_set_output_idle_state(ATIM_TypeDef *tim, uint32_t ch,
-						 uint32_t idle_high)
+        uint32_t idle_high)
 {
-	uint32_t bit;
+    uint32_t bit;
 
-	switch (ch) {
-	case 1U:
-		bit = ATIM_CR2_OIS1;
-		break;
-	case 2U:
-		bit = ATIM_CR2_OIS2;
-		break;
-	case 3U:
-		bit = ATIM_CR2_OIS3;
-		break;
-	case 4U:
-		bit = ATIM_CR2_OIS4;
-		break;
-	case 5U:
-		bit = ATIM_CR2_OIS5;
-		break;
-	case 6U:
-		bit = ATIM_CR2_OIS6;
-		break;
-	default:
-		return;
-	}
-	idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
+    switch (ch)
+    {
+    case 1U:
+        bit = ATIM_CR2_OIS1;
+        break;
+    case 2U:
+        bit = ATIM_CR2_OIS2;
+        break;
+    case 3U:
+        bit = ATIM_CR2_OIS3;
+        break;
+    case 4U:
+        bit = ATIM_CR2_OIS4;
+        break;
+    case 5U:
+        bit = ATIM_CR2_OIS5;
+        break;
+    case 6U:
+        bit = ATIM_CR2_OIS6;
+        break;
+    default:
+        return;
+    }
+    idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
 }
 
 /**
@@ -234,24 +234,25 @@ static inline void ll_atim_set_output_idle_state(ATIM_TypeDef *tim, uint32_t ch,
  * @param[in] idle_high  1 = OCxN high on idle, 0 = low.
  */
 static inline void ll_atim_set_output_idle_state_n(ATIM_TypeDef *tim, uint32_t ch,
-						   uint32_t idle_high)
+        uint32_t idle_high)
 {
-	uint32_t bit;
+    uint32_t bit;
 
-	switch (ch) {
-	case 1U:
-		bit = ATIM_CR2_OIS1N;
-		break;
-	case 2U:
-		bit = ATIM_CR2_OIS2N;
-		break;
-	case 3U:
-		bit = ATIM_CR2_OIS3N;
-		break;
-	default:
-		return;
-	}
-	idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
+    switch (ch)
+    {
+    case 1U:
+        bit = ATIM_CR2_OIS1N;
+        break;
+    case 2U:
+        bit = ATIM_CR2_OIS2N;
+        break;
+    case 3U:
+        bit = ATIM_CR2_OIS3N;
+        break;
+    default:
+        return;
+    }
+    idle_high ? SET_BIT(tim->CR2, bit) : CLEAR_BIT(tim->CR2, bit);
 }
 
 /**
@@ -260,7 +261,7 @@ static inline void ll_atim_set_output_idle_state_n(ATIM_TypeDef *tim, uint32_t c
  */
 static inline void ll_atim_ti1_selection_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR2, ATIM_CR2_TI1S);
+    SET_BIT(tim->CR2, ATIM_CR2_TI1S);
 }
 
 /**
@@ -269,7 +270,7 @@ static inline void ll_atim_ti1_selection_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_ti1_selection_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR2, ATIM_CR2_TI1S);
+    CLEAR_BIT(tim->CR2, ATIM_CR2_TI1S);
 }
 
 /**
@@ -279,22 +280,22 @@ static inline void ll_atim_ti1_selection_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_master_mode_selection(ATIM_TypeDef *tim, uint32_t mms)
 {
-	MODIFY_REG(tim->CR2, ATIM_CR2_MMS,
-		   MAKE_REG_VAL(mms, ATIM_CR2_MMS_Msk, ATIM_CR2_MMS_Pos));
+    MODIFY_REG(tim->CR2, ATIM_CR2_MMS,
+               MAKE_REG_VAL(mms, ATIM_CR2_MMS_Msk, ATIM_CR2_MMS_Pos));
 }
 
 static inline void ll_atim_set_capture_compare_dma_selection(ATIM_TypeDef *tim,
-								     uint32_t selection)
+        uint32_t selection)
 {
-	MODIFY_REG(tim->CR2, ATIM_CR2_CCDS,
-		   MAKE_REG_VAL(selection, ATIM_CR2_CCDS_Msk, ATIM_CR2_CCDS_Pos));
+    MODIFY_REG(tim->CR2, ATIM_CR2_CCDS,
+               MAKE_REG_VAL(selection, ATIM_CR2_CCDS_Msk, ATIM_CR2_CCDS_Pos));
 }
 
 static inline void ll_atim_set_capture_compare_control_update_selection(ATIM_TypeDef *tim,
-									 uint32_t selection)
+        uint32_t selection)
 {
-	MODIFY_REG(tim->CR2, ATIM_CR2_CCUS,
-		   MAKE_REG_VAL(selection, ATIM_CR2_CCUS_Msk, ATIM_CR2_CCUS_Pos));
+    MODIFY_REG(tim->CR2, ATIM_CR2_CCUS,
+               MAKE_REG_VAL(selection, ATIM_CR2_CCUS_Msk, ATIM_CR2_CCUS_Pos));
 }
 
 /**
@@ -303,7 +304,7 @@ static inline void ll_atim_set_capture_compare_control_update_selection(ATIM_Typ
  */
 static inline void ll_atim_ccpc_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CR2, ATIM_CR2_CCPC);
+    SET_BIT(tim->CR2, ATIM_CR2_CCPC);
 }
 
 /**
@@ -312,7 +313,7 @@ static inline void ll_atim_ccpc_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_ccpc_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR2, ATIM_CR2_CCPC);
+    CLEAR_BIT(tim->CR2, ATIM_CR2_CCPC);
 }
 
 /**
@@ -322,8 +323,8 @@ static inline void ll_atim_ccpc_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_slave_mode(ATIM_TypeDef *tim, uint32_t sms)
 {
-	MODIFY_REG(tim->SMCR, ATIM_SMCR_SMS,
-		   MAKE_REG_VAL(sms, ATIM_SMCR_SMS_Msk, ATIM_SMCR_SMS_Pos));
+    MODIFY_REG(tim->SMCR, ATIM_SMCR_SMS,
+               MAKE_REG_VAL(sms, ATIM_SMCR_SMS_Msk, ATIM_SMCR_SMS_Pos));
 }
 
 /**
@@ -333,8 +334,8 @@ static inline void ll_atim_set_slave_mode(ATIM_TypeDef *tim, uint32_t sms)
  */
 static inline void ll_atim_set_external_trigger_polarity(ATIM_TypeDef *tim, uint32_t etp)
 {
-	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETP,
-		   MAKE_REG_VAL(etp, ATIM_SMCR_ETP_Msk, ATIM_SMCR_ETP_Pos));
+    MODIFY_REG(tim->SMCR, ATIM_SMCR_ETP,
+               MAKE_REG_VAL(etp, ATIM_SMCR_ETP_Msk, ATIM_SMCR_ETP_Pos));
 }
 
 /**
@@ -343,7 +344,7 @@ static inline void ll_atim_set_external_trigger_polarity(ATIM_TypeDef *tim, uint
  */
 static inline void ll_atim_external_clock_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, ATIM_SMCR_ECE);
+    SET_BIT(tim->SMCR, ATIM_SMCR_ECE);
 }
 
 /**
@@ -352,7 +353,7 @@ static inline void ll_atim_external_clock_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_external_clock_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, ATIM_SMCR_ECE);
+    CLEAR_BIT(tim->SMCR, ATIM_SMCR_ECE);
 }
 
 /**
@@ -362,8 +363,8 @@ static inline void ll_atim_external_clock_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_external_trigger_prescaler(ATIM_TypeDef *tim, uint32_t etps)
 {
-	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETPS,
-		   MAKE_REG_VAL(etps, ATIM_SMCR_ETPS_Msk, ATIM_SMCR_ETPS_Pos));
+    MODIFY_REG(tim->SMCR, ATIM_SMCR_ETPS,
+               MAKE_REG_VAL(etps, ATIM_SMCR_ETPS_Msk, ATIM_SMCR_ETPS_Pos));
 }
 
 /**
@@ -373,8 +374,8 @@ static inline void ll_atim_set_external_trigger_prescaler(ATIM_TypeDef *tim, uin
  */
 static inline void ll_atim_set_external_trigger_filter(ATIM_TypeDef *tim, uint32_t etf)
 {
-	MODIFY_REG(tim->SMCR, ATIM_SMCR_ETF,
-		   MAKE_REG_VAL(etf, ATIM_SMCR_ETF_Msk, ATIM_SMCR_ETF_Pos));
+    MODIFY_REG(tim->SMCR, ATIM_SMCR_ETF,
+               MAKE_REG_VAL(etf, ATIM_SMCR_ETF_Msk, ATIM_SMCR_ETF_Pos));
 }
 
 /**
@@ -383,7 +384,7 @@ static inline void ll_atim_set_external_trigger_filter(ATIM_TypeDef *tim, uint32
  */
 static inline void ll_atim_master_slave_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, ATIM_SMCR_MSM);
+    SET_BIT(tim->SMCR, ATIM_SMCR_MSM);
 }
 
 /**
@@ -392,7 +393,7 @@ static inline void ll_atim_master_slave_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_master_slave_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, ATIM_SMCR_MSM);
+    CLEAR_BIT(tim->SMCR, ATIM_SMCR_MSM);
 }
 
 /**
@@ -402,160 +403,164 @@ static inline void ll_atim_master_slave_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_trigger_selection(ATIM_TypeDef *tim, uint32_t ts)
 {
-	MODIFY_REG(tim->SMCR, ATIM_SMCR_TS,
-		   MAKE_REG_VAL(ts, ATIM_SMCR_TS_Msk, ATIM_SMCR_TS_Pos));
+    MODIFY_REG(tim->SMCR, ATIM_SMCR_TS,
+               MAKE_REG_VAL(ts, ATIM_SMCR_TS_Msk, ATIM_SMCR_TS_Pos));
 }
 
 static inline void ll_atim_enable_channel_interrupt(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC1IE);
-		break;
-	case 2U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC2IE);
-		break;
-	case 3U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC3IE);
-		break;
-	case 4U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC4IE);
-		break;
-	case 5U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC5IE);
-		break;
-	case 6U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC6IE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC1IE);
+        break;
+    case 2U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC2IE);
+        break;
+    case 3U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC3IE);
+        break;
+    case 4U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC4IE);
+        break;
+    case 5U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC5IE);
+        break;
+    case 6U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC6IE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_disable_channel_interrupt(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC1IE);
-		break;
-	case 2U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC2IE);
-		break;
-	case 3U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC3IE);
-		break;
-	case 4U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC4IE);
-		break;
-	case 5U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC5IE);
-		break;
-	case 6U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC6IE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC1IE);
+        break;
+    case 2U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC2IE);
+        break;
+    case 3U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC3IE);
+        break;
+    case 4U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC4IE);
+        break;
+    case 5U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC5IE);
+        break;
+    case 6U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC6IE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_enable_trigger_dma(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_TDE);
+    SET_BIT(tim->DIER, ATIM_DIER_TDE);
 }
 
 static inline void ll_atim_disable_trigger_dma(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_TDE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_TDE);
 }
 
 static inline void ll_atim_enable_commutation_dma(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_COMDE);
+    SET_BIT(tim->DIER, ATIM_DIER_COMDE);
 }
 
 static inline void ll_atim_disable_commutation_dma(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_COMDE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_COMDE);
 }
 
 static inline void ll_atim_enable_channel_dma(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC1DE);
-		break;
-	case 2U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC2DE);
-		break;
-	case 3U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC3DE);
-		break;
-	case 4U:
-		SET_BIT(tim->DIER, ATIM_DIER_CC4DE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC1DE);
+        break;
+    case 2U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC2DE);
+        break;
+    case 3U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC3DE);
+        break;
+    case 4U:
+        SET_BIT(tim->DIER, ATIM_DIER_CC4DE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_disable_channel_dma(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC1DE);
-		break;
-	case 2U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC2DE);
-		break;
-	case 3U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC3DE);
-		break;
-	case 4U:
-		CLEAR_BIT(tim->DIER, ATIM_DIER_CC4DE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC1DE);
+        break;
+    case 2U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC2DE);
+        break;
+    case 3U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC3DE);
+        break;
+    case 4U:
+        CLEAR_BIT(tim->DIER, ATIM_DIER_CC4DE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_enable_update_dma(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_UDE);
+    SET_BIT(tim->DIER, ATIM_DIER_UDE);
 }
 
 static inline void ll_atim_disable_update_dma(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_UDE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_UDE);
 }
 
 static inline void ll_atim_enable_break_interrupt(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_BIE);
+    SET_BIT(tim->DIER, ATIM_DIER_BIE);
 }
 
 static inline void ll_atim_disable_break_interrupt(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_BIE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_BIE);
 }
 
 static inline void ll_atim_enable_trigger_interrupt(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_TIE);
+    SET_BIT(tim->DIER, ATIM_DIER_TIE);
 }
 
 static inline void ll_atim_disable_trigger_interrupt(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_TIE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_TIE);
 }
 
 static inline void ll_atim_enable_commutation_interrupt(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_COMIE);
+    SET_BIT(tim->DIER, ATIM_DIER_COMIE);
 }
 
 static inline void ll_atim_disable_commutation_interrupt(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_COMIE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_COMIE);
 }
 
 /*==============================================================================
@@ -564,199 +569,204 @@ static inline void ll_atim_disable_commutation_interrupt(ATIM_TypeDef *tim)
 
 static inline void ll_atim_enable_update_interrupt(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, ATIM_DIER_UIE);
+    SET_BIT(tim->DIER, ATIM_DIER_UIE);
 }
 
 static inline void ll_atim_disable_update_interrupt(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, ATIM_DIER_UIE);
+    CLEAR_BIT(tim->DIER, ATIM_DIER_UIE);
 }
 
 static inline uint32_t ll_atim_get_channel_flag(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		return READ_BIT(tim->SR, ATIM_SR_CC1IF) ? 1UL : 0UL;
-	case 2U:
-		return READ_BIT(tim->SR, ATIM_SR_CC2IF) ? 1UL : 0UL;
-	case 3U:
-		return READ_BIT(tim->SR, ATIM_SR_CC3IF) ? 1UL : 0UL;
-	case 4U:
-		return READ_BIT(tim->SR, ATIM_SR_CC4IF) ? 1UL : 0UL;
-	case 5U:
-		return READ_BIT(tim->SR, ATIM_SR_CC5IF) ? 1UL : 0UL;
-	case 6U:
-		return READ_BIT(tim->SR, ATIM_SR_CC6IF) ? 1UL : 0UL;
-	default:
-		return 0UL;
-	}
+    switch (ch)
+    {
+    case 1U:
+        return READ_BIT(tim->SR, ATIM_SR_CC1IF) ? 1UL : 0UL;
+    case 2U:
+        return READ_BIT(tim->SR, ATIM_SR_CC2IF) ? 1UL : 0UL;
+    case 3U:
+        return READ_BIT(tim->SR, ATIM_SR_CC3IF) ? 1UL : 0UL;
+    case 4U:
+        return READ_BIT(tim->SR, ATIM_SR_CC4IF) ? 1UL : 0UL;
+    case 5U:
+        return READ_BIT(tim->SR, ATIM_SR_CC5IF) ? 1UL : 0UL;
+    case 6U:
+        return READ_BIT(tim->SR, ATIM_SR_CC6IF) ? 1UL : 0UL;
+    default:
+        return 0UL;
+    }
 }
 
 static inline void ll_atim_clear_channel_flag(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC1IF);
-		break;
-	case 2U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC2IF);
-		break;
-	case 3U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC3IF);
-		break;
-	case 4U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC4IF);
-		break;
-	case 5U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC5IF);
-		break;
-	case 6U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC6IF);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC1IF);
+        break;
+    case 2U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC2IF);
+        break;
+    case 3U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC3IF);
+        break;
+    case 4U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC4IF);
+        break;
+    case 5U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC5IF);
+        break;
+    case 6U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC6IF);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline uint32_t ll_atim_get_system_break_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_SBIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_SBIF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_system_break_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_SBIF);
+    WRITE_REG(tim->SR, ~ATIM_SR_SBIF);
 }
 
 static inline uint32_t ll_atim_get_overcapture_flag(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		return READ_BIT(tim->SR, ATIM_SR_CC1OF) ? 1UL : 0UL;
-	case 2U:
-		return READ_BIT(tim->SR, ATIM_SR_CC2OF) ? 1UL : 0UL;
-	case 3U:
-		return READ_BIT(tim->SR, ATIM_SR_CC3OF) ? 1UL : 0UL;
-	case 4U:
-		return READ_BIT(tim->SR, ATIM_SR_CC4OF) ? 1UL : 0UL;
-	default:
-		return 0UL;
-	}
+    switch (ch)
+    {
+    case 1U:
+        return READ_BIT(tim->SR, ATIM_SR_CC1OF) ? 1UL : 0UL;
+    case 2U:
+        return READ_BIT(tim->SR, ATIM_SR_CC2OF) ? 1UL : 0UL;
+    case 3U:
+        return READ_BIT(tim->SR, ATIM_SR_CC3OF) ? 1UL : 0UL;
+    case 4U:
+        return READ_BIT(tim->SR, ATIM_SR_CC4OF) ? 1UL : 0UL;
+    default:
+        return 0UL;
+    }
 }
 
 static inline void ll_atim_clear_overcapture_flag(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC1OF);
-		break;
-	case 2U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC2OF);
-		break;
-	case 3U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC3OF);
-		break;
-	case 4U:
-		WRITE_REG(tim->SR, ~ATIM_SR_CC4OF);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC1OF);
+        break;
+    case 2U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC2OF);
+        break;
+    case 3U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC3OF);
+        break;
+    case 4U:
+        WRITE_REG(tim->SR, ~ATIM_SR_CC4OF);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline uint32_t ll_atim_get_break2_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_B2IF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_B2IF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_break2_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_B2IF);
+    WRITE_REG(tim->SR, ~ATIM_SR_B2IF);
 }
 
 static inline uint32_t ll_atim_get_break_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_BIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_BIF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_break_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_BIF);
+    WRITE_REG(tim->SR, ~ATIM_SR_BIF);
 }
 
 static inline uint32_t ll_atim_get_trigger_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_TIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_TIF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_trigger_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_TIF);
+    WRITE_REG(tim->SR, ~ATIM_SR_TIF);
 }
 
 static inline uint32_t ll_atim_get_commutation_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_COMIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_COMIF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_commutation_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_COMIF);
+    WRITE_REG(tim->SR, ~ATIM_SR_COMIF);
 }
 
 static inline uint32_t ll_atim_get_update_flag(ATIM_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, ATIM_SR_UIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, ATIM_SR_UIF) ? 1UL : 0UL;
 }
 
 static inline void ll_atim_clear_update_flag(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~ATIM_SR_UIF);
+    WRITE_REG(tim->SR, ~ATIM_SR_UIF);
 }
 
 static inline void ll_atim_generate_break2_event(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, ATIM_EGR_B2G);
+    WRITE_REG(tim->EGR, ATIM_EGR_B2G);
 }
 
 static inline void ll_atim_generate_break_event(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, ATIM_EGR_BG);
+    WRITE_REG(tim->EGR, ATIM_EGR_BG);
 }
 
 static inline void ll_atim_generate_trigger_event(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, ATIM_EGR_TG);
+    WRITE_REG(tim->EGR, ATIM_EGR_TG);
 }
 
 static inline void ll_atim_generate_commutation_event(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, ATIM_EGR_COMG);
+    WRITE_REG(tim->EGR, ATIM_EGR_COMG);
 }
 
 static inline void ll_atim_generate_channel_event(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1U:
-		WRITE_REG(tim->EGR, ATIM_EGR_CC1G);
-		break;
-	case 2U:
-		WRITE_REG(tim->EGR, ATIM_EGR_CC2G);
-		break;
-	case 3U:
-		WRITE_REG(tim->EGR, ATIM_EGR_CC3G);
-		break;
-	case 4U:
-		WRITE_REG(tim->EGR, ATIM_EGR_CC4G);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        WRITE_REG(tim->EGR, ATIM_EGR_CC1G);
+        break;
+    case 2U:
+        WRITE_REG(tim->EGR, ATIM_EGR_CC2G);
+        break;
+    case 3U:
+        WRITE_REG(tim->EGR, ATIM_EGR_CC3G);
+        break;
+    case 4U:
+        WRITE_REG(tim->EGR, ATIM_EGR_CC4G);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_generate_update(ATIM_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, ATIM_EGR_UG);
+    WRITE_REG(tim->EGR, ATIM_EGR_UG);
 }
 
 /**
@@ -768,26 +778,27 @@ static inline void ll_atim_generate_update(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_channel_oc_mode(ATIM_TypeDef *tim, uint32_t ch, uint32_t mode)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1M,
-			   MAKE_REG_VAL(mode, ATIM_CCMR1_OC1M_Msk, ATIM_CCMR1_OC1M_Pos));
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2M,
-			   MAKE_REG_VAL(mode, ATIM_CCMR1_OC2M_Msk, ATIM_CCMR1_OC2M_Pos));
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3M,
-			   MAKE_REG_VAL(mode, ATIM_CCMR2_OC3M_Msk, ATIM_CCMR2_OC3M_Pos));
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4M,
-			   MAKE_REG_VAL(mode, ATIM_CCMR2_OC4M_Msk, ATIM_CCMR2_OC4M_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1M,
+                   MAKE_REG_VAL(mode, ATIM_CCMR1_OC1M_Msk, ATIM_CCMR1_OC1M_Pos));
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2M,
+                   MAKE_REG_VAL(mode, ATIM_CCMR1_OC2M_Msk, ATIM_CCMR1_OC2M_Pos));
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3M,
+                   MAKE_REG_VAL(mode, ATIM_CCMR2_OC3M_Msk, ATIM_CCMR2_OC3M_Pos));
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4M,
+                   MAKE_REG_VAL(mode, ATIM_CCMR2_OC4M_Msk, ATIM_CCMR2_OC4M_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -799,99 +810,103 @@ static inline void ll_atim_set_channel_oc_mode(ATIM_TypeDef *tim, uint32_t ch, u
  */
 static inline void ll_atim_set_channel_preload(ATIM_TypeDef *tim, uint32_t ch, uint32_t enable)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1PE, enable ? ATIM_CCMR1_OC1PE : 0UL);
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2PE, enable ? ATIM_CCMR1_OC2PE : 0UL);
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3PE, enable ? ATIM_CCMR2_OC3PE : 0UL);
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4PE, enable ? ATIM_CCMR2_OC4PE : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1PE, enable ? ATIM_CCMR1_OC1PE : 0UL);
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2PE, enable ? ATIM_CCMR1_OC2PE : 0UL);
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3PE, enable ? ATIM_CCMR2_OC3PE : 0UL);
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4PE, enable ? ATIM_CCMR2_OC4PE : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_set_channel_clear(ATIM_TypeDef *tim, uint32_t ch, uint32_t enable)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1CE, enable ? ATIM_CCMR1_OC1CE : 0UL);
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2CE, enable ? ATIM_CCMR1_OC2CE : 0UL);
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3CE, enable ? ATIM_CCMR2_OC3CE : 0UL);
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4CE, enable ? ATIM_CCMR2_OC4CE : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC1CE, enable ? ATIM_CCMR1_OC1CE : 0UL);
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_OC2CE, enable ? ATIM_CCMR1_OC2CE : 0UL);
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC3CE, enable ? ATIM_CCMR2_OC3CE : 0UL);
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_OC4CE, enable ? ATIM_CCMR2_OC4CE : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_set_input_capture_config(ATIM_TypeDef *tim, uint32_t ch,
-								     uint32_t prescaler, uint32_t filter)
+        uint32_t prescaler, uint32_t filter)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_IC1PSC | ATIM_CCMR1_IC1F,
-			   MAKE_REG_VAL(prescaler, ATIM_CCMR1_IC1PSC_Msk,
-					 ATIM_CCMR1_IC1PSC_Pos) |
-			   MAKE_REG_VAL(filter, ATIM_CCMR1_IC1F_Msk, ATIM_CCMR1_IC1F_Pos));
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_IC2PSC | ATIM_CCMR1_IC2F,
-			   MAKE_REG_VAL(prescaler, ATIM_CCMR1_IC2PSC_Msk,
-					 ATIM_CCMR1_IC2PSC_Pos) |
-			   MAKE_REG_VAL(filter, ATIM_CCMR1_IC2F_Msk, ATIM_CCMR1_IC2F_Pos));
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_IC3PSC | ATIM_CCMR2_IC3F,
-			   MAKE_REG_VAL(prescaler, ATIM_CCMR2_IC3PSC_Msk,
-					 ATIM_CCMR2_IC3PSC_Pos) |
-			   MAKE_REG_VAL(filter, ATIM_CCMR2_IC3F_Msk, ATIM_CCMR2_IC3F_Pos));
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_IC4PSC | ATIM_CCMR2_IC4F,
-			   MAKE_REG_VAL(prescaler, ATIM_CCMR2_IC4PSC_Msk,
-					 ATIM_CCMR2_IC4PSC_Pos) |
-			   MAKE_REG_VAL(filter, ATIM_CCMR2_IC4F_Msk, ATIM_CCMR2_IC4F_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_IC1PSC | ATIM_CCMR1_IC1F,
+                   MAKE_REG_VAL(prescaler, ATIM_CCMR1_IC1PSC_Msk,
+                                ATIM_CCMR1_IC1PSC_Pos) |
+                   MAKE_REG_VAL(filter, ATIM_CCMR1_IC1F_Msk, ATIM_CCMR1_IC1F_Pos));
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_IC2PSC | ATIM_CCMR1_IC2F,
+                   MAKE_REG_VAL(prescaler, ATIM_CCMR1_IC2PSC_Msk,
+                                ATIM_CCMR1_IC2PSC_Pos) |
+                   MAKE_REG_VAL(filter, ATIM_CCMR1_IC2F_Msk, ATIM_CCMR1_IC2F_Pos));
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_IC3PSC | ATIM_CCMR2_IC3F,
+                   MAKE_REG_VAL(prescaler, ATIM_CCMR2_IC3PSC_Msk,
+                                ATIM_CCMR2_IC3PSC_Pos) |
+                   MAKE_REG_VAL(filter, ATIM_CCMR2_IC3F_Msk, ATIM_CCMR2_IC3F_Pos));
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_IC4PSC | ATIM_CCMR2_IC4F,
+                   MAKE_REG_VAL(prescaler, ATIM_CCMR2_IC4PSC_Msk,
+                                ATIM_CCMR2_IC4PSC_Pos) |
+                   MAKE_REG_VAL(filter, ATIM_CCMR2_IC4F_Msk, ATIM_CCMR2_IC4F_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_set_channel_direction(ATIM_TypeDef *tim, uint32_t ch, uint32_t dir)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_CC1S,
-			   MAKE_REG_VAL(dir, ATIM_CCMR1_CC1S_Msk, ATIM_CCMR1_CC1S_Pos));
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCMR1, ATIM_CCMR1_CC2S,
-			   MAKE_REG_VAL(dir, ATIM_CCMR1_CC2S_Msk, ATIM_CCMR1_CC2S_Pos));
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_CC3S,
-			   MAKE_REG_VAL(dir, ATIM_CCMR2_CC3S_Msk, ATIM_CCMR2_CC3S_Pos));
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCMR2, ATIM_CCMR2_CC4S,
-			   MAKE_REG_VAL(dir, ATIM_CCMR2_CC4S_Msk, ATIM_CCMR2_CC4S_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_CC1S,
+                   MAKE_REG_VAL(dir, ATIM_CCMR1_CC1S_Msk, ATIM_CCMR1_CC1S_Pos));
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCMR1, ATIM_CCMR1_CC2S,
+                   MAKE_REG_VAL(dir, ATIM_CCMR1_CC2S_Msk, ATIM_CCMR1_CC2S_Pos));
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_CC3S,
+                   MAKE_REG_VAL(dir, ATIM_CCMR2_CC3S_Msk, ATIM_CCMR2_CC3S_Pos));
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCMR2, ATIM_CCMR2_CC4S,
+                   MAKE_REG_VAL(dir, ATIM_CCMR2_CC4S_Msk, ATIM_CCMR2_CC4S_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -903,28 +918,29 @@ static inline void ll_atim_set_channel_direction(ATIM_TypeDef *tim, uint32_t ch,
  */
 static inline void ll_atim_set_channel_polarity(ATIM_TypeDef *tim, uint32_t ch, uint32_t pol)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC1P, pol ? ATIM_CCER_CC1P : 0UL);
-		break;
-	case 2:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC2P, pol ? ATIM_CCER_CC2P : 0UL);
-		break;
-	case 3:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC3P, pol ? ATIM_CCER_CC3P : 0UL);
-		break;
-	case 4:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC4P, pol ? ATIM_CCER_CC4P : 0UL);
-		break;
-	case 5:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC5P, pol ? ATIM_CCER_CC5P : 0UL);
-		break;
-	case 6:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC6P, pol ? ATIM_CCER_CC6P : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC1P, pol ? ATIM_CCER_CC1P : 0UL);
+        break;
+    case 2:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC2P, pol ? ATIM_CCER_CC2P : 0UL);
+        break;
+    case 3:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC3P, pol ? ATIM_CCER_CC3P : 0UL);
+        break;
+    case 4:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC4P, pol ? ATIM_CCER_CC4P : 0UL);
+        break;
+    case 5:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC5P, pol ? ATIM_CCER_CC5P : 0UL);
+        break;
+    case 6:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC6P, pol ? ATIM_CCER_CC6P : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -935,28 +951,29 @@ static inline void ll_atim_set_channel_polarity(ATIM_TypeDef *tim, uint32_t ch, 
  */
 static inline void ll_atim_enable_channel(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		SET_BIT(tim->CCER, ATIM_CCER_CC1E);
-		break;
-	case 2:
-		SET_BIT(tim->CCER, ATIM_CCER_CC2E);
-		break;
-	case 3:
-		SET_BIT(tim->CCER, ATIM_CCER_CC3E);
-		break;
-	case 4:
-		SET_BIT(tim->CCER, ATIM_CCER_CC4E);
-		break;
-	case 5:
-		SET_BIT(tim->CCER, ATIM_CCER_CC5E);
-		break;
-	case 6:
-		SET_BIT(tim->CCER, ATIM_CCER_CC6E);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        SET_BIT(tim->CCER, ATIM_CCER_CC1E);
+        break;
+    case 2:
+        SET_BIT(tim->CCER, ATIM_CCER_CC2E);
+        break;
+    case 3:
+        SET_BIT(tim->CCER, ATIM_CCER_CC3E);
+        break;
+    case 4:
+        SET_BIT(tim->CCER, ATIM_CCER_CC4E);
+        break;
+    case 5:
+        SET_BIT(tim->CCER, ATIM_CCER_CC5E);
+        break;
+    case 6:
+        SET_BIT(tim->CCER, ATIM_CCER_CC6E);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -967,49 +984,51 @@ static inline void ll_atim_enable_channel(ATIM_TypeDef *tim, uint32_t ch)
  */
 static inline void ll_atim_disable_channel(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC1E);
-		break;
-	case 2:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC2E);
-		break;
-	case 3:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC3E);
-		break;
-	case 4:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC4E);
-		break;
-	case 5:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC5E);
-		break;
-	case 6:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC6E);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC1E);
+        break;
+    case 2:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC2E);
+        break;
+    case 3:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC3E);
+        break;
+    case 4:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC4E);
+        break;
+    case 5:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC5E);
+        break;
+    case 6:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC6E);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_atim_set_complementary_polarity(ATIM_TypeDef *tim, uint32_t ch,
-								     uint32_t pol)
+        uint32_t pol)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC1NP, pol ? ATIM_CCER_CC1NP : 0UL);
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC2NP, pol ? ATIM_CCER_CC2NP : 0UL);
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC3NP, pol ? ATIM_CCER_CC3NP : 0UL);
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCER, ATIM_CCER_CC4NP, pol ? ATIM_CCER_CC4NP : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC1NP, pol ? ATIM_CCER_CC1NP : 0UL);
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC2NP, pol ? ATIM_CCER_CC2NP : 0UL);
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC3NP, pol ? ATIM_CCER_CC3NP : 0UL);
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCER, ATIM_CCER_CC4NP, pol ? ATIM_CCER_CC4NP : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -1020,19 +1039,20 @@ static inline void ll_atim_set_complementary_polarity(ATIM_TypeDef *tim, uint32_
  */
 static inline void ll_atim_enable_complementary(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		SET_BIT(tim->CCER, ATIM_CCER_CC1NE);
-		break;
-	case 2:
-		SET_BIT(tim->CCER, ATIM_CCER_CC2NE);
-		break;
-	case 3:
-		SET_BIT(tim->CCER, ATIM_CCER_CC3NE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        SET_BIT(tim->CCER, ATIM_CCER_CC1NE);
+        break;
+    case 2:
+        SET_BIT(tim->CCER, ATIM_CCER_CC2NE);
+        break;
+    case 3:
+        SET_BIT(tim->CCER, ATIM_CCER_CC3NE);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -1043,19 +1063,20 @@ static inline void ll_atim_enable_complementary(ATIM_TypeDef *tim, uint32_t ch)
  */
 static inline void ll_atim_disable_complementary(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC1NE);
-		break;
-	case 2:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC2NE);
-		break;
-	case 3:
-		CLEAR_BIT(tim->CCER, ATIM_CCER_CC3NE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC1NE);
+        break;
+    case 2:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC2NE);
+        break;
+    case 3:
+        CLEAR_BIT(tim->CCER, ATIM_CCER_CC3NE);
+        break;
+    default:
+        break;
+    }
 }
 
 /*==============================================================================
@@ -1064,12 +1085,12 @@ static inline void ll_atim_disable_complementary(ATIM_TypeDef *tim, uint32_t ch)
 
 static inline void ll_atim_set_counter(ATIM_TypeDef *tim, uint32_t cnt)
 {
-	WRITE_REG(tim->CNT, cnt);
+    WRITE_REG(tim->CNT, cnt);
 }
 
 static inline uint32_t ll_atim_get_counter(ATIM_TypeDef *tim)
 {
-	return READ_REG(tim->CNT);
+    return READ_REG(tim->CNT);
 }
 
 /*==============================================================================
@@ -1078,28 +1099,28 @@ static inline uint32_t ll_atim_get_counter(ATIM_TypeDef *tim)
 
 static inline void ll_atim_set_prescaler(ATIM_TypeDef *tim, uint16_t psc)
 {
-	WRITE_REG(tim->PSC, psc);
+    WRITE_REG(tim->PSC, psc);
 }
 
 static inline uint16_t ll_atim_get_prescaler(ATIM_TypeDef *tim)
 {
-	return (uint16_t)READ_REG(tim->PSC);
+    return (uint16_t)READ_REG(tim->PSC);
 }
 
 static inline void ll_atim_set_auto_reload(ATIM_TypeDef *tim, uint32_t arr)
 {
-	WRITE_REG(tim->ARR, arr);
+    WRITE_REG(tim->ARR, arr);
 }
 
 static inline uint32_t ll_atim_get_auto_reload(ATIM_TypeDef *tim)
 {
-	return READ_REG(tim->ARR);
+    return READ_REG(tim->ARR);
 }
 
 static inline void ll_atim_set_repetition(ATIM_TypeDef *tim, uint16_t rep)
 {
-	MODIFY_REG(tim->RCR, LL_ATIM_RCR_REP_Msk,
-		   MAKE_REG_VAL(rep, LL_ATIM_RCR_REP_Msk, ATIM_RCR_REP_Pos));
+    MODIFY_REG(tim->RCR, LL_ATIM_RCR_REP_Msk,
+               MAKE_REG_VAL(rep, LL_ATIM_RCR_REP_Msk, ATIM_RCR_REP_Pos));
 }
 
 /*==============================================================================
@@ -1115,28 +1136,29 @@ static inline void ll_atim_set_repetition(ATIM_TypeDef *tim, uint16_t rep)
  */
 static inline void ll_atim_set_compare(ATIM_TypeDef *tim, uint32_t ch, uint32_t val)
 {
-	switch (ch) {
-	case 1:
-		WRITE_REG(tim->CCR1, val);
-		break;
-	case 2:
-		WRITE_REG(tim->CCR2, val);
-		break;
-	case 3:
-		WRITE_REG(tim->CCR3, val);
-		break;
-	case 4:
-		WRITE_REG(tim->CCR4, val);
-		break;
-	case 5:
-		WRITE_REG(tim->CCR5, val);
-		break;
-	case 6:
-		WRITE_REG(tim->CCR6, val);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        WRITE_REG(tim->CCR1, val);
+        break;
+    case 2:
+        WRITE_REG(tim->CCR2, val);
+        break;
+    case 3:
+        WRITE_REG(tim->CCR3, val);
+        break;
+    case 4:
+        WRITE_REG(tim->CCR4, val);
+        break;
+    case 5:
+        WRITE_REG(tim->CCR5, val);
+        break;
+    case 6:
+        WRITE_REG(tim->CCR6, val);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -1147,100 +1169,101 @@ static inline void ll_atim_set_compare(ATIM_TypeDef *tim, uint32_t ch, uint32_t 
  */
 static inline uint32_t ll_atim_get_capture(ATIM_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		return READ_REG(tim->CCR1);
-	case 2:
-		return READ_REG(tim->CCR2);
-	case 3:
-		return READ_REG(tim->CCR3);
-	case 4:
-		return READ_REG(tim->CCR4);
-	default:
-		return 0U;
-	}
+    switch (ch)
+    {
+    case 1:
+        return READ_REG(tim->CCR1);
+    case 2:
+        return READ_REG(tim->CCR2);
+    case 3:
+        return READ_REG(tim->CCR3);
+    case 4:
+        return READ_REG(tim->CCR4);
+    default:
+        return 0U;
+    }
 }
 
 static inline void ll_atim_set_off_state_run(ATIM_TypeDef *tim, uint32_t enable)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_OSSR, enable ? ATIM_BDTR_OSSR : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_OSSR, enable ? ATIM_BDTR_OSSR : 0UL);
 }
 
 static inline void ll_atim_set_off_state_idle(ATIM_TypeDef *tim, uint32_t enable)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_OSSI, enable ? ATIM_BDTR_OSSI : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_OSSI, enable ? ATIM_BDTR_OSSI : 0UL);
 }
 
 static inline void ll_atim_set_break2_bidirectional(ATIM_TypeDef *tim, uint32_t enable)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2BID, enable ? ATIM_BDTR_BK2BID : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2BID, enable ? ATIM_BDTR_BK2BID : 0UL);
 }
 
 static inline void ll_atim_set_break_bidirectional(ATIM_TypeDef *tim, uint32_t enable)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BKBID, enable ? ATIM_BDTR_BKBID : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BKBID, enable ? ATIM_BDTR_BKBID : 0UL);
 }
 
 static inline void ll_atim_set_break2_disarm(ATIM_TypeDef *tim, uint32_t disarm)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2DSRM, disarm ? ATIM_BDTR_BK2DSRM : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2DSRM, disarm ? ATIM_BDTR_BK2DSRM : 0UL);
 }
 
 static inline void ll_atim_set_break_disarm(ATIM_TypeDef *tim, uint32_t disarm)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BKDSRM, disarm ? ATIM_BDTR_BKDSRM : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BKDSRM, disarm ? ATIM_BDTR_BKDSRM : 0UL);
 }
 
 static inline void ll_atim_set_break2_polarity(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2P, pol ? ATIM_BDTR_BK2P : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2P, pol ? ATIM_BDTR_BK2P : 0UL);
 }
 
 static inline void ll_atim_enable_break2(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->BDTR, ATIM_BDTR_BK2E);
+    SET_BIT(tim->BDTR, ATIM_BDTR_BK2E);
 }
 
 static inline void ll_atim_disable_break2(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->BDTR, ATIM_BDTR_BK2E);
+    CLEAR_BIT(tim->BDTR, ATIM_BDTR_BK2E);
 }
 
 static inline void ll_atim_set_break2_filter(ATIM_TypeDef *tim, uint32_t filter)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2F,
-		   MAKE_REG_VAL(filter, ATIM_BDTR_BK2F_Msk, ATIM_BDTR_BK2F_Pos));
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BK2F,
+               MAKE_REG_VAL(filter, ATIM_BDTR_BK2F_Msk, ATIM_BDTR_BK2F_Pos));
 }
 
 static inline void ll_atim_set_break_filter(ATIM_TypeDef *tim, uint32_t filter)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BKF,
-		   MAKE_REG_VAL(filter, ATIM_BDTR_BKF_Msk, ATIM_BDTR_BKF_Pos));
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BKF,
+               MAKE_REG_VAL(filter, ATIM_BDTR_BKF_Msk, ATIM_BDTR_BKF_Pos));
 }
 
 static inline void ll_atim_enable_main_output(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->BDTR, ATIM_BDTR_MOE);
+    SET_BIT(tim->BDTR, ATIM_BDTR_MOE);
 }
 
 static inline void ll_atim_disable_main_output(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->BDTR, ATIM_BDTR_MOE);
+    CLEAR_BIT(tim->BDTR, ATIM_BDTR_MOE);
 }
 
 static inline void ll_atim_enable_automatic_output(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->BDTR, ATIM_BDTR_AOE);
+    SET_BIT(tim->BDTR, ATIM_BDTR_AOE);
 }
 
 static inline void ll_atim_disable_automatic_output(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->BDTR, ATIM_BDTR_AOE);
+    CLEAR_BIT(tim->BDTR, ATIM_BDTR_AOE);
 }
 
 static inline void ll_atim_set_break_polarity(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_BKP, pol ? ATIM_BDTR_BKP : 0UL);
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_BKP, pol ? ATIM_BDTR_BKP : 0UL);
 }
 
 /*==============================================================================
@@ -1249,22 +1272,22 @@ static inline void ll_atim_set_break_polarity(ATIM_TypeDef *tim, uint32_t pol)
 
 static inline void ll_atim_enable_break(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->BDTR, ATIM_BDTR_BKE);
+    SET_BIT(tim->BDTR, ATIM_BDTR_BKE);
 }
 
 static inline void ll_atim_disable_break(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->BDTR, ATIM_BDTR_BKE);
+    CLEAR_BIT(tim->BDTR, ATIM_BDTR_BKE);
 }
 
 static inline void ll_atim_enable_dead_time_prescaler(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->BDTR, ATIM_BDTR_DTPSC);
+    SET_BIT(tim->BDTR, ATIM_BDTR_DTPSC);
 }
 
 static inline void ll_atim_disable_dead_time_prescaler(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->BDTR, ATIM_BDTR_DTPSC);
+    CLEAR_BIT(tim->BDTR, ATIM_BDTR_DTPSC);
 }
 
 /*==============================================================================
@@ -1280,8 +1303,8 @@ static inline void ll_atim_disable_dead_time_prescaler(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_dead_time(ATIM_TypeDef *tim, uint16_t dtg)
 {
-	MODIFY_REG(tim->BDTR, ATIM_BDTR_DTG,
-		   MAKE_REG_VAL(dtg, ATIM_BDTR_DTG_Msk, ATIM_BDTR_DTG_Pos));
+    MODIFY_REG(tim->BDTR, ATIM_BDTR_DTG,
+               MAKE_REG_VAL(dtg, ATIM_BDTR_DTG_Msk, ATIM_BDTR_DTG_Pos));
 }
 
 /**
@@ -1291,8 +1314,8 @@ static inline void ll_atim_set_dead_time(ATIM_TypeDef *tim, uint16_t dtg)
  */
 static inline void ll_atim_oc6_set_mode(ATIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC6M,
-		   MAKE_REG_VAL(mode, ATIM_CCMR3_OC6M_Msk, ATIM_CCMR3_OC6M_Pos));
+    MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC6M,
+               MAKE_REG_VAL(mode, ATIM_CCMR3_OC6M_Msk, ATIM_CCMR3_OC6M_Pos));
 }
 
 /**
@@ -1301,7 +1324,7 @@ static inline void ll_atim_oc6_set_mode(ATIM_TypeDef *tim, uint32_t mode)
  */
 static inline void ll_atim_oc6_preload_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
+    SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
 }
 
 /**
@@ -1310,7 +1333,7 @@ static inline void ll_atim_oc6_preload_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc6_preload_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
+    CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6PE);
 }
 
 /**
@@ -1319,7 +1342,7 @@ static inline void ll_atim_oc6_preload_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc6_clear_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
+    SET_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
 }
 
 /**
@@ -1328,7 +1351,7 @@ static inline void ll_atim_oc6_clear_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc6_clear_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
+    CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC6CE);
 }
 
 /**
@@ -1338,8 +1361,8 @@ static inline void ll_atim_oc6_clear_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc5_set_mode(ATIM_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC5M,
-		   MAKE_REG_VAL(mode, ATIM_CCMR3_OC5M_Msk, ATIM_CCMR3_OC5M_Pos));
+    MODIFY_REG(tim->CCMR3, ATIM_CCMR3_OC5M,
+               MAKE_REG_VAL(mode, ATIM_CCMR3_OC5M_Msk, ATIM_CCMR3_OC5M_Pos));
 }
 
 /**
@@ -1348,7 +1371,7 @@ static inline void ll_atim_oc5_set_mode(ATIM_TypeDef *tim, uint32_t mode)
  */
 static inline void ll_atim_oc5_preload_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
+    SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
 }
 
 /**
@@ -1357,7 +1380,7 @@ static inline void ll_atim_oc5_preload_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc5_preload_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
+    CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5PE);
 }
 
 /**
@@ -1366,7 +1389,7 @@ static inline void ll_atim_oc5_preload_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc5_clear_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
+    SET_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
 }
 
 /**
@@ -1375,7 +1398,7 @@ static inline void ll_atim_oc5_clear_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_oc5_clear_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
+    CLEAR_BIT(tim->CCMR3, ATIM_CCMR3_OC5CE);
 }
 
 /**
@@ -1385,10 +1408,9 @@ static inline void ll_atim_oc5_clear_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_set_group_ch5(ATIM_TypeDef *tim, uint32_t grp)
 {
-	MODIFY_REG(tim->CCMR3, ATIM_CCMR3_GC5C1 | ATIM_CCMR3_GC5C2 | ATIM_CCMR3_GC5C3,
-		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C1_Msk, ATIM_CCMR3_GC5C1_Pos) |
-		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C2_Msk, ATIM_CCMR3_GC5C2_Pos) |
-		   MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C3_Msk, ATIM_CCMR3_GC5C3_Pos));
+    MODIFY_REG(tim->CCMR3, ATIM_CCMR3_GC5C1 | ATIM_CCMR3_GC5C2 | ATIM_CCMR3_GC5C3,
+               MAKE_REG_VAL(grp, ATIM_CCMR3_GC5C1 | ATIM_CCMR3_GC5C2 | ATIM_CCMR3_GC5C3,
+                            ATIM_CCMR3_GC5C1_Pos));
 }
 
 /**
@@ -1400,62 +1422,62 @@ static inline void ll_atim_set_group_ch5(ATIM_TypeDef *tim, uint32_t grp)
  */
 static inline void ll_atim_set_lock_level(ATIM_TypeDef *tim, uint32_t level)
 {
-	MODIFY_REG(tim->AF1, ATIM_AF1_LOCK,
-		   MAKE_REG_VAL(level, ATIM_AF1_LOCK_Msk, ATIM_AF1_LOCK_Pos));
+    MODIFY_REG(tim->AF1, ATIM_AF1_LOCK,
+               MAKE_REG_VAL(level, ATIM_AF1_LOCK_Msk, ATIM_AF1_LOCK_Pos));
 }
 
 static inline void ll_atim_set_external_trigger_source(ATIM_TypeDef *tim, uint32_t source)
 {
-	MODIFY_REG(tim->AF1, ATIM_AF1_ETRSEL,
-		   MAKE_REG_VAL(source, ATIM_AF1_ETRSEL_Msk, ATIM_AF1_ETRSEL_Pos));
+    MODIFY_REG(tim->AF1, ATIM_AF1_ETRSEL,
+               MAKE_REG_VAL(source, ATIM_AF1_ETRSEL_Msk, ATIM_AF1_ETRSEL_Pos));
 }
 
 static inline void ll_atim_brk_cmp2_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF1, ATIM_AF1_BKCMP2P,
-		   MAKE_REG_VAL(pol, ATIM_AF1_BKCMP2P_Msk, ATIM_AF1_BKCMP2P_Pos));
+    MODIFY_REG(tim->AF1, ATIM_AF1_BKCMP2P,
+               MAKE_REG_VAL(pol, ATIM_AF1_BKCMP2P_Msk, ATIM_AF1_BKCMP2P_Pos));
 }
 
 static inline void ll_atim_brk_cmp1_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF1, ATIM_AF1_BKCMP1P,
-		   MAKE_REG_VAL(pol, ATIM_AF1_BKCMP1P_Msk, ATIM_AF1_BKCMP1P_Pos));
+    MODIFY_REG(tim->AF1, ATIM_AF1_BKCMP1P,
+               MAKE_REG_VAL(pol, ATIM_AF1_BKCMP1P_Msk, ATIM_AF1_BKCMP1P_Pos));
 }
 
 static inline void ll_atim_brk_input_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF1, ATIM_AF1_BKINP,
-		   MAKE_REG_VAL(pol, ATIM_AF1_BKINP_Msk, ATIM_AF1_BKINP_Pos));
+    MODIFY_REG(tim->AF1, ATIM_AF1_BKINP,
+               MAKE_REG_VAL(pol, ATIM_AF1_BKINP_Msk, ATIM_AF1_BKINP_Pos));
 }
 
 static inline void ll_atim_brk_cmp2_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF1, ATIM_AF1_BKCMP2E);
+    SET_BIT(tim->AF1, ATIM_AF1_BKCMP2E);
 }
 
 static inline void ll_atim_brk_cmp2_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF1, ATIM_AF1_BKCMP2E);
+    CLEAR_BIT(tim->AF1, ATIM_AF1_BKCMP2E);
 }
 
 static inline void ll_atim_brk_cmp1_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF1, ATIM_AF1_BKCMP1E);
+    SET_BIT(tim->AF1, ATIM_AF1_BKCMP1E);
 }
 
 static inline void ll_atim_brk_cmp1_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF1, ATIM_AF1_BKCMP1E);
+    CLEAR_BIT(tim->AF1, ATIM_AF1_BKCMP1E);
 }
 
 static inline void ll_atim_brk_input_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF1, ATIM_AF1_BKINE);
+    SET_BIT(tim->AF1, ATIM_AF1_BKINE);
 }
 
 static inline void ll_atim_brk_input_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF1, ATIM_AF1_BKINE);
+    CLEAR_BIT(tim->AF1, ATIM_AF1_BKINE);
 }
 
 /**
@@ -1465,8 +1487,8 @@ static inline void ll_atim_brk_input_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_cmp2_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP2P,
-		   MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP2P_Msk, ATIM_AF2_BK2CMP2P_Pos));
+    MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP2P,
+               MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP2P_Msk, ATIM_AF2_BK2CMP2P_Pos));
 }
 
 /**
@@ -1476,8 +1498,8 @@ static inline void ll_atim_brk2_cmp2_polarity_set(ATIM_TypeDef *tim, uint32_t po
  */
 static inline void ll_atim_brk2_cmp1_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP1P,
-		   MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP1P_Msk, ATIM_AF2_BK2CMP1P_Pos));
+    MODIFY_REG(tim->AF2, ATIM_AF2_BK2CMP1P,
+               MAKE_REG_VAL(pol, ATIM_AF2_BK2CMP1P_Msk, ATIM_AF2_BK2CMP1P_Pos));
 }
 
 /**
@@ -1487,8 +1509,8 @@ static inline void ll_atim_brk2_cmp1_polarity_set(ATIM_TypeDef *tim, uint32_t po
  */
 static inline void ll_atim_brk2_input_polarity_set(ATIM_TypeDef *tim, uint32_t pol)
 {
-	MODIFY_REG(tim->AF2, ATIM_AF2_BK2INP,
-		   MAKE_REG_VAL(pol, ATIM_AF2_BK2INP_Msk, ATIM_AF2_BK2INP_Pos));
+    MODIFY_REG(tim->AF2, ATIM_AF2_BK2INP,
+               MAKE_REG_VAL(pol, ATIM_AF2_BK2INP_Msk, ATIM_AF2_BK2INP_Pos));
 }
 
 /**
@@ -1497,7 +1519,7 @@ static inline void ll_atim_brk2_input_polarity_set(ATIM_TypeDef *tim, uint32_t p
  */
 static inline void ll_atim_brk2_cmp2_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
+    SET_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
 }
 
 /**
@@ -1506,7 +1528,7 @@ static inline void ll_atim_brk2_cmp2_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_cmp2_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
+    CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP2E);
 }
 
 /**
@@ -1515,7 +1537,7 @@ static inline void ll_atim_brk2_cmp2_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_cmp1_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
+    SET_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
 }
 
 /**
@@ -1524,7 +1546,7 @@ static inline void ll_atim_brk2_cmp1_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_cmp1_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
+    CLEAR_BIT(tim->AF2, ATIM_AF2_BK2CMP1E);
 }
 
 /**
@@ -1533,7 +1555,7 @@ static inline void ll_atim_brk2_cmp1_disable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_input_enable(ATIM_TypeDef *tim)
 {
-	SET_BIT(tim->AF2, ATIM_AF2_BK2INE);
+    SET_BIT(tim->AF2, ATIM_AF2_BK2INE);
 }
 
 /**
@@ -1542,13 +1564,13 @@ static inline void ll_atim_brk2_input_enable(ATIM_TypeDef *tim)
  */
 static inline void ll_atim_brk2_input_disable(ATIM_TypeDef *tim)
 {
-	CLEAR_BIT(tim->AF2, ATIM_AF2_BK2INE);
+    CLEAR_BIT(tim->AF2, ATIM_AF2_BK2INE);
 }
 
 static inline void ll_atim_set_debug_selection(ATIM_TypeDef *tim, uint32_t selection)
 {
-	MODIFY_REG(tim->DBGSEL, ATIM_DBGSEL_DBGSEL,
-		   MAKE_REG_VAL(selection, ATIM_DBGSEL_DBGSEL_Msk, ATIM_DBGSEL_DBGSEL_Pos));
+    MODIFY_REG(tim->DBGSEL, ATIM_DBGSEL_DBGSEL,
+               MAKE_REG_VAL(selection, ATIM_DBGSEL_DBGSEL_Msk, ATIM_DBGSEL_DBGSEL_Pos));
 }
 
 /*==============================================================================
@@ -1557,7 +1579,7 @@ static inline void ll_atim_set_debug_selection(ATIM_TypeDef *tim, uint32_t selec
 
 static inline uint32_t ll_atim_calc_update_freq(uint32_t clk_freq, uint16_t psc, uint32_t arr)
 {
-	return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
+    return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
 }
 
 /**
@@ -1568,7 +1590,7 @@ static inline uint32_t ll_atim_calc_update_freq(uint32_t clk_freq, uint16_t psc,
  */
 static inline uint32_t ll_atim_calc_pwm_duty(uint32_t arr, uint32_t permille)
 {
-	return (uint32_t)((((uint64_t)arr + 1U) * permille) / 1000U);
+    return (uint32_t)((((uint64_t)arr + 1U) * permille) / 1000U);
 }
 
 #ifdef __cplusplus

@@ -8,8 +8,7 @@
 #define __LL_AES_H
 
 #include <stdint.h>
-#include "aes_acc.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -350,12 +349,12 @@ static inline void ll_aes_config_core(AES_ACC_TypeDef *AESx,
 {
     MODIFY_REG(AESx->AES_SETTING,
                AES_ACC_AES_SETTING_AES_MODE | AES_ACC_AES_SETTING_AES_LENGTH |
-                   AES_ACC_AES_SETTING_KEY_SEL |
-                   AES_ACC_AES_SETTING_ALGO_STANDARD |
-                   AES_ACC_AES_SETTING_AES_OP_MODE |
-                   AES_ACC_AES_SETTING_AES_BYPASS,
+               AES_ACC_AES_SETTING_KEY_SEL |
+               AES_ACC_AES_SETTING_ALGO_STANDARD |
+               AES_ACC_AES_SETTING_AES_OP_MODE |
+               AES_ACC_AES_SETTING_AES_BYPASS,
                cfg->mode | cfg->key_len | cfg->key_sel | cfg->algo |
-                   cfg->op_mode | cfg->bypass);
+               cfg->op_mode | cfg->bypass);
 }
 
 /**
@@ -557,7 +556,7 @@ static inline void ll_aes_hash_set_dma_in(AES_ACC_TypeDef *AESx, uint32_t in_add
  * @param[in] iv_words Pointer to 8-word IV buffer.
  */
 static inline void ll_aes_hash_set_iv_words(AES_ACC_TypeDef *AESx,
-                                            const uint32_t iv_words[8])
+        const uint32_t iv_words[8])
 {
     volatile uint32_t *iv_reg = &AESx->HASH_IV_H0;
     uint32_t i;
@@ -587,7 +586,7 @@ static inline uint32_t ll_aes_hash_get_iv_word(AES_ACC_TypeDef *AESx, uint32_t i
  * @param[out] res_words Pointer to 8-word result buffer.
  */
 static inline void ll_aes_hash_get_result_words(AES_ACC_TypeDef *AESx,
-                                                uint32_t res_words[8])
+        uint32_t res_words[8])
 {
     volatile uint32_t *res_reg = &AESx->HASH_RESULT_H0;
     uint32_t i;
@@ -618,7 +617,7 @@ static inline uint32_t ll_aes_hash_get_result_word(AES_ACC_TypeDef *AESx, uint32
  * @param[in] len_h Length high 29 bits.
  */
 static inline void ll_aes_hash_set_length(AES_ACC_TypeDef *AESx,
-                                          uint32_t len_l, uint32_t len_h)
+        uint32_t len_l, uint32_t len_h)
 {
     WRITE_REG(AESx->HASH_LEN_L, len_l);
     MODIFY_REG(AESx->HASH_LEN_H, AES_ACC_HASH_LEN_H_DATA,
@@ -633,7 +632,7 @@ static inline void ll_aes_hash_set_length(AES_ACC_TypeDef *AESx,
  * @param[out] len_h      Result length high 29 bits.
  */
 static inline void ll_aes_hash_get_result_length(AES_ACC_TypeDef *AESx,
-                                                 uint32_t *len_l, uint32_t *len_h)
+        uint32_t *len_l, uint32_t *len_h)
 {
     *len_l = READ_REG(AESx->HASH_RESULT_LEN_L);
     *len_h = READ_REG(AESx->HASH_RESULT_LEN_H) & AES_ACC_HASH_RESULT_LEN_H_DATA_Msk;

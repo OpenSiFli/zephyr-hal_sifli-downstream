@@ -8,8 +8,7 @@
 #define __LL_PINMUX_H
 
 #include <stdint.h>
-#include "hpsys_pinmux.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -130,7 +129,7 @@ static inline void ll_pinmux_config_pad(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] drive Drive value from @ref LL_PINMUX_DRIVE.
  */
 static inline void ll_pinmux_config_drive(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                          uint32_t pad_index, uint32_t drive)
+        uint32_t pad_index, uint32_t drive)
 {
     __IO uint32_t *pad_reg;
 
@@ -152,7 +151,7 @@ static inline void ll_pinmux_config_drive(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] slew Slew rate from @ref LL_PINMUX_SLEW.
  */
 static inline void ll_pinmux_set_slew_rate(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                           uint32_t pad_index, uint32_t slew)
+        uint32_t pad_index, uint32_t slew)
 {
     __IO uint32_t *pad_reg;
 
@@ -172,8 +171,8 @@ static inline void ll_pinmux_set_slew_rate(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] input_type Input type from @ref LL_PINMUX_INPUT_TYPE.
  */
 static inline void ll_pinmux_set_input_type(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                            uint32_t pad_index,
-                                            uint32_t input_type)
+        uint32_t pad_index,
+        uint32_t input_type)
 {
     __IO uint32_t *pad_reg;
 
@@ -192,7 +191,7 @@ static inline void ll_pinmux_set_input_type(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] pad_index PAD index (0..HPSYS_PAD_NUM-1).
  */
 static inline void ll_pinmux_enable_input(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                          uint32_t pad_index)
+        uint32_t pad_index)
 {
     __IO uint32_t *pad_reg;
 
@@ -211,7 +210,7 @@ static inline void ll_pinmux_enable_input(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] pad_index PAD index (0..HPSYS_PAD_NUM-1).
  */
 static inline void ll_pinmux_disable_input(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                           uint32_t pad_index)
+        uint32_t pad_index)
 {
     __IO uint32_t *pad_reg;
 
@@ -231,7 +230,7 @@ static inline void ll_pinmux_disable_input(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @return Non-zero when input is enabled.
  */
 static inline uint32_t ll_pinmux_is_input_enabled(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                                  uint32_t pad_index)
+        uint32_t pad_index)
 {
     __IO uint32_t *pad_reg;
 
@@ -251,7 +250,7 @@ static inline uint32_t ll_pinmux_is_input_enabled(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @param[in] pull Pull value from @ref LL_PINMUX_PULL.
  */
 static inline void ll_pinmux_config_pull(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                         uint32_t pad_index, uint32_t pull)
+        uint32_t pad_index, uint32_t pull)
 {
     __IO uint32_t *pad_reg;
 
@@ -285,7 +284,7 @@ static inline void ll_pinmux_set_fsel(HPSYS_PINMUX_TypeDef *PINMUXx,
     pad_reg = ll_pinmux_get_pad_reg(PINMUXx, pad_index);
     MODIFY_REG(*pad_reg, HPSYS_PINMUX_PAD_SA00_FSEL_Msk,
                (fsel << HPSYS_PINMUX_PAD_SA00_FSEL_Pos) &
-                   HPSYS_PINMUX_PAD_SA00_FSEL_Msk);
+               HPSYS_PINMUX_PAD_SA00_FSEL_Msk);
 }
 
 /**
@@ -295,7 +294,7 @@ static inline void ll_pinmux_set_fsel(HPSYS_PINMUX_TypeDef *PINMUXx,
  * @return Raw FSEL field value.
  */
 static inline uint32_t ll_pinmux_get_fsel(HPSYS_PINMUX_TypeDef *PINMUXx,
-                                          uint32_t pad_index)
+        uint32_t pad_index)
 {
     __IO uint32_t *pad_reg;
 

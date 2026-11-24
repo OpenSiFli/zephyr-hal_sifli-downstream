@@ -8,8 +8,7 @@
 #define __LL_SDMMC_H
 
 #include <stdint.h>
-#include "sd.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +20,7 @@ extern "C" {
  */
 static inline void ll_sdmmc_ccs_disable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CCR, SD_CCR_CCS_DISABLE);
+    SET_BIT(SDx->CCR, SD_CCR_CCS_DISABLE);
 }
 
 /**
@@ -30,7 +29,7 @@ static inline void ll_sdmmc_ccs_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_ccs_enable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CCR, SD_CCR_CCS_DISABLE);
+    CLEAR_BIT(SDx->CCR, SD_CCR_CCS_DISABLE);
 }
 
 /**
@@ -40,8 +39,8 @@ static inline void ll_sdmmc_ccs_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_cmd_index(SD_TypeDef *SDx, uint32_t index)
 {
-	MODIFY_REG(SDx->CCR, SD_CCR_CMD_INDEX,
-		   MAKE_REG_VAL(index, SD_CCR_CMD_INDEX_Msk, SD_CCR_CMD_INDEX_Pos));
+    MODIFY_REG(SDx->CCR, SD_CCR_CMD_INDEX,
+               MAKE_REG_VAL(index, SD_CCR_CMD_INDEX_Msk, SD_CCR_CMD_INDEX_Pos));
 }
 
 /**
@@ -51,8 +50,8 @@ static inline void ll_sdmmc_set_cmd_index(SD_TypeDef *SDx, uint32_t index)
  */
 static inline void ll_sdmmc_set_cmd_long_rsp(SD_TypeDef *SDx, uint32_t long_rsp)
 {
-	MODIFY_REG(SDx->CCR, SD_CCR_CMD_LONG_RSP,
-		   long_rsp ? SD_CCR_CMD_LONG_RSP : 0U);
+    MODIFY_REG(SDx->CCR, SD_CCR_CMD_LONG_RSP,
+               long_rsp ? SD_CCR_CMD_LONG_RSP : 0U);
 }
 
 /**
@@ -62,8 +61,8 @@ static inline void ll_sdmmc_set_cmd_long_rsp(SD_TypeDef *SDx, uint32_t long_rsp)
  */
 static inline void ll_sdmmc_set_cmd_has_rsp(SD_TypeDef *SDx, uint32_t has_rsp)
 {
-	MODIFY_REG(SDx->CCR, SD_CCR_CMD_HAS_RSP,
-		   has_rsp ? SD_CCR_CMD_HAS_RSP : 0U);
+    MODIFY_REG(SDx->CCR, SD_CCR_CMD_HAS_RSP,
+               has_rsp ? SD_CCR_CMD_HAS_RSP : 0U);
 }
 
 /**
@@ -72,7 +71,7 @@ static inline void ll_sdmmc_set_cmd_has_rsp(SD_TypeDef *SDx, uint32_t has_rsp)
  */
 static inline void ll_sdmmc_enable_cmd_pend(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CCR, SD_CCR_CMD_PEND);
+    SET_BIT(SDx->CCR, SD_CCR_CMD_PEND);
 }
 
 /**
@@ -81,7 +80,7 @@ static inline void ll_sdmmc_enable_cmd_pend(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_cmd_pend(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CCR, SD_CCR_CMD_PEND);
+    CLEAR_BIT(SDx->CCR, SD_CCR_CMD_PEND);
 }
 
 /**
@@ -90,7 +89,7 @@ static inline void ll_sdmmc_disable_cmd_pend(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_enable_cmd_tx(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CCR, SD_CCR_CMD_TX_EN);
+    SET_BIT(SDx->CCR, SD_CCR_CMD_TX_EN);
 }
 
 /**
@@ -99,7 +98,7 @@ static inline void ll_sdmmc_enable_cmd_tx(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_cmd_tx(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CCR, SD_CCR_CMD_TX_EN);
+    CLEAR_BIT(SDx->CCR, SD_CCR_CMD_TX_EN);
 }
 
 /**
@@ -108,7 +107,7 @@ static inline void ll_sdmmc_disable_cmd_tx(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_start_cmd(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CCR, SD_CCR_CMD_START);
+    SET_BIT(SDx->CCR, SD_CCR_CMD_START);
 }
 
 /**
@@ -131,7 +130,7 @@ static inline void ll_sdmmc_start_cmd(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_cmd_arg(SD_TypeDef *SDx, uint32_t arg)
 {
-	WRITE_REG(SDx->CAR, arg);
+    WRITE_REG(SDx->CAR, arg);
 }
 
 /**
@@ -141,7 +140,7 @@ static inline void ll_sdmmc_set_cmd_arg(SD_TypeDef *SDx, uint32_t arg)
  */
 static inline uint32_t ll_sdmmc_get_rsp_index(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->RIR, SD_RIR_RSP_INDEX);
+    return GET_REG_VAL2(SDx->RIR, SD_RIR_RSP_INDEX);
 }
 
 /**
@@ -152,9 +151,9 @@ static inline uint32_t ll_sdmmc_get_rsp_index(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_rsp_word(SD_TypeDef *SDx, uint32_t idx)
 {
-	volatile uint32_t *rar = &SDx->RAR1;
+    volatile uint32_t *rar = &SDx->RAR1;
 
-	return (idx >= 1U && idx <= 4U) ? READ_REG(rar[idx - 1U]) : 0U;
+    return (idx >= 1U && idx <= 4U) ? READ_REG(rar[idx - 1U]) : 0U;
 }
 
 /*==============================================================================
@@ -168,8 +167,8 @@ static inline uint32_t ll_sdmmc_get_rsp_word(SD_TypeDef *SDx, uint32_t idx)
  */
 static inline void ll_sdmmc_set_block_size(SD_TypeDef *SDx, uint32_t size)
 {
-	MODIFY_REG(SDx->DCR, SD_DCR_BLOCK_SIZE,
-		   MAKE_REG_VAL(size, SD_DCR_BLOCK_SIZE_Msk, SD_DCR_BLOCK_SIZE_Pos));
+    MODIFY_REG(SDx->DCR, SD_DCR_BLOCK_SIZE,
+               MAKE_REG_VAL(size, SD_DCR_BLOCK_SIZE_Msk, SD_DCR_BLOCK_SIZE_Pos));
 }
 
 /**
@@ -179,8 +178,8 @@ static inline void ll_sdmmc_set_block_size(SD_TypeDef *SDx, uint32_t size)
  */
 static inline void ll_sdmmc_set_wire_mode(SD_TypeDef *SDx, uint32_t wires)
 {
-	MODIFY_REG(SDx->DCR, SD_DCR_WIRE_MODE,
-		   MAKE_REG_VAL(wires, SD_DCR_WIRE_MODE_Msk, SD_DCR_WIRE_MODE_Pos));
+    MODIFY_REG(SDx->DCR, SD_DCR_WIRE_MODE,
+               MAKE_REG_VAL(wires, SD_DCR_WIRE_MODE_Msk, SD_DCR_WIRE_MODE_Pos));
 }
 
 /**
@@ -190,8 +189,8 @@ static inline void ll_sdmmc_set_wire_mode(SD_TypeDef *SDx, uint32_t wires)
  */
 static inline void ll_sdmmc_set_stream_mode(SD_TypeDef *SDx, uint32_t stream)
 {
-	MODIFY_REG(SDx->DCR, SD_DCR_STREAM_MODE,
-		   stream ? SD_DCR_STREAM_MODE : 0U);
+    MODIFY_REG(SDx->DCR, SD_DCR_STREAM_MODE,
+               stream ? SD_DCR_STREAM_MODE : 0U);
 }
 
 /**
@@ -201,7 +200,7 @@ static inline void ll_sdmmc_set_stream_mode(SD_TypeDef *SDx, uint32_t stream)
  */
 static inline void ll_sdmmc_set_dir(SD_TypeDef *SDx, uint32_t read)
 {
-	MODIFY_REG(SDx->DCR, SD_DCR_R_WN, read ? SD_DCR_R_WN : 0U);
+    MODIFY_REG(SDx->DCR, SD_DCR_R_WN, read ? SD_DCR_R_WN : 0U);
 }
 
 /**
@@ -210,7 +209,7 @@ static inline void ll_sdmmc_set_dir(SD_TypeDef *SDx, uint32_t read)
  */
 static inline void ll_sdmmc_enable_data_transfer(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->DCR, SD_DCR_TRAN_DATA_EN);
+    SET_BIT(SDx->DCR, SD_DCR_TRAN_DATA_EN);
 }
 
 /**
@@ -219,7 +218,7 @@ static inline void ll_sdmmc_enable_data_transfer(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_data_transfer(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->DCR, SD_DCR_TRAN_DATA_EN);
+    CLEAR_BIT(SDx->DCR, SD_DCR_TRAN_DATA_EN);
 }
 
 /**
@@ -228,7 +227,7 @@ static inline void ll_sdmmc_disable_data_transfer(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_start_data(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->DCR, SD_DCR_DATA_START);
+    SET_BIT(SDx->DCR, SD_DCR_DATA_START);
 }
 
 /**
@@ -238,18 +237,19 @@ static inline void ll_sdmmc_start_data(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_block_tran_num(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DLR, SD_DLR_BLOCK_TRAN_NUM);
+    return GET_REG_VAL2(SDx->DLR, SD_DLR_BLOCK_TRAN_NUM);
 }
 
 /**
  * @brief Set the data length (DLR.DATA_LEN, value - 1, multiple of block size).
  * @param[in] SDx  SD instance pointer.
- * @param[in] len  Data length in bytes minus 1 (max 0x1FF).
+ * @param[in] len  Data length in bytes minus 1 (16-bit field, 0x0..0xFFFF;
+ *                 see UM52 DLR.DATA_LEN, max transfer 63.5 KB).
  */
 static inline void ll_sdmmc_set_data_len(SD_TypeDef *SDx, uint32_t len)
 {
-	MODIFY_REG(SDx->DLR, SD_DLR_DATA_LEN,
-		   MAKE_REG_VAL(len, SD_DLR_DATA_LEN_Msk, SD_DLR_DATA_LEN_Pos));
+    MODIFY_REG(SDx->DLR, SD_DLR_DATA_LEN,
+               MAKE_REG_VAL(len, SD_DLR_DATA_LEN_Msk, SD_DLR_DATA_LEN_Pos));
 }
 
 /**
@@ -259,8 +259,8 @@ static inline void ll_sdmmc_set_data_len(SD_TypeDef *SDx, uint32_t len)
  */
 static inline void ll_sdmmc_set_burst_len(SD_TypeDef *SDx, uint32_t len)
 {
-	MODIFY_REG(SDx->BLR, SD_BLR_BURST_LEN,
-		   MAKE_REG_VAL(len, SD_BLR_BURST_LEN_Msk, SD_BLR_BURST_LEN_Pos));
+    MODIFY_REG(SDx->BLR, SD_BLR_BURST_LEN,
+               MAKE_REG_VAL(len, SD_BLR_BURST_LEN_Msk, SD_BLR_BURST_LEN_Pos));
 }
 
 /**
@@ -271,9 +271,9 @@ static inline void ll_sdmmc_set_burst_len(SD_TypeDef *SDx, uint32_t len)
  */
 static inline void ll_sdmmc_set_fifo_rd_valid(SD_TypeDef *SDx, uint32_t valid, uint32_t en)
 {
-	MODIFY_REG(SDx->FDLR, SD_FDLR_RD_VALID | SD_FDLR_RD_VALID_EN,
-		   MAKE_REG_VAL(valid, SD_FDLR_RD_VALID_Msk, SD_FDLR_RD_VALID_Pos) |
-		   (en ? SD_FDLR_RD_VALID_EN : 0U));
+    MODIFY_REG(SDx->FDLR, SD_FDLR_RD_VALID | SD_FDLR_RD_VALID_EN,
+               MAKE_REG_VAL(valid, SD_FDLR_RD_VALID_Msk, SD_FDLR_RD_VALID_Pos) |
+               (en ? SD_FDLR_RD_VALID_EN : 0U));
 }
 
 /**
@@ -283,7 +283,7 @@ static inline void ll_sdmmc_set_fifo_rd_valid(SD_TypeDef *SDx, uint32_t valid, u
  */
 static inline void ll_sdmmc_write_fifo(SD_TypeDef *SDx, uint32_t data)
 {
-	WRITE_REG(SDx->FIFO, data);
+    WRITE_REG(SDx->FIFO, data);
 }
 
 /**
@@ -293,7 +293,7 @@ static inline void ll_sdmmc_write_fifo(SD_TypeDef *SDx, uint32_t data)
  */
 static inline uint32_t ll_sdmmc_read_fifo(SD_TypeDef *SDx)
 {
-	return READ_REG(SDx->FIFO);
+    return READ_REG(SDx->FIFO);
 }
 
 /*==============================================================================
@@ -303,10 +303,10 @@ static inline uint32_t ll_sdmmc_read_fifo(SD_TypeDef *SDx)
 /* Missing combined clearable-bit mask (not in regs/sd.h) defined here as
  * LL-local; removed once the regs header is updated upstream. */
 #define LL_SDMMC_SR_CLEARABLE                                                                    \
-	(SD_SR_CMD_DONE | SD_SR_CMD_RSP_CRC | SD_SR_CMD_TIMEOUT | SD_SR_DATA_DONE |               \
-	 SD_SR_DATA_CRC | SD_SR_DATA_TIMEOUT | SD_SR_STARTBIT_ERROR | SD_SR_FIFO_UNDERRUN |       \
-	 SD_SR_FIFO_OVERRUN | SD_SR_CMD_SENT | SD_SR_CARD_EXIT_INT | SD_SR_CARD_REMOVE |          \
-	 SD_SR_SDIO | SD_SR_CACHE_ERR)
+    (SD_SR_CMD_DONE | SD_SR_CMD_RSP_CRC | SD_SR_CMD_TIMEOUT | SD_SR_DATA_DONE |               \
+     SD_SR_DATA_CRC | SD_SR_DATA_TIMEOUT | SD_SR_STARTBIT_ERROR | SD_SR_FIFO_UNDERRUN |       \
+     SD_SR_FIFO_OVERRUN | SD_SR_CMD_SENT | SD_SR_CARD_EXIT_INT | SD_SR_CARD_REMOVE |          \
+     SD_SR_SDIO | SD_SR_CACHE_ERR)
 
 /**
  * @brief Get the raw status register (SR).
@@ -315,7 +315,7 @@ static inline uint32_t ll_sdmmc_read_fifo(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_status(SD_TypeDef *SDx)
 {
-	return READ_REG(SDx->SR);
+    return READ_REG(SDx->SR);
 }
 
 /**
@@ -325,7 +325,7 @@ static inline uint32_t ll_sdmmc_get_status(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_clear_status(SD_TypeDef *SDx, uint32_t status)
 {
-	WRITE_REG(SDx->SR, status & LL_SDMMC_SR_CLEARABLE);
+    WRITE_REG(SDx->SR, status & LL_SDMMC_SR_CLEARABLE);
 }
 
 /**
@@ -335,7 +335,7 @@ static inline void ll_sdmmc_clear_status(SD_TypeDef *SDx, uint32_t status)
  */
 static inline uint32_t ll_sdmmc_is_card_present(SD_TypeDef *SDx)
 {
-	return READ_BIT(SDx->SR, SD_SR_CARD_EXIT);
+    return READ_BIT(SDx->SR, SD_SR_CARD_EXIT);
 }
 
 /**
@@ -345,7 +345,7 @@ static inline uint32_t ll_sdmmc_is_card_present(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_is_data_busy(SD_TypeDef *SDx)
 {
-	return READ_BIT(SDx->SR, SD_SR_DATA_BUSY);
+    return READ_BIT(SDx->SR, SD_SR_DATA_BUSY);
 }
 
 /**
@@ -355,7 +355,7 @@ static inline uint32_t ll_sdmmc_is_data_busy(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_is_cmd_busy(SD_TypeDef *SDx)
 {
-	return READ_BIT(SDx->SR, SD_SR_CMD_BUSY);
+    return READ_BIT(SDx->SR, SD_SR_CMD_BUSY);
 }
 
 /**
@@ -365,7 +365,7 @@ static inline uint32_t ll_sdmmc_is_cmd_busy(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_enable_irq(SD_TypeDef *SDx, uint32_t mask)
 {
-	SET_BIT(SDx->IER, mask);
+    SET_BIT(SDx->IER, mask);
 }
 
 /**
@@ -375,7 +375,7 @@ static inline void ll_sdmmc_enable_irq(SD_TypeDef *SDx, uint32_t mask)
  */
 static inline void ll_sdmmc_disable_irq(SD_TypeDef *SDx, uint32_t mask)
 {
-	CLEAR_BIT(SDx->IER, mask);
+    CLEAR_BIT(SDx->IER, mask);
 }
 
 /** @defgroup LL_SDMMC_IRQ_MASK SDMMC Interrupt Mask Bits (IER) */
@@ -405,7 +405,7 @@ static inline void ll_sdmmc_disable_irq(SD_TypeDef *SDx, uint32_t mask)
  */
 static inline void ll_sdmmc_set_timeout(SD_TypeDef *SDx, uint32_t count)
 {
-	WRITE_REG(SDx->TOR, count);
+    WRITE_REG(SDx->TOR, count);
 }
 
 /** @} */
@@ -417,7 +417,7 @@ static inline void ll_sdmmc_set_timeout(SD_TypeDef *SDx, uint32_t count)
  */
 static inline uint32_t ll_sdmmc_get_irq_mask(SD_TypeDef *SDx)
 {
-	return READ_REG(SDx->IER);
+    return READ_REG(SDx->IER);
 }
 
 /*==============================================================================
@@ -431,8 +431,8 @@ static inline uint32_t ll_sdmmc_get_irq_mask(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_clock_div(SD_TypeDef *SDx, uint32_t div)
 {
-	MODIFY_REG(SDx->CLKCR, SD_CLKCR_DIV,
-		   MAKE_REG_VAL(div, SD_CLKCR_DIV_Msk, SD_CLKCR_DIV_Pos));
+    MODIFY_REG(SDx->CLKCR, SD_CLKCR_DIV,
+               MAKE_REG_VAL(div, SD_CLKCR_DIV_Msk, SD_CLKCR_DIV_Pos));
 }
 
 /**
@@ -442,8 +442,8 @@ static inline void ll_sdmmc_set_clock_div(SD_TypeDef *SDx, uint32_t div)
  */
 static inline void ll_sdmmc_set_clock_tune(SD_TypeDef *SDx, uint32_t sel)
 {
-	MODIFY_REG(SDx->CLKCR, SD_CLKCR_CLK_TUNE_SEL,
-		   MAKE_REG_VAL(sel, SD_CLKCR_CLK_TUNE_SEL_Msk, SD_CLKCR_CLK_TUNE_SEL_Pos));
+    MODIFY_REG(SDx->CLKCR, SD_CLKCR_CLK_TUNE_SEL,
+               MAKE_REG_VAL(sel, SD_CLKCR_CLK_TUNE_SEL_Msk, SD_CLKCR_CLK_TUNE_SEL_Pos));
 }
 
 /**
@@ -452,7 +452,7 @@ static inline void ll_sdmmc_set_clock_tune(SD_TypeDef *SDx, uint32_t sel)
  */
 static inline void ll_sdmmc_void_fifo_error_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CLKCR, SD_CLKCR_VOID_FIFO_ERROR);
+    SET_BIT(SDx->CLKCR, SD_CLKCR_VOID_FIFO_ERROR);
 }
 
 /**
@@ -461,7 +461,7 @@ static inline void ll_sdmmc_void_fifo_error_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_void_fifo_error_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CLKCR, SD_CLKCR_VOID_FIFO_ERROR);
+    CLEAR_BIT(SDx->CLKCR, SD_CLKCR_VOID_FIFO_ERROR);
 }
 
 /**
@@ -470,7 +470,7 @@ static inline void ll_sdmmc_void_fifo_error_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_stop_clock(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CLKCR, SD_CLKCR_STOP_CLK);
+    SET_BIT(SDx->CLKCR, SD_CLKCR_STOP_CLK);
 }
 
 /**
@@ -479,7 +479,7 @@ static inline void ll_sdmmc_stop_clock(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_start_clock(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CLKCR, SD_CLKCR_STOP_CLK);
+    CLEAR_BIT(SDx->CLKCR, SD_CLKCR_STOP_CLK);
 }
 
 /**
@@ -488,7 +488,7 @@ static inline void ll_sdmmc_start_clock(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_enable_rod(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->PCR, SD_PCR_ROD);
+    SET_BIT(SDx->PCR, SD_PCR_ROD);
 }
 
 /**
@@ -497,7 +497,7 @@ static inline void ll_sdmmc_enable_rod(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_rod(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->PCR, SD_PCR_ROD);
+    CLEAR_BIT(SDx->PCR, SD_PCR_ROD);
 }
 
 /**
@@ -506,7 +506,7 @@ static inline void ll_sdmmc_disable_rod(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_open_drain(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->PCR, SD_PCR_ODRAIN);
+    SET_BIT(SDx->PCR, SD_PCR_ODRAIN);
 }
 
 /**
@@ -515,7 +515,7 @@ static inline void ll_sdmmc_set_open_drain(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_clear_open_drain(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->PCR, SD_PCR_ODRAIN);
+    CLEAR_BIT(SDx->PCR, SD_PCR_ODRAIN);
 }
 
 /**
@@ -525,8 +525,8 @@ static inline void ll_sdmmc_clear_open_drain(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_voltage(SD_TypeDef *SDx, uint32_t volt)
 {
-	MODIFY_REG(SDx->PCR, SD_PCR_VOLTAGE,
-		   MAKE_REG_VAL(volt, SD_PCR_VOLTAGE_Msk, SD_PCR_VOLTAGE_Pos));
+    MODIFY_REG(SDx->PCR, SD_PCR_VOLTAGE,
+               MAKE_REG_VAL(volt, SD_PCR_VOLTAGE_Msk, SD_PCR_VOLTAGE_Pos));
 }
 
 /**
@@ -535,8 +535,8 @@ static inline void ll_sdmmc_set_voltage(SD_TypeDef *SDx, uint32_t volt)
  */
 static inline void ll_sdmmc_power_on(SD_TypeDef *SDx)
 {
-	MODIFY_REG(SDx->PCR, SD_PCR_PWR,
-		   MAKE_REG_VAL(1U, SD_PCR_PWR_Msk, SD_PCR_PWR_Pos));
+    MODIFY_REG(SDx->PCR, SD_PCR_PWR,
+               MAKE_REG_VAL(1U, SD_PCR_PWR_Msk, SD_PCR_PWR_Pos));
 }
 
 /**
@@ -545,7 +545,7 @@ static inline void ll_sdmmc_power_on(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_power_off(SD_TypeDef *SDx)
 {
-	MODIFY_REG(SDx->PCR, SD_PCR_PWR, 0U);
+    MODIFY_REG(SDx->PCR, SD_PCR_PWR, 0U);
 }
 
 /**
@@ -556,9 +556,9 @@ static inline void ll_sdmmc_power_off(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_timing(SD_TypeDef *SDx, uint32_t itiming, uint32_t otiming)
 {
-	MODIFY_REG(SDx->CDR, SD_CDR_ITIMING | SD_CDR_OTIMING,
-		   MAKE_REG_VAL(itiming, SD_CDR_ITIMING_Msk, SD_CDR_ITIMING_Pos) |
-		   MAKE_REG_VAL(otiming, SD_CDR_OTIMING_Msk, SD_CDR_OTIMING_Pos));
+    MODIFY_REG(SDx->CDR, SD_CDR_ITIMING | SD_CDR_OTIMING,
+               MAKE_REG_VAL(itiming, SD_CDR_ITIMING_Msk, SD_CDR_ITIMING_Pos) |
+               MAKE_REG_VAL(otiming, SD_CDR_OTIMING_Msk, SD_CDR_OTIMING_Pos));
 }
 
 /**
@@ -568,7 +568,7 @@ static inline void ll_sdmmc_set_timing(SD_TypeDef *SDx, uint32_t itiming, uint32
  */
 static inline void ll_sdmmc_set_cmd_od(SD_TypeDef *SDx, uint32_t od)
 {
-	MODIFY_REG(SDx->CDR, SD_CDR_CMD_OD, od ? SD_CDR_CMD_OD : 0U);
+    MODIFY_REG(SDx->CDR, SD_CDR_CMD_OD, od ? SD_CDR_CMD_OD : 0U);
 }
 
 /**
@@ -578,7 +578,7 @@ static inline void ll_sdmmc_set_cmd_od(SD_TypeDef *SDx, uint32_t od)
  */
 static inline void ll_sdmmc_set_cd_valid_level(SD_TypeDef *SDx, uint32_t high)
 {
-	MODIFY_REG(SDx->CDR, SD_CDR_CD_HVALID, high ? SD_CDR_CD_HVALID : 0U);
+    MODIFY_REG(SDx->CDR, SD_CDR_CD_HVALID, high ? SD_CDR_CD_HVALID : 0U);
 }
 
 /**
@@ -587,7 +587,7 @@ static inline void ll_sdmmc_set_cd_valid_level(SD_TypeDef *SDx, uint32_t high)
  */
 static inline void ll_sdmmc_enable_card_detect(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CDR, SD_CDR_EN_CD);
+    SET_BIT(SDx->CDR, SD_CDR_EN_CD);
 }
 
 /**
@@ -596,7 +596,7 @@ static inline void ll_sdmmc_enable_card_detect(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_card_detect(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CDR, SD_CDR_EN_CD);
+    CLEAR_BIT(SDx->CDR, SD_CDR_EN_CD);
 }
 
 /**
@@ -606,7 +606,7 @@ static inline void ll_sdmmc_disable_card_detect(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_otiming_sel(SD_TypeDef *SDx, uint32_t sel)
 {
-	MODIFY_REG(SDx->CDR, SD_CDR_OTIMING_SEL, sel ? SD_CDR_OTIMING_SEL : 0U);
+    MODIFY_REG(SDx->CDR, SD_CDR_OTIMING_SEL, sel ? SD_CDR_OTIMING_SEL : 0U);
 }
 
 /**
@@ -616,7 +616,7 @@ static inline void ll_sdmmc_set_otiming_sel(SD_TypeDef *SDx, uint32_t sel)
  */
 static inline void ll_sdmmc_set_itiming_sel(SD_TypeDef *SDx, uint32_t sel)
 {
-	MODIFY_REG(SDx->CDR, SD_CDR_ITIMING_SEL, sel ? SD_CDR_ITIMING_SEL : 0U);
+    MODIFY_REG(SDx->CDR, SD_CDR_ITIMING_SEL, sel ? SD_CDR_ITIMING_SEL : 0U);
 }
 
 /**
@@ -625,7 +625,7 @@ static inline void ll_sdmmc_set_itiming_sel(SD_TypeDef *SDx, uint32_t sel)
  */
 static inline void ll_sdmmc_use_data3_cd(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CDR, SD_CDR_SD_DATA3_CD);
+    SET_BIT(SDx->CDR, SD_CDR_SD_DATA3_CD);
 }
 
 /**
@@ -634,7 +634,7 @@ static inline void ll_sdmmc_use_data3_cd(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_use_cd_pin(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CDR, SD_CDR_SD_DATA3_CD);
+    CLEAR_BIT(SDx->CDR, SD_CDR_SD_DATA3_CD);
 }
 
 /**
@@ -644,7 +644,7 @@ static inline void ll_sdmmc_use_cd_pin(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_data_state(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DBGR1, SD_DBGR1_DATA_ST);
+    return GET_REG_VAL2(SDx->DBGR1, SD_DBGR1_DATA_ST);
 }
 
 /**
@@ -654,7 +654,7 @@ static inline uint32_t ll_sdmmc_get_data_state(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_cmd_state(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DBGR1, SD_DBGR1_CMD_ST);
+    return GET_REG_VAL2(SDx->DBGR1, SD_DBGR1_CMD_ST);
 }
 
 /**
@@ -664,8 +664,8 @@ static inline uint32_t ll_sdmmc_get_cmd_state(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_dbg_sel(SD_TypeDef *SDx, uint32_t sel)
 {
-	MODIFY_REG(SDx->DBGR2, SD_DBGR2_DBG_SEL,
-		   MAKE_REG_VAL(sel, SD_DBGR2_DBG_SEL_Msk, SD_DBGR2_DBG_SEL_Pos));
+    MODIFY_REG(SDx->DBGR2, SD_DBGR2_DBG_SEL,
+               MAKE_REG_VAL(sel, SD_DBGR2_DBG_SEL_Msk, SD_DBGR2_DBG_SEL_Pos));
 }
 
 /**
@@ -675,7 +675,7 @@ static inline void ll_sdmmc_set_dbg_sel(SD_TypeDef *SDx, uint32_t sel)
  */
 static inline uint32_t ll_sdmmc_get_valid_data_count(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DBGR2, SD_DBGR2_VALID_DATA_COU);
+    return GET_REG_VAL2(SDx->DBGR2, SD_DBGR2_VALID_DATA_COU);
 }
 
 /**
@@ -685,7 +685,7 @@ static inline uint32_t ll_sdmmc_get_valid_data_count(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_get_host_word_count(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DBGR2, SD_DBGR2_HOST_WORD_COUNTER);
+    return GET_REG_VAL2(SDx->DBGR2, SD_DBGR2_HOST_WORD_COUNTER);
 }
 
 /**
@@ -694,7 +694,7 @@ static inline uint32_t ll_sdmmc_get_host_word_count(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_sdio_4wires_multi_irq_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_MULTI_IRQ);
+    SET_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_MULTI_IRQ);
 }
 
 /**
@@ -703,7 +703,7 @@ static inline void ll_sdmmc_sdio_4wires_multi_irq_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_sdio_4wires_multi_irq_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_MULTI_IRQ);
+    CLEAR_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_MULTI_IRQ);
 }
 
 /**
@@ -712,7 +712,7 @@ static inline void ll_sdmmc_sdio_4wires_multi_irq_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_sdio_4wires_irq_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_IRQ);
+    SET_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_IRQ);
 }
 
 /**
@@ -721,7 +721,7 @@ static inline void ll_sdmmc_sdio_4wires_irq_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_sdio_4wires_irq_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_IRQ);
+    CLEAR_BIT(SDx->CEATA, SD_CEATA_SDIO_4WIRES_IRQ);
 }
 
 /**
@@ -730,7 +730,7 @@ static inline void ll_sdmmc_sdio_4wires_irq_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_enable_sdio_irq(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CEATA, SD_CEATA_ENABLE_SDIO_IRQ);
+    SET_BIT(SDx->CEATA, SD_CEATA_ENABLE_SDIO_IRQ);
 }
 
 /**
@@ -739,7 +739,7 @@ static inline void ll_sdmmc_enable_sdio_irq(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_disable_sdio_irq(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CEATA, SD_CEATA_ENABLE_SDIO_IRQ);
+    CLEAR_BIT(SDx->CEATA, SD_CEATA_ENABLE_SDIO_IRQ);
 }
 
 /*==============================================================================
@@ -753,7 +753,7 @@ static inline void ll_sdmmc_disable_sdio_irq(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_card_type(SD_TypeDef *SDx, uint32_t ata)
 {
-	MODIFY_REG(SDx->CEATA, SD_CEATA_ATA_MODE, ata ? SD_CEATA_ATA_MODE : 0U);
+    MODIFY_REG(SDx->CEATA, SD_CEATA_ATA_MODE, ata ? SD_CEATA_ATA_MODE : 0U);
 }
 
 /**
@@ -763,7 +763,7 @@ static inline void ll_sdmmc_set_card_type(SD_TypeDef *SDx, uint32_t ata)
  */
 static inline uint32_t ll_sdmmc_get_data_pad_status(SD_TypeDef *SDx)
 {
-	return GET_REG_VAL2(SDx->DSR, SD_DSR_SD_DATA_I_LL);
+    return GET_REG_VAL2(SDx->DSR, SD_DSR_SD_DATA_I_LL);
 }
 
 /**
@@ -773,7 +773,7 @@ static inline uint32_t ll_sdmmc_get_data_pad_status(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_set_clk_config(SD_TypeDef *SDx, uint32_t half)
 {
-	MODIFY_REG(SDx->CDCR, SD_CDCR_CLK_CONFIG, half ? SD_CDCR_CLK_CONFIG : 0U);
+    MODIFY_REG(SDx->CDCR, SD_CDCR_CLK_CONFIG, half ? SD_CDCR_CLK_CONFIG : 0U);
 }
 
 /**
@@ -782,7 +782,7 @@ static inline void ll_sdmmc_set_clk_config(SD_TypeDef *SDx, uint32_t half)
  */
 static inline void ll_sdmmc_cache_flush(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CASR, SD_CASR_CACHE_FLUSH);
+    SET_BIT(SDx->CASR, SD_CASR_CACHE_FLUSH);
 }
 
 /**
@@ -792,7 +792,7 @@ static inline void ll_sdmmc_cache_flush(SD_TypeDef *SDx)
  */
 static inline uint32_t ll_sdmmc_is_cache_busy(SD_TypeDef *SDx)
 {
-	return READ_BIT(SDx->CASR, SD_CASR_CACHE_BUSY);
+    return READ_BIT(SDx->CASR, SD_CASR_CACHE_BUSY);
 }
 
 /**
@@ -801,7 +801,7 @@ static inline uint32_t ll_sdmmc_is_cache_busy(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_clear_sd_busy(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CASR, SD_CASR_SD_BUSY);
+    SET_BIT(SDx->CASR, SD_CASR_SD_BUSY);
 }
 
 /**
@@ -810,7 +810,7 @@ static inline void ll_sdmmc_clear_sd_busy(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_request_sd_access(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CASR, SD_CASR_SD_REQ);
+    SET_BIT(SDx->CASR, SD_CASR_SD_REQ);
 }
 
 /*==============================================================================
@@ -823,7 +823,7 @@ static inline void ll_sdmmc_request_sd_access(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CACR, SD_CACR_CACHE_EN);
+    SET_BIT(SDx->CACR, SD_CACR_CACHE_EN);
 }
 
 /**
@@ -832,7 +832,7 @@ static inline void ll_sdmmc_cache_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_EN);
+    CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_EN);
 }
 
 /**
@@ -841,7 +841,7 @@ static inline void ll_sdmmc_cache_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_to_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CACR, SD_CACR_CACHE_TO_EN);
+    SET_BIT(SDx->CACR, SD_CACR_CACHE_TO_EN);
 }
 
 /**
@@ -850,7 +850,7 @@ static inline void ll_sdmmc_cache_to_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_to_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_TO_EN);
+    CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_TO_EN);
 }
 
 /**
@@ -859,7 +859,7 @@ static inline void ll_sdmmc_cache_to_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_force_read(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CACR, SD_CACR_CACHE_FORCE_READ);
+    SET_BIT(SDx->CACR, SD_CACR_CACHE_FORCE_READ);
 }
 
 /**
@@ -868,7 +868,7 @@ static inline void ll_sdmmc_cache_force_read(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_clear_force_read(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_FORCE_READ);
+    CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_FORCE_READ);
 }
 
 /**
@@ -878,7 +878,7 @@ static inline void ll_sdmmc_cache_clear_force_read(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_set_sdsc(SD_TypeDef *SDx, uint32_t small)
 {
-	MODIFY_REG(SDx->CACR, SD_CACR_CACHE_SDSC, small ? SD_CACR_CACHE_SDSC : 0U);
+    MODIFY_REG(SDx->CACR, SD_CACR_CACHE_SDSC, small ? SD_CACR_CACHE_SDSC : 0U);
 }
 
 /**
@@ -887,7 +887,7 @@ static inline void ll_sdmmc_cache_set_sdsc(SD_TypeDef *SDx, uint32_t small)
  */
 static inline void ll_sdmmc_cache_crc_enable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_NOCRC);
+    CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_NOCRC);
 }
 
 /**
@@ -896,7 +896,7 @@ static inline void ll_sdmmc_cache_crc_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_crc_disable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CACR, SD_CACR_CACHE_NOCRC);
+    SET_BIT(SDx->CACR, SD_CACR_CACHE_NOCRC);
 }
 
 /**
@@ -905,7 +905,7 @@ static inline void ll_sdmmc_cache_crc_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_hresp_enable(SD_TypeDef *SDx)
 {
-	SET_BIT(SDx->CACR, SD_CACR_CACHE_HRESP);
+    SET_BIT(SDx->CACR, SD_CACR_CACHE_HRESP);
 }
 
 /**
@@ -914,7 +914,7 @@ static inline void ll_sdmmc_cache_hresp_enable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_hresp_disable(SD_TypeDef *SDx)
 {
-	CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_HRESP);
+    CLEAR_BIT(SDx->CACR, SD_CACR_CACHE_HRESP);
 }
 
 /**
@@ -924,9 +924,9 @@ static inline void ll_sdmmc_cache_hresp_disable(SD_TypeDef *SDx)
  */
 static inline void ll_sdmmc_cache_set_pref_depth(SD_TypeDef *SDx, uint32_t depth)
 {
-	MODIFY_REG(SDx->CACR, SD_CACR_CACHE_PREF_BLOCK,
-		   MAKE_REG_VAL(depth, SD_CACR_CACHE_PREF_BLOCK_Msk,
-				SD_CACR_CACHE_PREF_BLOCK_Pos));
+    MODIFY_REG(SDx->CACR, SD_CACR_CACHE_PREF_BLOCK,
+               MAKE_REG_VAL(depth, SD_CACR_CACHE_PREF_BLOCK_Msk,
+                            SD_CACR_CACHE_PREF_BLOCK_Pos));
 }
 
 /**
@@ -936,8 +936,8 @@ static inline void ll_sdmmc_cache_set_pref_depth(SD_TypeDef *SDx, uint32_t depth
  */
 static inline void ll_sdmmc_cache_set_depth(SD_TypeDef *SDx, uint32_t depth)
 {
-	MODIFY_REG(SDx->CACR, SD_CACR_CACHE_BLOCK,
-		   MAKE_REG_VAL(depth, SD_CACR_CACHE_BLOCK_Msk, SD_CACR_CACHE_BLOCK_Pos));
+    MODIFY_REG(SDx->CACR, SD_CACR_CACHE_BLOCK,
+               MAKE_REG_VAL(depth, SD_CACR_CACHE_BLOCK_Msk, SD_CACR_CACHE_BLOCK_Pos));
 }
 
 /**
@@ -948,13 +948,13 @@ static inline void ll_sdmmc_cache_set_depth(SD_TypeDef *SDx, uint32_t depth)
  * @param[in] long_rsp Non-zero if the response is 136-bit long.
  */
 static inline void ll_sdmmc_cache_set_stop_cmd(SD_TypeDef *SDx, uint32_t index,
-					       uint32_t has_rsp, uint32_t long_rsp)
+        uint32_t has_rsp, uint32_t long_rsp)
 {
-	MODIFY_REG(SDx->CACR,
-		   SD_CACR_STOP_INDEX | SD_CACR_STOP_HAS_RSP | SD_CACR_STOP_LONG_RSP,
-		   MAKE_REG_VAL(index, SD_CACR_STOP_INDEX_Msk, SD_CACR_STOP_INDEX_Pos) |
-		   (has_rsp ? SD_CACR_STOP_HAS_RSP : 0U) |
-		   (long_rsp ? SD_CACR_STOP_LONG_RSP : 0U));
+    MODIFY_REG(SDx->CACR,
+               SD_CACR_STOP_INDEX | SD_CACR_STOP_HAS_RSP | SD_CACR_STOP_LONG_RSP,
+               MAKE_REG_VAL(index, SD_CACR_STOP_INDEX_Msk, SD_CACR_STOP_INDEX_Pos) |
+               (has_rsp ? SD_CACR_STOP_HAS_RSP : 0U) |
+               (long_rsp ? SD_CACR_STOP_LONG_RSP : 0U));
 }
 
 /**
@@ -965,13 +965,13 @@ static inline void ll_sdmmc_cache_set_stop_cmd(SD_TypeDef *SDx, uint32_t index,
  * @param[in] long_rsp Non-zero if the response is 136-bit long.
  */
 static inline void ll_sdmmc_cache_set_read_cmd(SD_TypeDef *SDx, uint32_t index,
-					       uint32_t has_rsp, uint32_t long_rsp)
+        uint32_t has_rsp, uint32_t long_rsp)
 {
-	MODIFY_REG(SDx->CACR,
-		   SD_CACR_READ_INDEX | SD_CACR_READ_HAS_RSP | SD_CACR_READ_LONG_RSP,
-		   MAKE_REG_VAL(index, SD_CACR_READ_INDEX_Msk, SD_CACR_READ_INDEX_Pos) |
-		   (has_rsp ? SD_CACR_READ_HAS_RSP : 0U) |
-		   (long_rsp ? SD_CACR_READ_LONG_RSP : 0U));
+    MODIFY_REG(SDx->CACR,
+               SD_CACR_READ_INDEX | SD_CACR_READ_HAS_RSP | SD_CACR_READ_LONG_RSP,
+               MAKE_REG_VAL(index, SD_CACR_READ_INDEX_Msk, SD_CACR_READ_INDEX_Pos) |
+               (has_rsp ? SD_CACR_READ_HAS_RSP : 0U) |
+               (long_rsp ? SD_CACR_READ_LONG_RSP : 0U));
 }
 
 /**
@@ -981,8 +981,8 @@ static inline void ll_sdmmc_cache_set_read_cmd(SD_TypeDef *SDx, uint32_t index,
  */
 static inline void ll_sdmmc_cache_set_tor(SD_TypeDef *SDx, uint32_t tor)
 {
-	MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_TOR,
-		   MAKE_REG_VAL(tor, SD_CACNT_CACHE_TOR_Msk, SD_CACNT_CACHE_TOR_Pos));
+    MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_TOR,
+               MAKE_REG_VAL(tor, SD_CACNT_CACHE_TOR_Msk, SD_CACNT_CACHE_TOR_Pos));
 }
 
 /**
@@ -992,8 +992,8 @@ static inline void ll_sdmmc_cache_set_tor(SD_TypeDef *SDx, uint32_t tor)
  */
 static inline void ll_sdmmc_cache_set_ndc(SD_TypeDef *SDx, uint32_t ndc)
 {
-	MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_NDC,
-		   MAKE_REG_VAL(ndc, SD_CACNT_CACHE_NDC_Msk, SD_CACNT_CACHE_NDC_Pos));
+    MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_NDC,
+               MAKE_REG_VAL(ndc, SD_CACNT_CACHE_NDC_Msk, SD_CACNT_CACHE_NDC_Pos));
 }
 
 /**
@@ -1003,8 +1003,8 @@ static inline void ll_sdmmc_cache_set_ndc(SD_TypeDef *SDx, uint32_t ndc)
  */
 static inline void ll_sdmmc_cache_set_ncc(SD_TypeDef *SDx, uint32_t ncc)
 {
-	MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_NCC,
-		   MAKE_REG_VAL(ncc, SD_CACNT_CACHE_NCC_Msk, SD_CACNT_CACHE_NCC_Pos));
+    MODIFY_REG(SDx->CACNT, SD_CACNT_CACHE_NCC,
+               MAKE_REG_VAL(ncc, SD_CACNT_CACHE_NCC_Msk, SD_CACNT_CACHE_NCC_Pos));
 }
 
 /**
@@ -1014,7 +1014,7 @@ static inline void ll_sdmmc_cache_set_ncc(SD_TypeDef *SDx, uint32_t ncc)
  */
 static inline void ll_sdmmc_cache_set_offset(SD_TypeDef *SDx, uint32_t offset)
 {
-	WRITE_REG(SDx->CAOFF, offset);
+    WRITE_REG(SDx->CAOFF, offset);
 }
 
 #ifdef __cplusplus

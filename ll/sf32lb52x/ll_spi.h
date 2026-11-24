@@ -8,8 +8,7 @@
 #define __LL_SPI_H
 
 #include <stdint.h>
-#include "spi.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -108,7 +107,7 @@ typedef struct
                             LL_SPI_DATAWIDTH_8BIT to @ref LL_SPI_DATAWIDTH_32BIT
                             or encoded DSS value. */
     uint32_t
-        invert_frame;   /**< Frame inversion control, 0 or SPI_TOP_CTRL_IFS. */
+    invert_frame;   /**< Frame inversion control, 0 or SPI_TOP_CTRL_IFS. */
     uint32_t trail_dma; /**< Trailing DMA control, 0 or SPI_TOP_CTRL_TRAIL. */
     uint32_t tte;       /**< TXD tristate control, 0 or SPI_TOP_CTRL_TTE. */
     uint32_t ttelp;     /**< TXD tristate timing, 0 or SPI_TOP_CTRL_TTELP. */
@@ -122,13 +121,13 @@ typedef struct
     uint32_t tx_threshold; /**< TX threshold field value for TFT. */
     uint32_t rx_threshold; /**< RX threshold field value for RFT. */
     uint32_t
-        tx_endian; /**< TX FIFO write endian, use @ref
+    tx_endian; /**< TX FIFO write endian, use @ref
                       LL_SPI_TX_ENDIAN_MODE0 to @ref LL_SPI_TX_ENDIAN_MODE3. */
     uint32_t
-        rx_endian; /**< RX FIFO read endian, use @ref
+    rx_endian; /**< RX FIFO read endian, use @ref
                       LL_SPI_RX_ENDIAN_MODE0 to @ref LL_SPI_RX_ENDIAN_MODE3. */
     uint32_t
-        packing_enable; /**< FIFO packing control, 0 or SPI_FIFO_CTRL_FPCKE. */
+    packing_enable; /**< FIFO packing control, 0 or SPI_FIFO_CTRL_FPCKE. */
 } ll_spi_fifo_config_t;
 
 /**
@@ -151,9 +150,9 @@ static inline void ll_spi_config_frame(SPI_TypeDef *SPIx,
 {
     MODIFY_REG(SPIx->TOP_CTRL,
                SPI_TOP_CTRL_DSS | SPI_TOP_CTRL_IFS | SPI_TOP_CTRL_TRAIL |
-                   SPI_TOP_CTRL_TTE | SPI_TOP_CTRL_TTELP,
+               SPI_TOP_CTRL_TTE | SPI_TOP_CTRL_TTELP,
                cfg->data_width | cfg->invert_frame | cfg->trail_dma | cfg->tte |
-                   cfg->ttelp);
+               cfg->ttelp);
 }
 
 /**
@@ -162,7 +161,7 @@ static inline void ll_spi_config_frame(SPI_TypeDef *SPIx,
  * @param[in] en   Non-zero to enable free-running clock.
  */
 static inline void ll_spi_set_slave_clock_free_running(SPI_TypeDef *SPIx,
-                                                       uint32_t en)
+        uint32_t en)
 {
     MODIFY_REG(SPIx->TOP_CTRL, SPI_TOP_CTRL_SCFR,
                en ? SPI_TOP_CTRL_SCFR : 0UL);
@@ -203,7 +202,7 @@ static inline void ll_spi_set_loopback(SPI_TypeDef *SPIx, uint32_t en)
  * @param[in] cfg Pointer to protocol configuration.
  */
 static inline void ll_spi_config_protocol(SPI_TypeDef *SPIx,
-                                          const ll_spi_protocol_config_t *cfg)
+        const ll_spi_protocol_config_t *cfg)
 {
     MODIFY_REG(SPIx->TOP_CTRL,
                SPI_TOP_CTRL_FRF | SPI_TOP_CTRL_SPO | SPI_TOP_CTRL_SPH,
@@ -258,16 +257,16 @@ static inline uint32_t ll_spi_is_enabled(SPI_TypeDef *SPIx)
  * @param[in] auto_full  Non-zero enables RX FIFO auto-full control.
  */
 static inline void ll_spi_set_fifo_test_control(SPI_TypeDef *SPIx,
-                                                uint32_t select_rx,
-                                                uint32_t enable_rw,
-                                                uint32_t auto_full)
+        uint32_t select_rx,
+        uint32_t enable_rw,
+        uint32_t auto_full)
 {
     MODIFY_REG(SPIx->FIFO_CTRL,
                SPI_FIFO_CTRL_STRF | SPI_FIFO_CTRL_EFWR |
-                   SPI_FIFO_CTRL_RXFIFO_AUTO_FULL_CTRL,
+               SPI_FIFO_CTRL_RXFIFO_AUTO_FULL_CTRL,
                (select_rx ? SPI_FIFO_CTRL_STRF : 0UL) |
-                   (enable_rw ? SPI_FIFO_CTRL_EFWR : 0UL) |
-                   (auto_full ? SPI_FIFO_CTRL_RXFIFO_AUTO_FULL_CTRL : 0UL));
+               (enable_rw ? SPI_FIFO_CTRL_EFWR : 0UL) |
+               (auto_full ? SPI_FIFO_CTRL_RXFIFO_AUTO_FULL_CTRL : 0UL));
 }
 
 /**
@@ -281,11 +280,11 @@ static inline void ll_spi_config_fifo(SPI_TypeDef *SPIx,
     MODIFY_REG(
         SPIx->FIFO_CTRL,
         SPI_FIFO_CTRL_TFT | SPI_FIFO_CTRL_RFT | SPI_FIFO_CTRL_TXFIFO_WR_ENDIAN |
-            SPI_FIFO_CTRL_RXFIFO_RD_ENDIAN | SPI_FIFO_CTRL_FPCKE,
+        SPI_FIFO_CTRL_RXFIFO_RD_ENDIAN | SPI_FIFO_CTRL_FPCKE,
         ((cfg->tx_threshold << SPI_FIFO_CTRL_TFT_Pos) & SPI_FIFO_CTRL_TFT_Msk) |
-            ((cfg->rx_threshold << SPI_FIFO_CTRL_RFT_Pos) &
-             SPI_FIFO_CTRL_RFT_Msk) |
-            cfg->tx_endian | cfg->rx_endian | cfg->packing_enable);
+        ((cfg->rx_threshold << SPI_FIFO_CTRL_RFT_Pos) &
+         SPI_FIFO_CTRL_RFT_Msk) |
+        cfg->tx_endian | cfg->rx_endian | cfg->packing_enable);
 }
 
 /**
@@ -314,16 +313,6 @@ static inline void ll_spi_disable_dma_rx(SPI_TypeDef *SPIx)
 static inline uint32_t ll_spi_is_enabled_dma_rx(SPI_TypeDef *SPIx)
 {
     return READ_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_RSRE);
-}
-
-/**
- * @brief Pulse the TX/RX FIFO reset bits (FIFO_CTRL.TSRE/RSRE set then clear).
- * @param[in] SPIx SPI instance pointer.
- */
-static inline void ll_spi_pulse_fifo_reset(SPI_TypeDef *SPIx)
-{
-    SET_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_TSRE | SPI_FIFO_CTRL_RSRE);
-    CLEAR_BIT(SPIx->FIFO_CTRL, SPI_FIFO_CTRL_TSRE | SPI_FIFO_CTRL_RSRE);
 }
 
 /**
@@ -913,7 +902,7 @@ static inline void ll_spi_disable_receive_only(SPI_TypeDef *SPIx)
  * @param[in] cycles Cycle match value.
  */
 static inline void ll_spi_set_rwot_cycle_match(SPI_TypeDef *SPIx,
-                                               uint32_t cycles)
+        uint32_t cycles)
 {
     WRITE_REG(SPIx->RWOT_CCM, cycles);
 }
@@ -965,10 +954,10 @@ static inline void ll_spi_config_clock(SPI_TypeDef *SPIx,
 {
     MODIFY_REG(SPIx->CLK_CTRL,
                SPI_CLK_CTRL_CLK_DIV | SPI_CLK_CTRL_CLK_SEL |
-                   SPI_CLK_CTRL_CLK_SSP_EN,
+               SPI_CLK_CTRL_CLK_SSP_EN,
                ((cfg->clk_div << SPI_CLK_CTRL_CLK_DIV_Pos) &
                 SPI_CLK_CTRL_CLK_DIV_Msk) |
-                   cfg->clk_sel | SPI_CLK_CTRL_CLK_SSP_EN);
+               cfg->clk_sel | SPI_CLK_CTRL_CLK_SSP_EN);
 }
 
 /**

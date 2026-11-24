@@ -9,8 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "hpsys_rcc.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -110,14 +109,15 @@ extern "C" {
  */
 static inline volatile uint32_t *ll_rcc_rstr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t group)
 {
-	switch (group) {
-	case LL_RCC_GROUP_1:
-		return &rcc->RSTR1;
-	case LL_RCC_GROUP_2:
-		return &rcc->RSTR2;
-	default:
-		return NULL;
-	}
+    switch (group)
+    {
+    case LL_RCC_GROUP_1:
+        return &rcc->RSTR1;
+    case LL_RCC_GROUP_2:
+        return &rcc->RSTR2;
+    default:
+        return NULL;
+    }
 }
 
 /**
@@ -128,11 +128,12 @@ static inline volatile uint32_t *ll_rcc_rstr_reg(HPSYS_RCC_TypeDef *rcc, uint32_
  */
 static inline void ll_rcc_reset_module(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
+    volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
 
-	if (rstr != NULL) {
-		SET_BIT(*rstr, mask);
-	}
+    if (rstr != NULL)
+    {
+        SET_BIT(*rstr, mask);
+    }
 }
 
 /**
@@ -143,11 +144,12 @@ static inline void ll_rcc_reset_module(HPSYS_RCC_TypeDef *rcc, uint32_t group, u
  */
 static inline void ll_rcc_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
+    volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
 
-	if (rstr != NULL) {
-		CLEAR_BIT(*rstr, mask);
-	}
+    if (rstr != NULL)
+    {
+        CLEAR_BIT(*rstr, mask);
+    }
 }
 
 /**
@@ -158,11 +160,11 @@ static inline void ll_rcc_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t group, 
  * @return Non-zero while the module is asserted in reset, 0 otherwise.
  */
 static inline uint32_t ll_rcc_is_module_in_reset(HPSYS_RCC_TypeDef *rcc, uint32_t group,
-						 uint32_t mask)
+        uint32_t mask)
 {
-	volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
+    volatile uint32_t *rstr = ll_rcc_rstr_reg(rcc, group);
 
-	return (rstr != NULL) ? (READ_BIT(*rstr, mask) != 0UL) : 0UL;
+    return (rstr != NULL) ? (READ_BIT(*rstr, mask) != 0UL) : 0UL;
 }
 
 /*==============================================================================
@@ -179,14 +181,15 @@ static inline uint32_t ll_rcc_is_module_in_reset(HPSYS_RCC_TypeDef *rcc, uint32_
  */
 static inline volatile uint32_t *ll_rcc_enr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t group)
 {
-	switch (group) {
-	case LL_RCC_GROUP_1:
-		return &rcc->ENR1;
-	case LL_RCC_GROUP_2:
-		return &rcc->ENR2;
-	default:
-		return NULL;
-	}
+    switch (group)
+    {
+    case LL_RCC_GROUP_1:
+        return &rcc->ENR1;
+    case LL_RCC_GROUP_2:
+        return &rcc->ENR2;
+    default:
+        return NULL;
+    }
 }
 
 /**
@@ -197,11 +200,12 @@ static inline volatile uint32_t *ll_rcc_enr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline void ll_rcc_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
+    volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
 
-	if (enr != NULL) {
-		SET_BIT(*enr, mask);
-	}
+    if (enr != NULL)
+    {
+        SET_BIT(*enr, mask);
+    }
 }
 
 /**
@@ -209,11 +213,12 @@ static inline void ll_rcc_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, u
  */
 static inline void ll_rcc_disable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
+    volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
 
-	if (enr != NULL) {
-		CLEAR_BIT(*enr, mask);
-	}
+    if (enr != NULL)
+    {
+        CLEAR_BIT(*enr, mask);
+    }
 }
 
 /**
@@ -224,11 +229,11 @@ static inline void ll_rcc_disable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, 
  * @return Non-zero while the module clock is enabled, 0 otherwise.
  */
 static inline uint32_t ll_rcc_is_clock_enabled(HPSYS_RCC_TypeDef *rcc, uint32_t group,
-					       uint32_t mask)
+        uint32_t mask)
 {
-	volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
+    volatile uint32_t *enr = ll_rcc_enr_reg(rcc, group);
 
-	return (enr != NULL) ? (READ_BIT(*enr, mask) != 0UL) : 0UL;
+    return (enr != NULL) ? (READ_BIT(*enr, mask) != 0UL) : 0UL;
 }
 
 /**
@@ -237,14 +242,15 @@ static inline uint32_t ll_rcc_is_clock_enabled(HPSYS_RCC_TypeDef *rcc, uint32_t 
  */
 static inline volatile uint32_t *ll_rcc_esr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t group)
 {
-	switch (group) {
-	case LL_RCC_GROUP_1:
-		return &rcc->ESR1;
-	case LL_RCC_GROUP_2:
-		return &rcc->ESR2;
-	default:
-		return NULL;
-	}
+    switch (group)
+    {
+    case LL_RCC_GROUP_1:
+        return &rcc->ESR1;
+    case LL_RCC_GROUP_2:
+        return &rcc->ESR2;
+    default:
+        return NULL;
+    }
 }
 
 /**
@@ -252,11 +258,12 @@ static inline volatile uint32_t *ll_rcc_esr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline void ll_rcc_set_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *esr = ll_rcc_esr_reg(rcc, group);
+    volatile uint32_t *esr = ll_rcc_esr_reg(rcc, group);
 
-	if (esr != NULL) {
-		WRITE_REG(*esr, mask);
-	}
+    if (esr != NULL)
+    {
+        WRITE_REG(*esr, mask);
+    }
 }
 
 /**
@@ -265,14 +272,15 @@ static inline void ll_rcc_set_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t grou
  */
 static inline volatile uint32_t *ll_rcc_ecr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t group)
 {
-	switch (group) {
-	case LL_RCC_GROUP_1:
-		return &rcc->ECR1;
-	case LL_RCC_GROUP_2:
-		return &rcc->ECR2;
-	default:
-		return NULL;
-	}
+    switch (group)
+    {
+    case LL_RCC_GROUP_1:
+        return &rcc->ECR1;
+    case LL_RCC_GROUP_2:
+        return &rcc->ECR2;
+    default:
+        return NULL;
+    }
 }
 
 /**
@@ -280,11 +288,12 @@ static inline volatile uint32_t *ll_rcc_ecr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline void ll_rcc_clear_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t group, uint32_t mask)
 {
-	volatile uint32_t *ecr = ll_rcc_ecr_reg(rcc, group);
+    volatile uint32_t *ecr = ll_rcc_ecr_reg(rcc, group);
 
-	if (ecr != NULL) {
-		WRITE_REG(*ecr, mask);
-	}
+    if (ecr != NULL)
+    {
+        WRITE_REG(*ecr, mask);
+    }
 }
 
 /**
@@ -294,8 +303,8 @@ static inline void ll_rcc_clear_enable_clock(HPSYS_RCC_TypeDef *rcc, uint32_t gr
  */
 static inline void ll_rcc_set_usb_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_USBC_Msk, HPSYS_RCC_CSR_SEL_USBC_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_USBC_Msk, HPSYS_RCC_CSR_SEL_USBC_Pos));
 }
 
 /**
@@ -305,7 +314,7 @@ static inline void ll_rcc_set_usb_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t 
  */
 static inline uint32_t ll_rcc_get_usb_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_USBC);
 }
 
 /**
@@ -315,8 +324,8 @@ static inline uint32_t ll_rcc_get_usb_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_tick_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_TICK,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_TICK_Msk, HPSYS_RCC_CSR_SEL_TICK_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_TICK,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_TICK_Msk, HPSYS_RCC_CSR_SEL_TICK_Pos));
 }
 
 /**
@@ -326,7 +335,7 @@ static inline void ll_rcc_set_tick_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline uint32_t ll_rcc_get_tick_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_TICK);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_TICK);
 }
 
 /**
@@ -336,8 +345,8 @@ static inline uint32_t ll_rcc_get_tick_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_peri_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_PERI_Msk, HPSYS_RCC_CSR_SEL_PERI_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_PERI_Msk, HPSYS_RCC_CSR_SEL_PERI_Pos));
 }
 
 /**
@@ -347,7 +356,7 @@ static inline void ll_rcc_set_peri_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline uint32_t ll_rcc_get_peri_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_PERI);
 }
 
 /**
@@ -357,8 +366,8 @@ static inline uint32_t ll_rcc_get_peri_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_mpi2_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI2,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI2_Msk, HPSYS_RCC_CSR_SEL_MPI2_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI2,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI2_Msk, HPSYS_RCC_CSR_SEL_MPI2_Pos));
 }
 
 /**
@@ -368,7 +377,7 @@ static inline void ll_rcc_set_mpi2_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline uint32_t ll_rcc_get_mpi2_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI2);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI2);
 }
 
 /**
@@ -378,8 +387,8 @@ static inline uint32_t ll_rcc_get_mpi2_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI1_Msk, HPSYS_RCC_CSR_SEL_MPI1_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_MPI1_Msk, HPSYS_RCC_CSR_SEL_MPI1_Pos));
 }
 
 /**
@@ -389,7 +398,7 @@ static inline void ll_rcc_set_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline uint32_t ll_rcc_get_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_MPI1);
 }
 
 /**
@@ -399,8 +408,8 @@ static inline uint32_t ll_rcc_get_mpi1_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_LP_Msk, HPSYS_RCC_CSR_SEL_SYS_LP_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_LP_Msk, HPSYS_RCC_CSR_SEL_SYS_LP_Pos));
 }
 
 /**
@@ -410,7 +419,7 @@ static inline void ll_rcc_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc, uint32
  */
 static inline uint32_t ll_rcc_get_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS_LP);
 }
 
 /*==============================================================================
@@ -424,13 +433,13 @@ static inline uint32_t ll_rcc_get_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS,
-		   MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_Msk, HPSYS_RCC_CSR_SEL_SYS_Pos));
+    MODIFY_REG(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS,
+               MAKE_REG_VAL(src, HPSYS_RCC_CSR_SEL_SYS_Msk, HPSYS_RCC_CSR_SEL_SYS_Pos));
 }
 
 static inline uint32_t ll_rcc_get_sys_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS);
+    return GET_REG_VAL2(rcc->CSR, HPSYS_RCC_CSR_SEL_SYS);
 }
 
 /**
@@ -440,8 +449,8 @@ static inline uint32_t ll_rcc_get_sys_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_tick_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
 {
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV,
-		   MAKE_REG_VAL(div, HPSYS_RCC_CFGR_TICKDIV_Msk, HPSYS_RCC_CFGR_TICKDIV_Pos));
+    MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV,
+               MAKE_REG_VAL(div, HPSYS_RCC_CFGR_TICKDIV_Msk, HPSYS_RCC_CFGR_TICKDIV_Pos));
 }
 
 /**
@@ -451,7 +460,7 @@ static inline void ll_rcc_set_tick_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
  */
 static inline uint32_t ll_rcc_get_tick_div(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV);
+    return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_TICKDIV);
 }
 
 /**
@@ -461,8 +470,8 @@ static inline uint32_t ll_rcc_get_tick_div(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_apb2_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv2)
 {
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2,
-		   MAKE_REG_VAL(pdiv2, HPSYS_RCC_CFGR_PDIV2_Msk, HPSYS_RCC_CFGR_PDIV2_Pos));
+    MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2,
+               MAKE_REG_VAL(pdiv2, HPSYS_RCC_CFGR_PDIV2_Msk, HPSYS_RCC_CFGR_PDIV2_Pos));
 }
 
 /**
@@ -472,7 +481,7 @@ static inline void ll_rcc_set_apb2_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv2)
  */
 static inline uint32_t ll_rcc_get_apb2_div(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
+    return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
 }
 
 /**
@@ -482,8 +491,8 @@ static inline uint32_t ll_rcc_get_apb2_div(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_apb1_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv1)
 {
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1,
-		   MAKE_REG_VAL(pdiv1, HPSYS_RCC_CFGR_PDIV1_Msk, HPSYS_RCC_CFGR_PDIV1_Pos));
+    MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1,
+               MAKE_REG_VAL(pdiv1, HPSYS_RCC_CFGR_PDIV1_Msk, HPSYS_RCC_CFGR_PDIV1_Pos));
 }
 
 /**
@@ -493,7 +502,7 @@ static inline void ll_rcc_set_apb1_div(HPSYS_RCC_TypeDef *rcc, uint32_t pdiv1)
  */
 static inline uint32_t ll_rcc_get_apb1_div(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
+    return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
 }
 
 /*==============================================================================
@@ -507,8 +516,8 @@ static inline uint32_t ll_rcc_get_apb1_div(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t hdiv)
 {
-	MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_HDIV,
-		   MAKE_REG_VAL(hdiv, HPSYS_RCC_CFGR_HDIV_Msk, HPSYS_RCC_CFGR_HDIV_Pos));
+    MODIFY_REG(rcc->CFGR, HPSYS_RCC_CFGR_HDIV,
+               MAKE_REG_VAL(hdiv, HPSYS_RCC_CFGR_HDIV_Msk, HPSYS_RCC_CFGR_HDIV_Pos));
 }
 
 /**
@@ -518,7 +527,7 @@ static inline void ll_rcc_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t hdiv)
  */
 static inline uint32_t ll_rcc_get_ahb_div(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_HDIV);
+    return GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_HDIV);
 }
 
 /*==============================================================================
@@ -532,8 +541,8 @@ static inline uint32_t ll_rcc_get_ahb_div(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_usb_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
 {
-	MODIFY_REG(rcc->USBCR, HPSYS_RCC_USBCR_DIV,
-		   MAKE_REG_VAL(div, HPSYS_RCC_USBCR_DIV_Msk, HPSYS_RCC_USBCR_DIV_Pos));
+    MODIFY_REG(rcc->USBCR, HPSYS_RCC_USBCR_DIV,
+               MAKE_REG_VAL(div, HPSYS_RCC_USBCR_DIV_Msk, HPSYS_RCC_USBCR_DIV_Pos));
 }
 
 /**
@@ -543,7 +552,7 @@ static inline void ll_rcc_set_usb_div(HPSYS_RCC_TypeDef *rcc, uint32_t div)
  */
 static inline uint32_t ll_rcc_get_usb_div(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->USBCR, HPSYS_RCC_USBCR_DIV);
+    return GET_REG_VAL2(rcc->USBCR, HPSYS_RCC_USBCR_DIV);
 }
 
 /*==============================================================================
@@ -569,14 +578,15 @@ static inline uint32_t ll_rcc_get_usb_div(HPSYS_RCC_TypeDef *rcc)
  */
 static inline volatile uint32_t *ll_rcc_dll_cr_reg(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	switch (idx) {
-	case LL_RCC_DLL_INDEX_1:
-		return &rcc->DLL1CR;
-	case LL_RCC_DLL_INDEX_2:
-		return &rcc->DLL2CR;
-	default:
-		return NULL;
-	}
+    switch (idx)
+    {
+    case LL_RCC_DLL_INDEX_1:
+        return &rcc->DLL1CR;
+    case LL_RCC_DLL_INDEX_2:
+        return &rcc->DLL2CR;
+    default:
+        return NULL;
+    }
 }
 
 /**
@@ -585,9 +595,9 @@ static inline volatile uint32_t *ll_rcc_dll_cr_reg(HPSYS_RCC_TypeDef *rcc, uint3
  */
 static inline uint32_t ll_rcc_dll_is_ready(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	return (cr != NULL) ? (READ_BIT(*cr, HPSYS_RCC_DLL1CR_READY) != 0UL) : 0UL;
+    return (cr != NULL) ? (READ_BIT(*cr, HPSYS_RCC_DLL1CR_READY) != 0UL) : 0UL;
 }
 
 /**
@@ -600,13 +610,14 @@ static inline uint32_t ll_rcc_dll_is_ready(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_set_out_div2(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint32_t div2)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	if (cr != NULL) {
-		MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_OUT_DIV2_EN,
-			   MAKE_REG_VAL(div2, HPSYS_RCC_DLL1CR_OUT_DIV2_EN_Msk,
-					HPSYS_RCC_DLL1CR_OUT_DIV2_EN_Pos));
-	}
+    if (cr != NULL)
+    {
+        MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_OUT_DIV2_EN,
+                   MAKE_REG_VAL(div2, HPSYS_RCC_DLL1CR_OUT_DIV2_EN_Msk,
+                                HPSYS_RCC_DLL1CR_OUT_DIV2_EN_Pos));
+    }
 }
 
 /**
@@ -617,13 +628,14 @@ static inline void ll_rcc_dll_set_out_div2(HPSYS_RCC_TypeDef *rcc, uint32_t idx,
  */
 static inline void ll_rcc_dll_set_in_div2(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint32_t div2)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	if (cr != NULL) {
-		MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_IN_DIV2_EN,
-			   MAKE_REG_VAL(div2, HPSYS_RCC_DLL1CR_IN_DIV2_EN_Msk,
-					HPSYS_RCC_DLL1CR_IN_DIV2_EN_Pos));
-	}
+    if (cr != NULL)
+    {
+        MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_IN_DIV2_EN,
+                   MAKE_REG_VAL(div2, HPSYS_RCC_DLL1CR_IN_DIV2_EN_Msk,
+                                HPSYS_RCC_DLL1CR_IN_DIV2_EN_Pos));
+    }
 }
 
 /**
@@ -637,12 +649,13 @@ static inline void ll_rcc_dll_set_in_div2(HPSYS_RCC_TypeDef *rcc, uint32_t idx, 
  */
 static inline void ll_rcc_dll_set_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint32_t stg)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	if (cr != NULL) {
-		MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_STG,
-			   MAKE_REG_VAL(stg, HPSYS_RCC_DLL1CR_STG_Msk, HPSYS_RCC_DLL1CR_STG_Pos));
-	}
+    if (cr != NULL)
+    {
+        MODIFY_REG(*cr, HPSYS_RCC_DLL1CR_STG,
+                   MAKE_REG_VAL(stg, HPSYS_RCC_DLL1CR_STG_Msk, HPSYS_RCC_DLL1CR_STG_Pos));
+    }
 }
 
 /**
@@ -651,9 +664,9 @@ static inline void ll_rcc_dll_set_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx, uint
  */
 static inline uint32_t ll_rcc_dll_get_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	return (cr != NULL) ? GET_REG_VAL2(*cr, HPSYS_RCC_DLL1CR_STG) : 0UL;
+    return (cr != NULL) ? GET_REG_VAL2(*cr, HPSYS_RCC_DLL1CR_STG) : 0UL;
 }
 
 /**
@@ -663,11 +676,12 @@ static inline uint32_t ll_rcc_dll_get_stg(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	if (cr != NULL) {
-		SET_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
-	}
+    if (cr != NULL)
+    {
+        SET_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
+    }
 }
 
 /**
@@ -675,16 +689,17 @@ static inline void ll_rcc_dll_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
+    volatile uint32_t *cr = ll_rcc_dll_cr_reg(rcc, idx);
 
-	if (cr != NULL) {
-		CLEAR_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
-	}
+    if (cr != NULL)
+    {
+        CLEAR_BIT(*cr, HPSYS_RCC_DLL1CR_EN);
+    }
 }
 
 static inline uint32_t ll_rcc_hrc_is_calibration_done(HPSYS_RCC_TypeDef *rcc)
 {
-	return READ_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_DONE) ? 1UL : 0UL;
+    return READ_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_DONE) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -701,12 +716,15 @@ static inline uint32_t ll_rcc_hrc_is_calibration_done(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_hrc_start_calibration(HPSYS_RCC_TypeDef *rcc, uint16_t length)
 {
-	/* Clear enable to reset state */
-	CLEAR_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_EN);
-	/* Set calibration length */
-	MODIFY_REG(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_LENGTH, length);
-	/* Start calibration */
-	SET_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_EN);
+    /* Clear enable to reset state */
+    CLEAR_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_EN);
+    /* Set calibration length (CAL_LENGTH is bit0..15, MAKE_REG_VAL keeps the
+     * encoding correct even if the field position changes on other parts). */
+    MODIFY_REG(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_LENGTH,
+               MAKE_REG_VAL(length, HPSYS_RCC_HRCCAL1_CAL_LENGTH_Msk,
+                            HPSYS_RCC_HRCCAL1_CAL_LENGTH_Pos));
+    /* Start calibration */
+    SET_BIT(rcc->HRCCAL1, HPSYS_RCC_HRCCAL1_CAL_EN);
 }
 
 /**
@@ -715,33 +733,33 @@ static inline void ll_rcc_hrc_start_calibration(HPSYS_RCC_TypeDef *rcc, uint16_t
  * @param[out] hrc_cnt clk_hrc48 count
  */
 static inline void ll_rcc_hrc_get_calibration_result(HPSYS_RCC_TypeDef *rcc, uint16_t *hxt_cnt,
-						     uint16_t *hrc_cnt)
+        uint16_t *hrc_cnt)
 {
-	uint32_t reg = READ_REG(rcc->HRCCAL2);
-	*hrc_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HRC_CNT);
-	*hxt_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HXT_CNT);
+    uint32_t reg = READ_REG(rcc->HRCCAL2);
+    *hrc_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HRC_CNT);
+    *hxt_cnt = (uint16_t)GET_REG_VAL2(reg, HPSYS_RCC_HRCCAL2_HXT_CNT);
 }
 static inline void ll_rcc_deepwfi_set_dll_output(HPSYS_RCC_TypeDef *rcc,
-							 uint32_t dll1_out_en,
-							 uint32_t dll1_rstb,
-							 uint32_t dll2_out_en,
-							 uint32_t dll2_rstb)
+        uint32_t dll1_out_en,
+        uint32_t dll1_rstb,
+        uint32_t dll2_out_en,
+        uint32_t dll2_rstb)
 {
-	MODIFY_REG(rcc->DWCFGR,
-		   HPSYS_RCC_DWCFGR_DLL1_OUT_EN | HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB |
-			   HPSYS_RCC_DWCFGR_DLL2_OUT_EN | HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB,
-		   (dll1_out_en ? HPSYS_RCC_DWCFGR_DLL1_OUT_EN : 0UL) |
-		   (dll1_rstb ? HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB : 0UL) |
-		   (dll2_out_en ? HPSYS_RCC_DWCFGR_DLL2_OUT_EN : 0UL) |
-		   (dll2_rstb ? HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB : 0UL));
+    MODIFY_REG(rcc->DWCFGR,
+               HPSYS_RCC_DWCFGR_DLL1_OUT_EN | HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB |
+               HPSYS_RCC_DWCFGR_DLL2_OUT_EN | HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB,
+               (dll1_out_en ? HPSYS_RCC_DWCFGR_DLL1_OUT_EN : 0UL) |
+               (dll1_rstb ? HPSYS_RCC_DWCFGR_DLL1_OUT_RSTB : 0UL) |
+               (dll2_out_en ? HPSYS_RCC_DWCFGR_DLL2_OUT_EN : 0UL) |
+               (dll2_rstb ? HPSYS_RCC_DWCFGR_DLL2_OUT_RSTB : 0UL));
 }
 
 static inline void ll_rcc_deepwfi_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc,
-								   uint32_t src)
+        uint32_t src)
 {
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS_LP,
-		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_LP_Msk,
-				HPSYS_RCC_DWCFGR_SEL_SYS_LP_Pos));
+    MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS_LP,
+               MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_LP_Msk,
+                            HPSYS_RCC_DWCFGR_SEL_SYS_LP_Pos));
 }
 
 /**
@@ -751,8 +769,8 @@ static inline void ll_rcc_deepwfi_set_sys_lp_clock_source(HPSYS_RCC_TypeDef *rcc
  */
 static inline void ll_rcc_deepwfi_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t src)
 {
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS,
-		   MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_Msk, HPSYS_RCC_DWCFGR_SEL_SYS_Pos));
+    MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_SEL_SYS,
+               MAKE_REG_VAL(src, HPSYS_RCC_DWCFGR_SEL_SYS_Msk, HPSYS_RCC_DWCFGR_SEL_SYS_Pos));
 }
 
 /*==============================================================================
@@ -764,7 +782,7 @@ static inline void ll_rcc_deepwfi_set_sys_clock_source(HPSYS_RCC_TypeDef *rcc, u
  */
 static inline void ll_rcc_deepwfi_enable_div_reconfig(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DWCFGR, HPSYS_RCC_DWCFGR_DIV_EN);
+    SET_BIT(rcc->DWCFGR, HPSYS_RCC_DWCFGR_DIV_EN);
 }
 
 /**
@@ -772,16 +790,16 @@ static inline void ll_rcc_deepwfi_enable_div_reconfig(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_deepwfi_disable_div_reconfig(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DWCFGR, HPSYS_RCC_DWCFGR_DIV_EN);
+    CLEAR_BIT(rcc->DWCFGR, HPSYS_RCC_DWCFGR_DIV_EN);
 }
 static inline void ll_rcc_deepwfi_set_apb_div(HPSYS_RCC_TypeDef *rcc,
-						      uint32_t pdiv1, uint32_t pdiv2)
+        uint32_t pdiv1, uint32_t pdiv2)
 {
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_PDIV1 | HPSYS_RCC_DWCFGR_PDIV2,
-		   MAKE_REG_VAL(pdiv1, HPSYS_RCC_DWCFGR_PDIV1_Msk,
-				HPSYS_RCC_DWCFGR_PDIV1_Pos) |
-		   MAKE_REG_VAL(pdiv2, HPSYS_RCC_DWCFGR_PDIV2_Msk,
-				HPSYS_RCC_DWCFGR_PDIV2_Pos));
+    MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_PDIV1 | HPSYS_RCC_DWCFGR_PDIV2,
+               MAKE_REG_VAL(pdiv1, HPSYS_RCC_DWCFGR_PDIV1_Msk,
+                            HPSYS_RCC_DWCFGR_PDIV1_Pos) |
+               MAKE_REG_VAL(pdiv2, HPSYS_RCC_DWCFGR_PDIV2_Msk,
+                            HPSYS_RCC_DWCFGR_PDIV2_Pos));
 }
 
 /**
@@ -791,8 +809,8 @@ static inline void ll_rcc_deepwfi_set_apb_div(HPSYS_RCC_TypeDef *rcc,
  */
 static inline void ll_rcc_deepwfi_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t hdiv)
 {
-	MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_HDIV,
-		   MAKE_REG_VAL(hdiv, HPSYS_RCC_DWCFGR_HDIV_Msk, HPSYS_RCC_DWCFGR_HDIV_Pos));
+    MODIFY_REG(rcc->DWCFGR, HPSYS_RCC_DWCFGR_HDIV,
+               MAKE_REG_VAL(hdiv, HPSYS_RCC_DWCFGR_HDIV_Msk, HPSYS_RCC_DWCFGR_HDIV_Pos));
 }
 
 /*==============================================================================
@@ -810,21 +828,27 @@ static inline void ll_rcc_deepwfi_set_ahb_div(HPSYS_RCC_TypeDef *rcc, uint32_t h
  */
 static inline uint32_t ll_rcc_get_sys_clock_freq(HPSYS_RCC_TypeDef *rcc)
 {
-	uint32_t src = ll_rcc_get_sys_clock_source(rcc);
-	uint32_t freq;
+    uint32_t src = ll_rcc_get_sys_clock_source(rcc);
+    uint32_t freq;
 
-	if (src == LL_RCC_SYS_CLKSRC_HXT48) {
-		freq = LL_RCC_HXT48_FREQ;
-	} else if (src == LL_RCC_SYS_CLKSRC_DLL1) {
-		uint32_t stg = GET_REG_VAL2(rcc->DLL1CR, HPSYS_RCC_DLL1CR_STG);
-		freq = (stg + 1U) * 24000000UL;
-		if (READ_BIT(rcc->DLL1CR, HPSYS_RCC_DLL1CR_OUT_DIV2_EN)) {
-			freq /= 2U;
-		}
-	} else {
-		freq = LL_RCC_HRC48_FREQ;
-	}
-	return freq;
+    if (src == LL_RCC_SYS_CLKSRC_HXT48)
+    {
+        freq = LL_RCC_HXT48_FREQ;
+    }
+    else if (src == LL_RCC_SYS_CLKSRC_DLL1)
+    {
+        uint32_t stg = GET_REG_VAL2(rcc->DLL1CR, HPSYS_RCC_DLL1CR_STG);
+        freq = (stg + 1U) * 24000000UL;
+        if (READ_BIT(rcc->DLL1CR, HPSYS_RCC_DLL1CR_OUT_DIV2_EN))
+        {
+            freq /= 2U;
+        }
+    }
+    else
+    {
+        freq = LL_RCC_HRC48_FREQ;
+    }
+    return freq;
 }
 
 /**
@@ -832,9 +856,9 @@ static inline uint32_t ll_rcc_get_sys_clock_freq(HPSYS_RCC_TypeDef *rcc)
  */
 static inline uint32_t ll_rcc_get_hclk_freq(HPSYS_RCC_TypeDef *rcc)
 {
-	uint32_t hdiv = ll_rcc_get_ahb_div(rcc);
-	uint32_t clk_sys = ll_rcc_get_sys_clock_freq(rcc);
-	return (hdiv == 0UL) ? clk_sys : (clk_sys / hdiv);
+    uint32_t hdiv = ll_rcc_get_ahb_div(rcc);
+    uint32_t clk_sys = ll_rcc_get_sys_clock_freq(rcc);
+    return (hdiv == 0UL) ? clk_sys : (clk_sys / hdiv);
 }
 
 /**
@@ -842,8 +866,8 @@ static inline uint32_t ll_rcc_get_hclk_freq(HPSYS_RCC_TypeDef *rcc)
  */
 static inline uint32_t ll_rcc_get_pclk2_freq(HPSYS_RCC_TypeDef *rcc)
 {
-	uint32_t pdiv2 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
-	return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv2);
+    uint32_t pdiv2 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV2);
+    return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv2);
 }
 
 /**
@@ -851,8 +875,8 @@ static inline uint32_t ll_rcc_get_pclk2_freq(HPSYS_RCC_TypeDef *rcc)
  */
 static inline uint32_t ll_rcc_get_pclk_freq(HPSYS_RCC_TypeDef *rcc)
 {
-	uint32_t pdiv1 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
-	return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv1);
+    uint32_t pdiv1 = GET_REG_VAL2(rcc->CFGR, HPSYS_RCC_CFGR_PDIV1);
+    return ll_rcc_get_hclk_freq(rcc) / (1UL << pdiv1);
 }
 
 /**< HXT48 frequency */
@@ -880,7 +904,7 @@ static inline uint32_t ll_rcc_get_pclk_freq(HPSYS_RCC_TypeDef *rcc)
  */
 static inline uint32_t ll_rcc_dbgclkr_dll_field(uint32_t idx, uint32_t dll1_mask)
 {
-	return (idx == LL_RCC_DLL_INDEX_2) ? (dll1_mask << 8U) : dll1_mask;
+    return (idx == LL_RCC_DLL_INDEX_2) ? (dll1_mask << 8U) : dll1_mask;
 }
 
 /**
@@ -890,12 +914,12 @@ static inline uint32_t ll_rcc_dbgclkr_dll_field(uint32_t idx, uint32_t dll1_mask
  * @param[in] str Output strength (2 bits).
  */
 static inline void ll_rcc_set_dll_out_strength(HPSYS_RCC_TypeDef *rcc, uint32_t idx,
-					       uint32_t str)
+        uint32_t str)
 {
-	MODIFY_REG(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
-		   MAKE_REG_VAL(str, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
-				HPSYS_RCC_DBGCLKR_DLL1_OUT_STR_Pos +
-					((idx == LL_RCC_DLL_INDEX_2) ? 8U : 0U)));
+    MODIFY_REG(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
+               MAKE_REG_VAL(str, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_STR),
+                            HPSYS_RCC_DBGCLKR_DLL1_OUT_STR_Pos +
+                            ((idx == LL_RCC_DLL_INDEX_2) ? 8U : 0U)));
 }
 
 /**
@@ -903,7 +927,7 @@ static inline void ll_rcc_set_dll_out_strength(HPSYS_RCC_TypeDef *rcc, uint32_t 
  */
 static inline void ll_rcc_dll_clock_gate_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
 }
 
 /**
@@ -911,7 +935,7 @@ static inline void ll_rcc_dll_clock_gate_enable(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline void ll_rcc_dll_clock_gate_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_CG_EN));
 }
 
 /**
@@ -919,7 +943,7 @@ static inline void ll_rcc_dll_clock_gate_disable(HPSYS_RCC_TypeDef *rcc, uint32_
  */
 static inline void ll_rcc_dll_out_assert_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
 }
 
 /**
@@ -927,7 +951,7 @@ static inline void ll_rcc_dll_out_assert_reset(HPSYS_RCC_TypeDef *rcc, uint32_t 
  */
 static inline void ll_rcc_dll_out_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_RSTB));
 }
 
 /**
@@ -935,7 +959,7 @@ static inline void ll_rcc_dll_out_release_reset(HPSYS_RCC_TypeDef *rcc, uint32_t
  */
 static inline void ll_rcc_dll_loop_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
 }
 
 /**
@@ -943,7 +967,7 @@ static inline void ll_rcc_dll_loop_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_loop_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LOOP_EN));
 }
 
 /**
@@ -951,7 +975,7 @@ static inline void ll_rcc_dll_loop_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
 }
 
 /**
@@ -959,7 +983,7 @@ static inline void ll_rcc_dll_out_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_OUT_EN));
 }
 
 /**
@@ -967,7 +991,7 @@ static inline void ll_rcc_dll_out_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_ldo_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
 }
 
 /**
@@ -975,7 +999,7 @@ static inline void ll_rcc_dll_ldo_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_ldo_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_LDO_EN));
 }
 
 /**
@@ -985,7 +1009,7 @@ static inline void ll_rcc_dll_ldo_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_dbg_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
+    SET_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
 }
 
 /**
@@ -993,7 +1017,7 @@ static inline void ll_rcc_dll_dbg_enable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_dll_dbg_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
 {
-	CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
+    CLEAR_BIT(rcc->DBGCLKR, ll_rcc_dbgclkr_dll_field(idx, HPSYS_RCC_DBGCLKR_DLL1_DBG));
 }
 
 /**
@@ -1002,7 +1026,7 @@ static inline void ll_rcc_dll_dbg_disable(HPSYS_RCC_TypeDef *rcc, uint32_t idx)
  */
 static inline void ll_rcc_debug_clock_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+    SET_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
 }
 
 /**
@@ -1011,7 +1035,7 @@ static inline void ll_rcc_debug_clock_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_debug_clock_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
+    CLEAR_BIT(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_EN);
 }
 
 /**
@@ -1021,9 +1045,9 @@ static inline void ll_rcc_debug_clock_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_set_debug_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_t sel)
 {
-	MODIFY_REG(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL,
-		   MAKE_REG_VAL(sel, HPSYS_RCC_DBGCLKR_CLK_SEL_Msk,
-				HPSYS_RCC_DBGCLKR_CLK_SEL_Pos));
+    MODIFY_REG(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL,
+               MAKE_REG_VAL(sel, HPSYS_RCC_DBGCLKR_CLK_SEL_Msk,
+                            HPSYS_RCC_DBGCLKR_CLK_SEL_Pos));
 }
 
 /**
@@ -1033,7 +1057,7 @@ static inline void ll_rcc_set_debug_clock_source(HPSYS_RCC_TypeDef *rcc, uint32_
  */
 static inline uint32_t ll_rcc_get_debug_clock_source(HPSYS_RCC_TypeDef *rcc)
 {
-	return GET_REG_VAL2(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL);
+    return GET_REG_VAL2(rcc->DBGCLKR, HPSYS_RCC_DBGCLKR_CLK_SEL);
 }
 
 /**
@@ -1042,7 +1066,7 @@ static inline uint32_t ll_rcc_get_debug_clock_source(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_hp_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
+    SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
 }
 
 /**
@@ -1051,7 +1075,7 @@ static inline void ll_rcc_dbg_force_hp_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_hp_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
+    CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_HP);
 }
 
 /**
@@ -1060,7 +1084,7 @@ static inline void ll_rcc_dbg_force_hp_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_gpio_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
+    SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
 }
 
 /**
@@ -1069,7 +1093,7 @@ static inline void ll_rcc_dbg_force_gpio_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_gpio_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
+    CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_GPIO);
 }
 
 /**
@@ -1078,7 +1102,7 @@ static inline void ll_rcc_dbg_force_gpio_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_bus_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+    SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
 }
 
 /**
@@ -1087,7 +1111,7 @@ static inline void ll_rcc_dbg_force_bus_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_force_bus_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
+    CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_FORCE_BUS);
 }
 
 /**
@@ -1096,7 +1120,7 @@ static inline void ll_rcc_dbg_force_bus_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_sysclk_swlp_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+    SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
 }
 
 /**
@@ -1105,7 +1129,7 @@ static inline void ll_rcc_dbg_sysclk_swlp_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_sysclk_swlp_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
+    CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_SWLP);
 }
 
 /**
@@ -1114,7 +1138,7 @@ static inline void ll_rcc_dbg_sysclk_swlp_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_sysclk_aon_enable(HPSYS_RCC_TypeDef *rcc)
 {
-	SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+    SET_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
 }
 
 /**
@@ -1123,7 +1147,7 @@ static inline void ll_rcc_dbg_sysclk_aon_enable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_dbg_sysclk_aon_disable(HPSYS_RCC_TypeDef *rcc)
 {
-	CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
+    CLEAR_BIT(rcc->DBGR, HPSYS_RCC_DBGR_SYSCLK_AON);
 }
 
 /**
@@ -1132,7 +1156,7 @@ static inline void ll_rcc_dbg_sysclk_aon_disable(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_enter_scan_mode(HPSYS_RCC_TypeDef *rcc)
 {
-	WRITE_REG(rcc->TESTR, 0xdeadbeefUL);
+    WRITE_REG(rcc->TESTR, 0xdeadbeefUL);
 }
 
 /**
@@ -1142,7 +1166,7 @@ static inline void ll_rcc_enter_scan_mode(HPSYS_RCC_TypeDef *rcc)
  */
 static inline void ll_rcc_write_test_reg(HPSYS_RCC_TypeDef *rcc, uint32_t val)
 {
-	WRITE_REG(rcc->TESTR, val);
+    WRITE_REG(rcc->TESTR, val);
 }
 
 #ifdef __cplusplus

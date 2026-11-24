@@ -8,8 +8,7 @@
 #define __LL_AUDPRC_H
 
 #include <stdint.h>
-#include "audprc.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,7 +32,7 @@ extern "C" {
  */
 static inline __IO uint32_t *ll_audprc_tx_cfg_reg(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	return &((&AUDPRCx->TX_CH0_CFG)[ch * 2U]);
+    return &((&AUDPRCx->TX_CH0_CFG)[ch * 2U]);
 }
 
 /**
@@ -44,7 +43,7 @@ static inline __IO uint32_t *ll_audprc_tx_cfg_reg(AUDPRC_TypeDef *AUDPRCx, uint3
  */
 static inline __IO uint32_t *ll_audprc_rx_cfg_reg(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	return &((&AUDPRCx->RX_CH0_CFG)[ch * 2U]);
+    return &((&AUDPRCx->RX_CH0_CFG)[ch * 2U]);
 }
 
 /**
@@ -55,7 +54,7 @@ static inline __IO uint32_t *ll_audprc_rx_cfg_reg(AUDPRC_TypeDef *AUDPRCx, uint3
  */
 static inline __IO uint32_t *ll_audprc_tx_out_cfg_reg(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	return &((&AUDPRCx->TX_OUT_CH0_CFG)[ch * 2U]);
+    return &((&AUDPRCx->TX_OUT_CH0_CFG)[ch * 2U]);
 }
 
 /*==============================================================================
@@ -69,7 +68,7 @@ static inline __IO uint32_t *ll_audprc_tx_out_cfg_reg(AUDPRC_TypeDef *AUDPRCx, u
  */
 static inline uint32_t ll_audprc_get_revision(AUDPRC_TypeDef *AUDPRCx)
 {
-	return READ_REG(AUDPRCx->ID);
+    return READ_REG(AUDPRCx->ID);
 }
 
 /**
@@ -78,7 +77,7 @@ static inline uint32_t ll_audprc_get_revision(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_clock_div_update(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUDCLK_DIV_UPDATE);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUDCLK_DIV_UPDATE);
 }
 
 /**
@@ -88,8 +87,8 @@ static inline void ll_audprc_clock_div_update(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_set_clock_div(AUDPRC_TypeDef *AUDPRCx, uint32_t div)
 {
-	MODIFY_REG(AUDPRCx->CFG, AUDPRC_CFG_AUDCLK_DIV,
-		   MAKE_REG_VAL(div, AUDPRC_CFG_AUDCLK_DIV_Msk, AUDPRC_CFG_AUDCLK_DIV_Pos));
+    MODIFY_REG(AUDPRCx->CFG, AUDPRC_CFG_AUDCLK_DIV,
+               MAKE_REG_VAL(div, AUDPRC_CFG_AUDCLK_DIV_Msk, AUDPRC_CFG_AUDCLK_DIV_Pos));
 }
 
 /**
@@ -99,8 +98,8 @@ static inline void ll_audprc_set_clock_div(AUDPRC_TypeDef *AUDPRCx, uint32_t div
  */
 static inline void ll_audprc_set_stb_clk_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t use_pll)
 {
-	MODIFY_REG(AUDPRCx->CFG, AUDPRC_CFG_STB_CLK_SEL,
-		   use_pll ? AUDPRC_CFG_STB_CLK_SEL : 0U);
+    MODIFY_REG(AUDPRCx->CFG, AUDPRC_CFG_STB_CLK_SEL,
+               use_pll ? AUDPRC_CFG_STB_CLK_SEL : 0U);
 }
 
 /**
@@ -109,7 +108,7 @@ static inline void ll_audprc_set_stb_clk_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t u
  */
 static inline void ll_audprc_auto_gate_enable(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUTO_GATE_EN);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUTO_GATE_EN);
 }
 
 /**
@@ -118,7 +117,7 @@ static inline void ll_audprc_auto_gate_enable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_auto_gate_disable(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUTO_GATE_EN);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_AUTO_GATE_EN);
 }
 
 /**
@@ -127,7 +126,7 @@ static inline void ll_audprc_auto_gate_disable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_path_enable(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_EN);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_EN);
 }
 
 /**
@@ -136,7 +135,7 @@ static inline void ll_audprc_adc_path_enable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_path_disable(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_EN);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_EN);
 }
 
 /**
@@ -145,7 +144,7 @@ static inline void ll_audprc_adc_path_disable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_path_enable(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_EN);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_EN);
 }
 
 /**
@@ -154,7 +153,7 @@ static inline void ll_audprc_dac_path_enable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_path_disable(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_EN);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_EN);
 }
 
 /**
@@ -163,7 +162,7 @@ static inline void ll_audprc_dac_path_disable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_path_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_SRESET);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_SRESET);
 }
 
 /**
@@ -172,7 +171,7 @@ static inline void ll_audprc_adc_path_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_path_release_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_SRESET);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_SRESET);
 }
 
 /**
@@ -181,7 +180,7 @@ static inline void ll_audprc_adc_path_release_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_path_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_SRESET);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_SRESET);
 }
 
 /**
@@ -190,7 +189,7 @@ static inline void ll_audprc_dac_path_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_path_release_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_SRESET);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_SRESET);
 }
 
 /**
@@ -199,7 +198,7 @@ static inline void ll_audprc_dac_path_release_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_path_flush(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_FLUSH);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ADC_PATH_FLUSH);
 }
 
 /**
@@ -208,7 +207,7 @@ static inline void ll_audprc_adc_path_flush(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_path_flush(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_FLUSH);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_DAC_PATH_FLUSH);
 }
 
 /**
@@ -217,7 +216,7 @@ static inline void ll_audprc_dac_path_flush(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_SRESET);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_SRESET);
 }
 
 /**
@@ -226,7 +225,7 @@ static inline void ll_audprc_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_release_reset(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_SRESET);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_SRESET);
 }
 
 /**
@@ -235,7 +234,7 @@ static inline void ll_audprc_release_reset(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_enable(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ENABLE);
+    SET_BIT(AUDPRCx->CFG, AUDPRC_CFG_ENABLE);
 }
 
 /**
@@ -244,7 +243,7 @@ static inline void ll_audprc_enable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_disable(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ENABLE);
+    CLEAR_BIT(AUDPRCx->CFG, AUDPRC_CFG_ENABLE);
 }
 
 /**
@@ -254,9 +253,9 @@ static inline void ll_audprc_disable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_tx_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
 
-	SET_BIT(*cfg, AUDPRC_TX_CH0_CFG_ENABLE);
+    SET_BIT(*cfg, AUDPRC_TX_CH0_CFG_ENABLE);
 }
 
 /**
@@ -266,9 +265,9 @@ static inline void ll_audprc_tx_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint32_t
  */
 static inline void ll_audprc_tx_channel_disable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
 
-	CLEAR_BIT(*cfg, AUDPRC_TX_CH0_CFG_ENABLE);
+    CLEAR_BIT(*cfg, AUDPRC_TX_CH0_CFG_ENABLE);
 }
 
 /**
@@ -278,9 +277,9 @@ static inline void ll_audprc_tx_channel_disable(AUDPRC_TypeDef *AUDPRCx, uint32_
  */
 static inline void ll_audprc_rx_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
 
-	SET_BIT(*cfg, AUDPRC_RX_CH0_CFG_ENABLE);
+    SET_BIT(*cfg, AUDPRC_RX_CH0_CFG_ENABLE);
 }
 
 /**
@@ -290,9 +289,9 @@ static inline void ll_audprc_rx_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint32_t
  */
 static inline void ll_audprc_rx_channel_disable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
 
-	CLEAR_BIT(*cfg, AUDPRC_RX_CH0_CFG_ENABLE);
+    CLEAR_BIT(*cfg, AUDPRC_RX_CH0_CFG_ENABLE);
 }
 
 /**
@@ -302,9 +301,9 @@ static inline void ll_audprc_rx_channel_disable(AUDPRC_TypeDef *AUDPRCx, uint32_
  */
 static inline void ll_audprc_tx_out_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
 
-	SET_BIT(*cfg, AUDPRC_TX_OUT_CH0_CFG_ENABLE);
+    SET_BIT(*cfg, AUDPRC_TX_OUT_CH0_CFG_ENABLE);
 }
 
 /**
@@ -314,9 +313,9 @@ static inline void ll_audprc_tx_out_channel_enable(AUDPRC_TypeDef *AUDPRCx, uint
  */
 static inline void ll_audprc_tx_out_channel_disable(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
 
-	CLEAR_BIT(*cfg, AUDPRC_TX_OUT_CH0_CFG_ENABLE);
+    CLEAR_BIT(*cfg, AUDPRC_TX_OUT_CH0_CFG_ENABLE);
 }
 
 /**
@@ -326,8 +325,8 @@ static inline void ll_audprc_tx_out_channel_disable(AUDPRC_TypeDef *AUDPRCx, uin
  */
 static inline void ll_audprc_set_adc_stb_div(AUDPRC_TypeDef *AUDPRCx, uint32_t div)
 {
-	MODIFY_REG(AUDPRCx->STB, AUDPRC_STB_ADC_DIV,
-		   MAKE_REG_VAL(div, AUDPRC_STB_ADC_DIV_Msk, AUDPRC_STB_ADC_DIV_Pos));
+    MODIFY_REG(AUDPRCx->STB, AUDPRC_STB_ADC_DIV,
+               MAKE_REG_VAL(div, AUDPRC_STB_ADC_DIV_Msk, AUDPRC_STB_ADC_DIV_Pos));
 }
 
 /*==============================================================================
@@ -341,8 +340,8 @@ static inline void ll_audprc_set_adc_stb_div(AUDPRC_TypeDef *AUDPRCx, uint32_t d
  */
 static inline void ll_audprc_set_dac_stb_div(AUDPRC_TypeDef *AUDPRCx, uint32_t div)
 {
-	MODIFY_REG(AUDPRCx->STB, AUDPRC_STB_DAC_DIV,
-		   MAKE_REG_VAL(div, AUDPRC_STB_DAC_DIV_Msk, AUDPRC_STB_DAC_DIV_Pos));
+    MODIFY_REG(AUDPRCx->STB, AUDPRC_STB_DAC_DIV,
+               MAKE_REG_VAL(div, AUDPRC_STB_DAC_DIV_Msk, AUDPRC_STB_DAC_DIV_Pos));
 }
 
 /*==============================================================================
@@ -357,9 +356,9 @@ static inline void ll_audprc_set_dac_stb_div(AUDPRC_TypeDef *AUDPRCx, uint32_t d
  */
 static inline uint32_t ll_audprc_get_tx_fifo_count(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
 
-	return (*cfg & AUDPRC_TX_CH0_CFG_FIFO_CNT_Msk) >> AUDPRC_TX_CH0_CFG_FIFO_CNT_Pos;
+    return (*cfg & AUDPRC_TX_CH0_CFG_FIFO_CNT_Msk) >> AUDPRC_TX_CH0_CFG_FIFO_CNT_Pos;
 }
 
 /**
@@ -371,16 +370,16 @@ static inline uint32_t ll_audprc_get_tx_fifo_count(AUDPRC_TypeDef *AUDPRCx, uint
  * @param[in] dma_msk Non-zero masks the DMA request.
  */
 static inline void ll_audprc_tx_channel_config(AUDPRC_TypeDef *AUDPRCx, uint32_t ch,
-					       uint32_t format, uint32_t mode, uint32_t dma_msk)
+        uint32_t format, uint32_t mode, uint32_t dma_msk)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_cfg_reg(AUDPRCx, ch);
 
-	MODIFY_REG(*cfg,
-		   AUDPRC_TX_CH0_CFG_FORMAT | AUDPRC_TX_CH0_CFG_MODE |
-			   AUDPRC_TX_CH0_CFG_DMA_MSK,
-		   MAKE_REG_VAL(format, AUDPRC_TX_CH0_CFG_FORMAT_Msk, AUDPRC_TX_CH0_CFG_FORMAT_Pos) |
-		   (mode ? AUDPRC_TX_CH0_CFG_MODE : 0U) |
-		   (dma_msk ? AUDPRC_TX_CH0_CFG_DMA_MSK : 0U));
+    MODIFY_REG(*cfg,
+               AUDPRC_TX_CH0_CFG_FORMAT | AUDPRC_TX_CH0_CFG_MODE |
+               AUDPRC_TX_CH0_CFG_DMA_MSK,
+               MAKE_REG_VAL(format, AUDPRC_TX_CH0_CFG_FORMAT_Msk, AUDPRC_TX_CH0_CFG_FORMAT_Pos) |
+               (mode ? AUDPRC_TX_CH0_CFG_MODE : 0U) |
+               (dma_msk ? AUDPRC_TX_CH0_CFG_DMA_MSK : 0U));
 }
 
 /**
@@ -390,11 +389,11 @@ static inline void ll_audprc_tx_channel_config(AUDPRC_TypeDef *AUDPRCx, uint32_t
  * @param[in] data    Data word to write.
  */
 static inline void ll_audprc_tx_write_entry(AUDPRC_TypeDef *AUDPRCx, uint32_t ch,
-					    uint32_t data)
+        uint32_t data)
 {
-	volatile uint32_t *entry = &((&AUDPRCx->TX_CH0_ENTRY)[ch * 2U]);
+    volatile uint32_t *entry = &((&AUDPRCx->TX_CH0_ENTRY)[ch * 2U]);
 
-	WRITE_REG(*entry, data);
+    WRITE_REG(*entry, data);
 }
 
 /**
@@ -405,9 +404,9 @@ static inline void ll_audprc_tx_write_entry(AUDPRC_TypeDef *AUDPRCx, uint32_t ch
  */
 static inline uint32_t ll_audprc_get_rx_fifo_count(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
 
-	return (*cfg & AUDPRC_RX_CH0_CFG_FIFO_CNT_Msk) >> AUDPRC_RX_CH0_CFG_FIFO_CNT_Pos;
+    return (*cfg & AUDPRC_RX_CH0_CFG_FIFO_CNT_Msk) >> AUDPRC_RX_CH0_CFG_FIFO_CNT_Pos;
 }
 
 /**
@@ -419,16 +418,16 @@ static inline uint32_t ll_audprc_get_rx_fifo_count(AUDPRC_TypeDef *AUDPRCx, uint
  * @param[in] dma_msk Non-zero masks the DMA request.
  */
 static inline void ll_audprc_rx_channel_config(AUDPRC_TypeDef *AUDPRCx, uint32_t ch,
-					       uint32_t format, uint32_t mode, uint32_t dma_msk)
+        uint32_t format, uint32_t mode, uint32_t dma_msk)
 {
-	__IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_rx_cfg_reg(AUDPRCx, ch);
 
-	MODIFY_REG(*cfg,
-		   AUDPRC_RX_CH0_CFG_FORMAT | AUDPRC_RX_CH0_CFG_MODE |
-			   AUDPRC_RX_CH0_CFG_DMA_MSK,
-		   MAKE_REG_VAL(format, AUDPRC_RX_CH0_CFG_FORMAT_Msk, AUDPRC_RX_CH0_CFG_FORMAT_Pos) |
-		   (mode ? AUDPRC_RX_CH0_CFG_MODE : 0U) |
-		   (dma_msk ? AUDPRC_RX_CH0_CFG_DMA_MSK : 0U));
+    MODIFY_REG(*cfg,
+               AUDPRC_RX_CH0_CFG_FORMAT | AUDPRC_RX_CH0_CFG_MODE |
+               AUDPRC_RX_CH0_CFG_DMA_MSK,
+               MAKE_REG_VAL(format, AUDPRC_RX_CH0_CFG_FORMAT_Msk, AUDPRC_RX_CH0_CFG_FORMAT_Pos) |
+               (mode ? AUDPRC_RX_CH0_CFG_MODE : 0U) |
+               (dma_msk ? AUDPRC_RX_CH0_CFG_DMA_MSK : 0U));
 }
 
 /**
@@ -439,9 +438,9 @@ static inline void ll_audprc_rx_channel_config(AUDPRC_TypeDef *AUDPRCx, uint32_t
  */
 static inline uint32_t ll_audprc_rx_read_entry(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	volatile uint32_t *entry = &((&AUDPRCx->RX_CH0_ENTRY)[ch * 2U]);
+    volatile uint32_t *entry = &((&AUDPRCx->RX_CH0_ENTRY)[ch * 2U]);
 
-	return READ_REG(*entry);
+    return READ_REG(*entry);
 }
 
 /**
@@ -452,10 +451,10 @@ static inline uint32_t ll_audprc_rx_read_entry(AUDPRC_TypeDef *AUDPRCx, uint32_t
  */
 static inline uint32_t ll_audprc_get_tx_out_fifo_count(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
 
-	return (*cfg & AUDPRC_TX_OUT_CH0_CFG_FIFO_CNT_Msk) >>
-	       AUDPRC_TX_OUT_CH0_CFG_FIFO_CNT_Pos;
+    return (*cfg & AUDPRC_TX_OUT_CH0_CFG_FIFO_CNT_Msk) >>
+           AUDPRC_TX_OUT_CH0_CFG_FIFO_CNT_Pos;
 }
 
 /**
@@ -467,18 +466,18 @@ static inline uint32_t ll_audprc_get_tx_out_fifo_count(AUDPRC_TypeDef *AUDPRCx, 
  * @param[in] dma_msk Non-zero masks the DMA request.
  */
 static inline void ll_audprc_tx_out_channel_config(AUDPRC_TypeDef *AUDPRCx, uint32_t ch,
-						   uint32_t format, uint32_t mode,
-						   uint32_t dma_msk)
+        uint32_t format, uint32_t mode,
+        uint32_t dma_msk)
 {
-	__IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
+    __IO uint32_t *cfg = ll_audprc_tx_out_cfg_reg(AUDPRCx, ch);
 
-	MODIFY_REG(*cfg,
-		   AUDPRC_TX_OUT_CH0_CFG_FORMAT | AUDPRC_TX_OUT_CH0_CFG_MODE |
-			   AUDPRC_TX_OUT_CH0_CFG_DMA_MSK,
-		   MAKE_REG_VAL(format, AUDPRC_TX_OUT_CH0_CFG_FORMAT_Msk,
-				AUDPRC_TX_OUT_CH0_CFG_FORMAT_Pos) |
-		   (mode ? AUDPRC_TX_OUT_CH0_CFG_MODE : 0U) |
-		   (dma_msk ? AUDPRC_TX_OUT_CH0_CFG_DMA_MSK : 0U));
+    MODIFY_REG(*cfg,
+               AUDPRC_TX_OUT_CH0_CFG_FORMAT | AUDPRC_TX_OUT_CH0_CFG_MODE |
+               AUDPRC_TX_OUT_CH0_CFG_DMA_MSK,
+               MAKE_REG_VAL(format, AUDPRC_TX_OUT_CH0_CFG_FORMAT_Msk,
+                            AUDPRC_TX_OUT_CH0_CFG_FORMAT_Pos) |
+               (mode ? AUDPRC_TX_OUT_CH0_CFG_MODE : 0U) |
+               (dma_msk ? AUDPRC_TX_OUT_CH0_CFG_DMA_MSK : 0U));
 }
 
 /**
@@ -489,9 +488,9 @@ static inline void ll_audprc_tx_out_channel_config(AUDPRC_TypeDef *AUDPRCx, uint
  */
 static inline uint32_t ll_audprc_tx_out_read_entry(AUDPRC_TypeDef *AUDPRCx, uint32_t ch)
 {
-	volatile uint32_t *entry = &((&AUDPRCx->TX_OUT_CH0_ENTRY)[ch * 2U]);
+    volatile uint32_t *entry = &((&AUDPRCx->TX_OUT_CH0_ENTRY)[ch * 2U]);
 
-	return READ_REG(*entry);
+    return READ_REG(*entry);
 }
 
 /*==============================================================================
@@ -506,9 +505,9 @@ static inline uint32_t ll_audprc_tx_out_read_entry(AUDPRC_TypeDef *AUDPRCx, uint
  */
 static inline void ll_audprc_dac_set_dst_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t sel)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_DST_SEL,
-		   MAKE_REG_VAL(sel, AUDPRC_DAC_PATH_CFG0_DST_SEL_Msk,
-				AUDPRC_DAC_PATH_CFG0_DST_SEL_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_DST_SEL,
+               MAKE_REG_VAL(sel, AUDPRC_DAC_PATH_CFG0_DST_SEL_Msk,
+                            AUDPRC_DAC_PATH_CFG0_DST_SEL_Pos));
 }
 
 /**
@@ -518,17 +517,20 @@ static inline void ll_audprc_dac_set_dst_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t s
  * @param[in] src     Source (3 bits): 0..3 = TX_CH0..3, 4 = mute.
  */
 static inline void ll_audprc_dac_set_mix_r_src(AUDPRC_TypeDef *AUDPRCx, uint32_t slot,
-					       uint32_t src)
+        uint32_t src)
 {
-	if (slot == 0U) {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXRSRC0,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXRSRC0_Msk,
-					AUDPRC_DAC_PATH_CFG0_MIXRSRC0_Pos));
-	} else {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXRSRC1,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXRSRC1_Msk,
-					AUDPRC_DAC_PATH_CFG0_MIXRSRC1_Pos));
-	}
+    if (slot == 0U)
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXRSRC0,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXRSRC0_Msk,
+                                AUDPRC_DAC_PATH_CFG0_MIXRSRC0_Pos));
+    }
+    else
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXRSRC1,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXRSRC1_Msk,
+                                AUDPRC_DAC_PATH_CFG0_MIXRSRC1_Pos));
+    }
 }
 
 /**
@@ -538,17 +540,20 @@ static inline void ll_audprc_dac_set_mix_r_src(AUDPRC_TypeDef *AUDPRCx, uint32_t
  * @param[in] src     Source (3 bits): 0..3 = TX_CH0..3, 4 = mute.
  */
 static inline void ll_audprc_dac_set_mix_l_src(AUDPRC_TypeDef *AUDPRCx, uint32_t slot,
-					       uint32_t src)
+        uint32_t src)
 {
-	if (slot == 0U) {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXLSRC0,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXLSRC0_Msk,
-					AUDPRC_DAC_PATH_CFG0_MIXLSRC0_Pos));
-	} else {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXLSRC1,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXLSRC1_Msk,
-					AUDPRC_DAC_PATH_CFG0_MIXLSRC1_Pos));
-	}
+    if (slot == 0U)
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXLSRC0,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXLSRC0_Msk,
+                                AUDPRC_DAC_PATH_CFG0_MIXLSRC0_Pos));
+    }
+    else
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG0, AUDPRC_DAC_PATH_CFG0_MIXLSRC1,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG0_MIXLSRC1_Msk,
+                                AUDPRC_DAC_PATH_CFG0_MIXLSRC1_Pos));
+    }
 }
 
 /**
@@ -558,14 +563,14 @@ static inline void ll_audprc_dac_set_mix_l_src(AUDPRC_TypeDef *AUDPRCx, uint32_t
  * @param[in] fine_vol  Fine volume (4 bits, 0.5 dB steps).
  */
 static inline void ll_audprc_dac_set_vol_r(AUDPRC_TypeDef *AUDPRCx, uint32_t rough_vol,
-					   uint32_t fine_vol)
+        uint32_t fine_vol)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG0,
-		   AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R | AUDPRC_DAC_PATH_CFG0_FINE_VOL_R,
-		   MAKE_REG_VAL(rough_vol, AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R_Msk,
-				AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R_Pos) |
-		   MAKE_REG_VAL(fine_vol, AUDPRC_DAC_PATH_CFG0_FINE_VOL_R_Msk,
-				AUDPRC_DAC_PATH_CFG0_FINE_VOL_R_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG0,
+               AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R | AUDPRC_DAC_PATH_CFG0_FINE_VOL_R,
+               MAKE_REG_VAL(rough_vol, AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R_Msk,
+                            AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_R_Pos) |
+               MAKE_REG_VAL(fine_vol, AUDPRC_DAC_PATH_CFG0_FINE_VOL_R_Msk,
+                            AUDPRC_DAC_PATH_CFG0_FINE_VOL_R_Pos));
 }
 
 /**
@@ -575,14 +580,14 @@ static inline void ll_audprc_dac_set_vol_r(AUDPRC_TypeDef *AUDPRCx, uint32_t rou
  * @param[in] fine_vol  Fine volume (4 bits, 0.5 dB steps).
  */
 static inline void ll_audprc_dac_set_vol_l(AUDPRC_TypeDef *AUDPRCx, uint32_t rough_vol,
-					   uint32_t fine_vol)
+        uint32_t fine_vol)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG0,
-		   AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L | AUDPRC_DAC_PATH_CFG0_FINE_VOL_L,
-		   MAKE_REG_VAL(rough_vol, AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L_Msk,
-				AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L_Pos) |
-		   MAKE_REG_VAL(fine_vol, AUDPRC_DAC_PATH_CFG0_FINE_VOL_L_Msk,
-				AUDPRC_DAC_PATH_CFG0_FINE_VOL_L_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG0,
+               AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L | AUDPRC_DAC_PATH_CFG0_FINE_VOL_L,
+               MAKE_REG_VAL(rough_vol, AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L_Msk,
+                            AUDPRC_DAC_PATH_CFG0_ROUGH_VOL_L_Pos) |
+               MAKE_REG_VAL(fine_vol, AUDPRC_DAC_PATH_CFG0_FINE_VOL_L_Msk,
+                            AUDPRC_DAC_PATH_CFG0_FINE_VOL_L_Pos));
 }
 
 /**
@@ -591,7 +596,7 @@ static inline void ll_audprc_dac_set_vol_l(AUDPRC_TypeDef *AUDPRCx, uint32_t rou
  */
 static inline void ll_audprc_dac_src_ch_clear(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_CLR);
+    SET_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_CLR);
 }
 
 /**
@@ -601,7 +606,7 @@ static inline void ll_audprc_dac_src_ch_clear(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline uint32_t ll_audprc_dac_is_src_ch_clear_done(AUDPRC_TypeDef *AUDPRCx)
 {
-	return READ_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_CLR_DONE);
+    return READ_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_CLR_DONE);
 }
 
 /**
@@ -612,32 +617,37 @@ static inline uint32_t ll_audprc_dac_is_src_ch_clear_done(AUDPRC_TypeDef *AUDPRC
  * @param[in] mode    Mode: 0 = upsampling, 1 = downsampling.
  */
 static inline void ll_audprc_dac_config_src_hbf(AUDPRC_TypeDef *AUDPRCx, uint32_t stage,
-						uint32_t en, uint32_t mode)
+        uint32_t en, uint32_t mode)
 {
-	uint32_t en_msk;
-	uint32_t mode_msk;
-	uint32_t value = 0U;
+    uint32_t en_msk;
+    uint32_t mode_msk;
+    uint32_t value = 0U;
 
-	if (stage == 1U) {
-		en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF1_EN;
-		mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE;
-		value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE_Msk,
-				     AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE_Pos) |
-			(en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF1_EN : 0U);
-	} else if (stage == 2U) {
-		en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF2_EN;
-		mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE;
-		value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE_Msk,
-				     AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE_Pos) |
-			(en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF2_EN : 0U);
-	} else {
-		en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF3_EN;
-		mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE;
-		value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE_Msk,
-				     AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE_Pos) |
-			(en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF3_EN : 0U);
-	}
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, en_msk | mode_msk, value);
+    if (stage == 1U)
+    {
+        en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF1_EN;
+        mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE;
+        value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE_Msk,
+                             AUDPRC_DAC_PATH_CFG1_SRC_HBF1_MODE_Pos) |
+                (en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF1_EN : 0U);
+    }
+    else if (stage == 2U)
+    {
+        en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF2_EN;
+        mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE;
+        value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE_Msk,
+                             AUDPRC_DAC_PATH_CFG1_SRC_HBF2_MODE_Pos) |
+                (en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF2_EN : 0U);
+    }
+    else
+    {
+        en_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF3_EN;
+        mode_msk = AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE;
+        value = MAKE_REG_VAL(mode, AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE_Msk,
+                             AUDPRC_DAC_PATH_CFG1_SRC_HBF3_MODE_Pos) |
+                (en ? AUDPRC_DAC_PATH_CFG1_SRC_HBF3_EN : 0U);
+    }
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, en_msk | mode_msk, value);
 }
 
 /**
@@ -647,9 +657,9 @@ static inline void ll_audprc_dac_config_src_hbf(AUDPRC_TypeDef *AUDPRCx, uint32_
  */
 static inline void ll_audprc_dac_set_src_ch_en(AUDPRC_TypeDef *AUDPRCx, uint32_t ch_en)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_EN,
-		   MAKE_REG_VAL(ch_en, AUDPRC_DAC_PATH_CFG1_SRC_CH_EN_Msk,
-				AUDPRC_DAC_PATH_CFG1_SRC_CH_EN_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_SRC_CH_EN,
+               MAKE_REG_VAL(ch_en, AUDPRC_DAC_PATH_CFG1_SRC_CH_EN_Msk,
+                            AUDPRC_DAC_PATH_CFG1_SRC_CH_EN_Pos));
 }
 
 /**
@@ -658,7 +668,7 @@ static inline void ll_audprc_dac_set_src_ch_en(AUDPRC_TypeDef *AUDPRCx, uint32_t
  */
 static inline void ll_audprc_dac_eq_clear(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CLR);
+    SET_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CLR);
 }
 
 /**
@@ -668,7 +678,7 @@ static inline void ll_audprc_dac_eq_clear(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline uint32_t ll_audprc_dac_is_eq_clear_done(AUDPRC_TypeDef *AUDPRCx)
 {
-	return READ_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CLR_DONE);
+    return READ_BIT(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CLR_DONE);
 }
 
 /**
@@ -678,9 +688,9 @@ static inline uint32_t ll_audprc_dac_is_eq_clear_done(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_dac_set_eq_stage(AUDPRC_TypeDef *AUDPRCx, uint32_t stage)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_STAGE,
-		   MAKE_REG_VAL(stage, AUDPRC_DAC_PATH_CFG1_EQ_STAGE_Msk,
-				AUDPRC_DAC_PATH_CFG1_EQ_STAGE_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_STAGE,
+               MAKE_REG_VAL(stage, AUDPRC_DAC_PATH_CFG1_EQ_STAGE_Msk,
+                            AUDPRC_DAC_PATH_CFG1_EQ_STAGE_Pos));
 }
 
 /**
@@ -691,9 +701,9 @@ static inline void ll_audprc_dac_set_eq_stage(AUDPRC_TypeDef *AUDPRCx, uint32_t 
  */
 static inline void ll_audprc_dac_set_eq_ch_en(AUDPRC_TypeDef *AUDPRCx, uint32_t ch_en)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CH_EN,
-		   MAKE_REG_VAL(ch_en, AUDPRC_DAC_PATH_CFG1_EQ_CH_EN_Msk,
-				AUDPRC_DAC_PATH_CFG1_EQ_CH_EN_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_EQ_CH_EN,
+               MAKE_REG_VAL(ch_en, AUDPRC_DAC_PATH_CFG1_EQ_CH_EN_Msk,
+                            AUDPRC_DAC_PATH_CFG1_EQ_CH_EN_Pos));
 }
 
 /**
@@ -703,17 +713,20 @@ static inline void ll_audprc_dac_set_eq_ch_en(AUDPRC_TypeDef *AUDPRCx, uint32_t 
  * @param[in] src     Source (3 bits): 0..3 = TX_CH0/1/RX_CH0/1, 4 = mute.
  */
 static inline void ll_audprc_dac_set_mux_r_src(AUDPRC_TypeDef *AUDPRCx, uint32_t slot,
-					       uint32_t src)
+        uint32_t src)
 {
-	if (slot == 0U) {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXRSRC0,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXRSRC0_Msk,
-					AUDPRC_DAC_PATH_CFG1_MUXRSRC0_Pos));
-	} else {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXRSRC1,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXRSRC1_Msk,
-					AUDPRC_DAC_PATH_CFG1_MUXRSRC1_Pos));
-	}
+    if (slot == 0U)
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXRSRC0,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXRSRC0_Msk,
+                                AUDPRC_DAC_PATH_CFG1_MUXRSRC0_Pos));
+    }
+    else
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXRSRC1,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXRSRC1_Msk,
+                                AUDPRC_DAC_PATH_CFG1_MUXRSRC1_Pos));
+    }
 }
 
 /**
@@ -723,17 +736,20 @@ static inline void ll_audprc_dac_set_mux_r_src(AUDPRC_TypeDef *AUDPRCx, uint32_t
  * @param[in] src     Source (3 bits): 0..3 = TX_CH0/1/RX_CH0/1, 4 = mute.
  */
 static inline void ll_audprc_dac_set_mux_l_src(AUDPRC_TypeDef *AUDPRCx, uint32_t slot,
-					       uint32_t src)
+        uint32_t src)
 {
-	if (slot == 0U) {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXLSRC0,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXLSRC0_Msk,
-					AUDPRC_DAC_PATH_CFG1_MUXLSRC0_Pos));
-	} else {
-		MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXLSRC1,
-			   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXLSRC1_Msk,
-					AUDPRC_DAC_PATH_CFG1_MUXLSRC1_Pos));
-	}
+    if (slot == 0U)
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXLSRC0,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXLSRC0_Msk,
+                                AUDPRC_DAC_PATH_CFG1_MUXLSRC0_Pos));
+    }
+    else
+    {
+        MODIFY_REG(AUDPRCx->DAC_PATH_CFG1, AUDPRC_DAC_PATH_CFG1_MUXLSRC1,
+                   MAKE_REG_VAL(src, AUDPRC_DAC_PATH_CFG1_MUXLSRC1_Msk,
+                                AUDPRC_DAC_PATH_CFG1_MUXLSRC1_Pos));
+    }
 }
 
 /**
@@ -743,13 +759,13 @@ static inline void ll_audprc_dac_set_mux_l_src(AUDPRC_TypeDef *AUDPRCx, uint32_t
  * @param[in] sinc_en   Non-zero enables the sinc filter.
  */
 static inline void ll_audprc_dac_set_src_sinc(AUDPRC_TypeDef *AUDPRCx, uint32_t ratio,
-					      uint32_t sinc_en)
+        uint32_t sinc_en)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG2,
-		   AUDPRC_DAC_PATH_CFG2_SINC_RATIO | AUDPRC_DAC_PATH_CFG2_SRC_SINC_EN,
-		   MAKE_REG_VAL(ratio, AUDPRC_DAC_PATH_CFG2_SINC_RATIO_Msk,
-				AUDPRC_DAC_PATH_CFG2_SINC_RATIO_Pos) |
-		   (sinc_en ? AUDPRC_DAC_PATH_CFG2_SRC_SINC_EN : 0U));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG2,
+               AUDPRC_DAC_PATH_CFG2_SINC_RATIO | AUDPRC_DAC_PATH_CFG2_SRC_SINC_EN,
+               MAKE_REG_VAL(ratio, AUDPRC_DAC_PATH_CFG2_SINC_RATIO_Msk,
+                            AUDPRC_DAC_PATH_CFG2_SINC_RATIO_Pos) |
+               (sinc_en ? AUDPRC_DAC_PATH_CFG2_SRC_SINC_EN : 0U));
 }
 
 /**
@@ -759,7 +775,7 @@ static inline void ll_audprc_dac_set_src_sinc(AUDPRC_TypeDef *AUDPRCx, uint32_t 
  */
 static inline uint32_t ll_audprc_dac_get_ramp_stat_r(AUDPRC_TypeDef *AUDPRCx)
 {
-	return GET_REG_VAL2(AUDPRCx->DAC_PATH_CFG3, AUDPRC_DAC_PATH_CFG3_RAMP_STAT_R);
+    return GET_REG_VAL2(AUDPRCx->DAC_PATH_CFG3, AUDPRC_DAC_PATH_CFG3_RAMP_STAT_R);
 }
 
 /**
@@ -771,18 +787,18 @@ static inline uint32_t ll_audprc_dac_get_ramp_stat_r(AUDPRC_TypeDef *AUDPRCx)
  * @param[in] interval   Ramp interval (4 bits).
  */
 static inline void ll_audprc_dac_set_ramp_r(AUDPRC_TypeDef *AUDPRCx, uint32_t en,
-					    uint32_t slow, uint32_t zero_adj,
-					    uint32_t interval)
+        uint32_t slow, uint32_t zero_adj,
+        uint32_t interval)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG3,
-		   AUDPRC_DAC_PATH_CFG3_RAMP_EN_R | AUDPRC_DAC_PATH_CFG3_RAMP_MODE_R |
-			   AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_R |
-			   AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R,
-		   (en ? AUDPRC_DAC_PATH_CFG3_RAMP_EN_R : 0U) |
-		   (slow ? AUDPRC_DAC_PATH_CFG3_RAMP_MODE_R : 0U) |
-		   (zero_adj ? AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_R : 0U) |
-		   MAKE_REG_VAL(interval, AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R_Msk,
-				AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG3,
+               AUDPRC_DAC_PATH_CFG3_RAMP_EN_R | AUDPRC_DAC_PATH_CFG3_RAMP_MODE_R |
+               AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_R |
+               AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R,
+               (en ? AUDPRC_DAC_PATH_CFG3_RAMP_EN_R : 0U) |
+               (slow ? AUDPRC_DAC_PATH_CFG3_RAMP_MODE_R : 0U) |
+               (zero_adj ? AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_R : 0U) |
+               MAKE_REG_VAL(interval, AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R_Msk,
+                            AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_R_Pos));
 }
 
 /**
@@ -792,7 +808,7 @@ static inline void ll_audprc_dac_set_ramp_r(AUDPRC_TypeDef *AUDPRCx, uint32_t en
  */
 static inline uint32_t ll_audprc_dac_get_ramp_stat_l(AUDPRC_TypeDef *AUDPRCx)
 {
-	return GET_REG_VAL2(AUDPRCx->DAC_PATH_CFG3, AUDPRC_DAC_PATH_CFG3_RAMP_STAT_L);
+    return GET_REG_VAL2(AUDPRCx->DAC_PATH_CFG3, AUDPRC_DAC_PATH_CFG3_RAMP_STAT_L);
 }
 
 /**
@@ -804,18 +820,18 @@ static inline uint32_t ll_audprc_dac_get_ramp_stat_l(AUDPRC_TypeDef *AUDPRCx)
  * @param[in] interval   Ramp interval (4 bits).
  */
 static inline void ll_audprc_dac_set_ramp_l(AUDPRC_TypeDef *AUDPRCx, uint32_t en,
-					    uint32_t slow, uint32_t zero_adj,
-					    uint32_t interval)
+        uint32_t slow, uint32_t zero_adj,
+        uint32_t interval)
 {
-	MODIFY_REG(AUDPRCx->DAC_PATH_CFG3,
-		   AUDPRC_DAC_PATH_CFG3_RAMP_EN_L | AUDPRC_DAC_PATH_CFG3_RAMP_MODE_L |
-			   AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_L |
-			   AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L,
-		   (en ? AUDPRC_DAC_PATH_CFG3_RAMP_EN_L : 0U) |
-		   (slow ? AUDPRC_DAC_PATH_CFG3_RAMP_MODE_L : 0U) |
-		   (zero_adj ? AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_L : 0U) |
-		   MAKE_REG_VAL(interval, AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L_Msk,
-				AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L_Pos));
+    MODIFY_REG(AUDPRCx->DAC_PATH_CFG3,
+               AUDPRC_DAC_PATH_CFG3_RAMP_EN_L | AUDPRC_DAC_PATH_CFG3_RAMP_MODE_L |
+               AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_L |
+               AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L,
+               (en ? AUDPRC_DAC_PATH_CFG3_RAMP_EN_L : 0U) |
+               (slow ? AUDPRC_DAC_PATH_CFG3_RAMP_MODE_L : 0U) |
+               (zero_adj ? AUDPRC_DAC_PATH_CFG3_ZERO_ADJUST_EN_L : 0U) |
+               MAKE_REG_VAL(interval, AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L_Msk,
+                            AUDPRC_DAC_PATH_CFG3_RAMP_INTERVAL_L_Pos));
 }
 
 /**
@@ -824,7 +840,7 @@ static inline void ll_audprc_dac_set_ramp_l(AUDPRC_TypeDef *AUDPRCx, uint32_t en
  */
 static inline void ll_audprc_adc_rx2tx_loopback_enable(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_RX2TX_LOOPBACK);
+    SET_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_RX2TX_LOOPBACK);
 }
 
 /**
@@ -833,7 +849,7 @@ static inline void ll_audprc_adc_rx2tx_loopback_enable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_rx2tx_loopback_disable(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_RX2TX_LOOPBACK);
+    CLEAR_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_RX2TX_LOOPBACK);
 }
 
 /**
@@ -842,7 +858,7 @@ static inline void ll_audprc_adc_rx2tx_loopback_disable(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_swap_data(AUDPRC_TypeDef *AUDPRCx)
 {
-	SET_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_DATA_SWAP);
+    SET_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_DATA_SWAP);
 }
 
 /**
@@ -851,7 +867,7 @@ static inline void ll_audprc_adc_swap_data(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_disable_swap(AUDPRC_TypeDef *AUDPRCx)
 {
-	CLEAR_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_DATA_SWAP);
+    CLEAR_BIT(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_DATA_SWAP);
 }
 
 /*==============================================================================
@@ -865,8 +881,8 @@ static inline void ll_audprc_adc_disable_swap(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_adc_set_src_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t ext)
 {
-	MODIFY_REG(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_SRC_SEL,
-		   ext ? AUDPRC_ADC_PATH_CFG0_SRC_SEL : 0U);
+    MODIFY_REG(AUDPRCx->ADC_PATH_CFG0, AUDPRC_ADC_PATH_CFG0_SRC_SEL,
+               ext ? AUDPRC_ADC_PATH_CFG0_SRC_SEL : 0U);
 }
 
 /**
@@ -876,14 +892,14 @@ static inline void ll_audprc_adc_set_src_sel(AUDPRC_TypeDef *AUDPRCx, uint32_t e
  * @param[in] fine_vol  Fine volume (4 bits, 0.5 dB steps).
  */
 static inline void ll_audprc_adc_set_vol_r(AUDPRC_TypeDef *AUDPRCx, uint32_t rough_vol,
-					   uint32_t fine_vol)
+        uint32_t fine_vol)
 {
-	MODIFY_REG(AUDPRCx->ADC_PATH_CFG0,
-		   AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R | AUDPRC_ADC_PATH_CFG0_FINE_VOL_R,
-		   MAKE_REG_VAL(rough_vol, AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R_Msk,
-				AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R_Pos) |
-		   MAKE_REG_VAL(fine_vol, AUDPRC_ADC_PATH_CFG0_FINE_VOL_R_Msk,
-				AUDPRC_ADC_PATH_CFG0_FINE_VOL_R_Pos));
+    MODIFY_REG(AUDPRCx->ADC_PATH_CFG0,
+               AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R | AUDPRC_ADC_PATH_CFG0_FINE_VOL_R,
+               MAKE_REG_VAL(rough_vol, AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R_Msk,
+                            AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_R_Pos) |
+               MAKE_REG_VAL(fine_vol, AUDPRC_ADC_PATH_CFG0_FINE_VOL_R_Msk,
+                            AUDPRC_ADC_PATH_CFG0_FINE_VOL_R_Pos));
 }
 
 /**
@@ -893,14 +909,14 @@ static inline void ll_audprc_adc_set_vol_r(AUDPRC_TypeDef *AUDPRCx, uint32_t rou
  * @param[in] fine_vol  Fine volume (4 bits, 0.5 dB steps).
  */
 static inline void ll_audprc_adc_set_vol_l(AUDPRC_TypeDef *AUDPRCx, uint32_t rough_vol,
-					   uint32_t fine_vol)
+        uint32_t fine_vol)
 {
-	MODIFY_REG(AUDPRCx->ADC_PATH_CFG0,
-		   AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L | AUDPRC_ADC_PATH_CFG0_FINE_VOL_L,
-		   MAKE_REG_VAL(rough_vol, AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L_Msk,
-				AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L_Pos) |
-		   MAKE_REG_VAL(fine_vol, AUDPRC_ADC_PATH_CFG0_FINE_VOL_L_Msk,
-				AUDPRC_ADC_PATH_CFG0_FINE_VOL_L_Pos));
+    MODIFY_REG(AUDPRCx->ADC_PATH_CFG0,
+               AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L | AUDPRC_ADC_PATH_CFG0_FINE_VOL_L,
+               MAKE_REG_VAL(rough_vol, AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L_Msk,
+                            AUDPRC_ADC_PATH_CFG0_ROUGH_VOL_L_Pos) |
+               MAKE_REG_VAL(fine_vol, AUDPRC_ADC_PATH_CFG0_FINE_VOL_L_Msk,
+                            AUDPRC_ADC_PATH_CFG0_FINE_VOL_L_Pos));
 }
 
 /*==============================================================================
@@ -914,13 +930,14 @@ static inline void ll_audprc_adc_set_vol_l(AUDPRC_TypeDef *AUDPRCx, uint32_t rou
  * @param[in] coef    Coefficient value (24 bits).
  */
 static inline void ll_audprc_dac_set_eq_coef(AUDPRC_TypeDef *AUDPRCx, uint32_t idx,
-					     uint32_t coef)
+        uint32_t coef)
 {
-	volatile uint32_t *eq = &AUDPRCx->DAC_EQ_CFG0;
+    volatile uint32_t *eq = &AUDPRCx->DAC_EQ_CFG0;
 
-	if (idx < 50U) {
-		WRITE_REG(eq[idx], coef);
-	}
+    if (idx < 50U)
+    {
+        WRITE_REG(eq[idx], coef);
+    }
 }
 
 /**
@@ -931,9 +948,9 @@ static inline void ll_audprc_dac_set_eq_coef(AUDPRC_TypeDef *AUDPRCx, uint32_t i
  */
 static inline uint32_t ll_audprc_dac_get_eq_coef(AUDPRC_TypeDef *AUDPRCx, uint32_t idx)
 {
-	volatile uint32_t *eq = &AUDPRCx->DAC_EQ_CFG0;
+    volatile uint32_t *eq = &AUDPRCx->DAC_EQ_CFG0;
 
-	return (idx < 50U) ? READ_REG(eq[idx]) : 0U;
+    return (idx < 50U) ? READ_REG(eq[idx]) : 0U;
 }
 
 /*==============================================================================
@@ -979,7 +996,7 @@ static inline uint32_t ll_audprc_dac_get_eq_coef(AUDPRC_TypeDef *AUDPRCx, uint32
  */
 static inline uint32_t ll_audprc_get_irq_status(AUDPRC_TypeDef *AUDPRCx)
 {
-	return READ_REG(AUDPRCx->IRQ);
+    return READ_REG(AUDPRCx->IRQ);
 }
 
 /**
@@ -989,10 +1006,10 @@ static inline uint32_t ll_audprc_get_irq_status(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_clear_irq_status(AUDPRC_TypeDef *AUDPRCx, uint32_t status)
 {
-	/* Preserve the high-bit mask field while clearing rw1c status bits. */
-	WRITE_REG(AUDPRCx->IRQ,
-		  (READ_REG(AUDPRCx->IRQ) & LL_AUDPRC_IRQ_MSK_MASK) |
-			  (status & LL_AUDPRC_IRQ_STAT_MASK));
+    /* Preserve the high-bit mask field while clearing rw1c status bits. */
+    WRITE_REG(AUDPRCx->IRQ,
+              (READ_REG(AUDPRCx->IRQ) & LL_AUDPRC_IRQ_MSK_MASK) |
+              (status & LL_AUDPRC_IRQ_STAT_MASK));
 }
 
 /**
@@ -1002,7 +1019,7 @@ static inline void ll_audprc_clear_irq_status(AUDPRC_TypeDef *AUDPRCx, uint32_t 
  */
 static inline uint32_t ll_audprc_get_irq_mask(AUDPRC_TypeDef *AUDPRCx)
 {
-	return READ_REG(AUDPRCx->IRQ) & LL_AUDPRC_IRQ_MSK_MASK;
+    return READ_REG(AUDPRCx->IRQ) & LL_AUDPRC_IRQ_MSK_MASK;
 }
 
 /**
@@ -1012,7 +1029,10 @@ static inline uint32_t ll_audprc_get_irq_mask(AUDPRC_TypeDef *AUDPRCx)
  */
 static inline void ll_audprc_set_irq_mask(AUDPRC_TypeDef *AUDPRCx, uint32_t mask)
 {
-	MODIFY_REG(AUDPRCx->IRQ, LL_AUDPRC_IRQ_MSK_MASK, mask & LL_AUDPRC_IRQ_MSK_MASK);
+    /* IRQ low bits (0..9) are rw1c status: MODIFY_REG would write their read
+     * value back and clear any pending flag. Write the whole register, keeping
+     * only the R/W mask field and writing 0 to the rw1c status bits (no effect). */
+    WRITE_REG(AUDPRCx->IRQ, mask & LL_AUDPRC_IRQ_MSK_MASK);
 }
 
 /*==============================================================================
@@ -1026,27 +1046,28 @@ static inline void ll_audprc_set_irq_mask(AUDPRC_TypeDef *AUDPRCx, uint32_t mask
  * @param[in] val      Control value (8 bits).
  */
 static inline void ll_audprc_set_reserved_ctrl(AUDPRC_TypeDef *AUDPRCx,
-					       uint32_t byte_idx, uint32_t val)
+        uint32_t byte_idx, uint32_t val)
 {
-	switch (byte_idx) {
-	case 0U:
-		MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_0,
-			   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_0_Msk,
-					AUDPRC_RESERVED_IN_CTRL_0_Pos));
-		break;
-	case 1U:
-		MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_1,
-			   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_1_Msk,
-					AUDPRC_RESERVED_IN_CTRL_1_Pos));
-		break;
-	case 2U:
-		MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_2,
-			   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_2_Msk,
-					AUDPRC_RESERVED_IN_CTRL_2_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (byte_idx)
+    {
+    case 0U:
+        MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_0,
+                   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_0_Msk,
+                                AUDPRC_RESERVED_IN_CTRL_0_Pos));
+        break;
+    case 1U:
+        MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_1,
+                   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_1_Msk,
+                                AUDPRC_RESERVED_IN_CTRL_1_Pos));
+        break;
+    case 2U:
+        MODIFY_REG(AUDPRCx->RESERVED_IN, AUDPRC_RESERVED_IN_CTRL_2,
+                   MAKE_REG_VAL(val, AUDPRC_RESERVED_IN_CTRL_2_Msk,
+                                AUDPRC_RESERVED_IN_CTRL_2_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -1056,7 +1077,7 @@ static inline void ll_audprc_set_reserved_ctrl(AUDPRC_TypeDef *AUDPRCx,
  */
 static inline uint32_t ll_audprc_get_reserved_stat(AUDPRC_TypeDef *AUDPRCx)
 {
-	return GET_REG_VAL2(AUDPRCx->RESERVED_OUT, AUDPRC_RESERVED_OUT_STAT);
+    return GET_REG_VAL2(AUDPRCx->RESERVED_OUT, AUDPRC_RESERVED_OUT_STAT);
 }
 
 #ifdef __cplusplus

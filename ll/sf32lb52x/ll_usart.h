@@ -8,8 +8,7 @@
 #define __LL_USART_H
 
 #include <stdint.h>
-#include "usart.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -74,7 +73,7 @@ typedef struct
  * @param[in] cfg Pointer to frame configuration.
  */
 static inline void ll_usart_config_frame(USART_TypeDef *USARTx,
-                                         const ll_usart_frame_config_t *cfg)
+        const ll_usart_frame_config_t *cfg)
 {
     MODIFY_REG(USARTx->CR1, USART_CR1_M | USART_CR1_PCE | USART_CR1_PS,
                cfg->data_width | cfg->parity);
@@ -107,7 +106,7 @@ static inline void ll_usart_write_cr1(USART_TypeDef *USARTx, uint32_t value)
  * @param[in] baudrate Target baudrate in bps.
  */
 static inline void ll_usart_config_baudrate(USART_TypeDef *USARTx,
-                                            uint32_t baudrate)
+        uint32_t baudrate)
 {
     uint32_t div;
 
@@ -448,7 +447,7 @@ static inline uint32_t ll_usart_is_enabled_it_cts(USART_TypeDef *USARTx)
  * LL_USART_HWCONTROL.
  */
 static inline void ll_usart_config_hwflow(USART_TypeDef *USARTx,
-                                          uint32_t hwcontrol)
+        uint32_t hwcontrol)
 {
     MODIFY_REG(USARTx->CR3, USART_CR3_RTSE | USART_CR3_CTSE, hwcontrol);
 }

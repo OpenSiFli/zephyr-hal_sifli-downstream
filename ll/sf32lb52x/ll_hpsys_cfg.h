@@ -8,8 +8,7 @@
 #define __LL_HPSYS_CFG_H
 
 #include <stdint.h>
-#include "hpsys_cfg.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -294,9 +293,9 @@ static inline void ll_cfg_set_sys_reserved(HPSYS_CFG_TypeDef *CFGx, uint32_t val
  * @note Used by the pinctrl driver for dynamic per-field PINR updates.
  */
 static inline void ll_cfg_set_pinr_field(HPSYS_CFG_TypeDef *CFGx,
-                                         uint32_t pinr_offset,
-                                         uint32_t pinr_field,
-                                         uint32_t pad)
+        uint32_t pinr_offset,
+        uint32_t pinr_field,
+        uint32_t pad)
 {
     __IO uint32_t *pinr_reg;
     uint32_t pinr_msk;
@@ -312,7 +311,7 @@ static inline void ll_cfg_set_pinr_field(HPSYS_CFG_TypeDef *CFGx,
  * @param[in] cfg Pointer to I2C1 PINR configuration.
  */
 static inline void ll_cfg_config_i2c1_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
+        const ll_cfg_i2c_pinr_config_t *cfg)
 {
     uint32_t value;
 
@@ -323,7 +322,7 @@ static inline void ll_cfg_config_i2c1_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->I2C1_PINR,
                HPSYS_CFG_I2C1_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C1_PINR_SDA_PIN_Msk,
+               HPSYS_CFG_I2C1_PINR_SDA_PIN_Msk,
                value);
 }
 
@@ -333,7 +332,7 @@ static inline void ll_cfg_config_i2c1_pinr(HPSYS_CFG_TypeDef *CFGx,
  * @param[in] cfg Pointer to I2C2 PINR configuration.
  */
 static inline void ll_cfg_config_i2c2_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
+        const ll_cfg_i2c_pinr_config_t *cfg)
 {
     uint32_t value;
 
@@ -344,7 +343,7 @@ static inline void ll_cfg_config_i2c2_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->I2C2_PINR,
                HPSYS_CFG_I2C2_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C2_PINR_SDA_PIN_Msk,
+               HPSYS_CFG_I2C2_PINR_SDA_PIN_Msk,
                value);
 }
 
@@ -354,7 +353,7 @@ static inline void ll_cfg_config_i2c2_pinr(HPSYS_CFG_TypeDef *CFGx,
  * @param[in] cfg Pointer to I2C3 PINR configuration.
  */
 static inline void ll_cfg_config_i2c3_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
+        const ll_cfg_i2c_pinr_config_t *cfg)
 {
     uint32_t value;
 
@@ -365,7 +364,7 @@ static inline void ll_cfg_config_i2c3_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->I2C3_PINR,
                HPSYS_CFG_I2C3_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C3_PINR_SDA_PIN_Msk,
+               HPSYS_CFG_I2C3_PINR_SDA_PIN_Msk,
                value);
 }
 
@@ -375,7 +374,7 @@ static inline void ll_cfg_config_i2c3_pinr(HPSYS_CFG_TypeDef *CFGx,
  * @param[in] cfg Pointer to I2C4 PINR configuration.
  */
 static inline void ll_cfg_config_i2c4_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                           const ll_cfg_i2c_pinr_config_t *cfg)
+        const ll_cfg_i2c_pinr_config_t *cfg)
 {
     uint32_t value;
 
@@ -386,7 +385,7 @@ static inline void ll_cfg_config_i2c4_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->I2C4_PINR,
                HPSYS_CFG_I2C4_PINR_SCL_PIN_Msk |
-                   HPSYS_CFG_I2C4_PINR_SDA_PIN_Msk,
+               HPSYS_CFG_I2C4_PINR_SDA_PIN_Msk,
                value);
 }
 
@@ -412,9 +411,9 @@ ll_cfg_config_usart1_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->USART1_PINR,
                HPSYS_CFG_USART1_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART1_PINR_CTS_PIN_Msk,
+               HPSYS_CFG_USART1_PINR_RXD_PIN_Msk |
+               HPSYS_CFG_USART1_PINR_RTS_PIN_Msk |
+               HPSYS_CFG_USART1_PINR_CTS_PIN_Msk,
                value);
 }
 
@@ -440,9 +439,9 @@ ll_cfg_config_usart2_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->USART2_PINR,
                HPSYS_CFG_USART2_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART2_PINR_CTS_PIN_Msk,
+               HPSYS_CFG_USART2_PINR_RXD_PIN_Msk |
+               HPSYS_CFG_USART2_PINR_RTS_PIN_Msk |
+               HPSYS_CFG_USART2_PINR_CTS_PIN_Msk,
                value);
 }
 
@@ -468,9 +467,9 @@ ll_cfg_config_usart3_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->USART3_PINR,
                HPSYS_CFG_USART3_PINR_TXD_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_RXD_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_RTS_PIN_Msk |
-                   HPSYS_CFG_USART3_PINR_CTS_PIN_Msk,
+               HPSYS_CFG_USART3_PINR_RXD_PIN_Msk |
+               HPSYS_CFG_USART3_PINR_RTS_PIN_Msk |
+               HPSYS_CFG_USART3_PINR_CTS_PIN_Msk,
                value);
 }
 
@@ -499,9 +498,9 @@ ll_cfg_config_gptim1_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->GPTIM1_PINR,
                HPSYS_CFG_GPTIM1_PINR_CH1_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH2_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH3_PIN_Msk |
-                   HPSYS_CFG_GPTIM1_PINR_CH4_PIN_Msk,
+               HPSYS_CFG_GPTIM1_PINR_CH2_PIN_Msk |
+               HPSYS_CFG_GPTIM1_PINR_CH3_PIN_Msk |
+               HPSYS_CFG_GPTIM1_PINR_CH4_PIN_Msk,
                gptim_value);
     MODIFY_REG(CFGx->ETR_PINR, HPSYS_CFG_ETR_PINR_ETR1_PIN_Msk, etr_value);
 }
@@ -531,9 +530,9 @@ ll_cfg_config_gptim2_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->GPTIM2_PINR,
                HPSYS_CFG_GPTIM2_PINR_CH1_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH2_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH3_PIN_Msk |
-                   HPSYS_CFG_GPTIM2_PINR_CH4_PIN_Msk,
+               HPSYS_CFG_GPTIM2_PINR_CH2_PIN_Msk |
+               HPSYS_CFG_GPTIM2_PINR_CH3_PIN_Msk |
+               HPSYS_CFG_GPTIM2_PINR_CH4_PIN_Msk,
                gptim_value);
     MODIFY_REG(CFGx->ETR_PINR, HPSYS_CFG_ETR_PINR_ETR2_PIN_Msk, etr_value);
 }
@@ -558,8 +557,8 @@ ll_cfg_config_lptim1_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->LPTIM1_PINR,
                HPSYS_CFG_LPTIM1_PINR_IN_PIN_Msk |
-                   HPSYS_CFG_LPTIM1_PINR_OUT_PIN_Msk |
-                   HPSYS_CFG_LPTIM1_PINR_ETR_PIN_Msk,
+               HPSYS_CFG_LPTIM1_PINR_OUT_PIN_Msk |
+               HPSYS_CFG_LPTIM1_PINR_ETR_PIN_Msk,
                value);
 }
 
@@ -583,8 +582,8 @@ ll_cfg_config_lptim2_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->LPTIM2_PINR,
                HPSYS_CFG_LPTIM2_PINR_IN_PIN_Msk |
-                   HPSYS_CFG_LPTIM2_PINR_OUT_PIN_Msk |
-                   HPSYS_CFG_LPTIM2_PINR_ETR_PIN_Msk,
+               HPSYS_CFG_LPTIM2_PINR_OUT_PIN_Msk |
+               HPSYS_CFG_LPTIM2_PINR_ETR_PIN_Msk,
                value);
 }
 
@@ -610,9 +609,9 @@ ll_cfg_config_atim1_pinr1(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->ATIM1_PINR1,
                HPSYS_CFG_ATIM1_PINR1_CH1_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH2_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH3_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR1_CH4_PIN_Msk,
+               HPSYS_CFG_ATIM1_PINR1_CH2_PIN_Msk |
+               HPSYS_CFG_ATIM1_PINR1_CH3_PIN_Msk |
+               HPSYS_CFG_ATIM1_PINR1_CH4_PIN_Msk,
                value);
 }
 
@@ -636,8 +635,8 @@ ll_cfg_config_atim1_pinr2(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->ATIM1_PINR2,
                HPSYS_CFG_ATIM1_PINR2_CH1N_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR2_CH2N_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR2_CH3N_PIN_Msk,
+               HPSYS_CFG_ATIM1_PINR2_CH2N_PIN_Msk |
+               HPSYS_CFG_ATIM1_PINR2_CH3N_PIN_Msk,
                value);
 }
 
@@ -661,8 +660,8 @@ ll_cfg_config_atim1_pinr3(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->ATIM1_PINR3,
                HPSYS_CFG_ATIM1_PINR3_BK_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR3_BK2_PIN_Msk |
-                   HPSYS_CFG_ATIM1_PINR3_ETR_PIN_Msk,
+               HPSYS_CFG_ATIM1_PINR3_BK2_PIN_Msk |
+               HPSYS_CFG_ATIM1_PINR3_ETR_PIN_Msk,
                value);
 }
 
@@ -672,7 +671,7 @@ ll_cfg_config_atim1_pinr3(HPSYS_CFG_TypeDef *CFGx,
  * @param[in] cfg Pointer to PTA PINR configuration.
  */
 static inline void ll_cfg_config_pta_pinr(HPSYS_CFG_TypeDef *CFGx,
-                                          const ll_cfg_pta_pinr_config_t *cfg)
+        const ll_cfg_pta_pinr_config_t *cfg)
 {
     uint32_t value;
 
@@ -690,9 +689,9 @@ static inline void ll_cfg_config_pta_pinr(HPSYS_CFG_TypeDef *CFGx,
 
     MODIFY_REG(CFGx->PTA_PINR,
                HPSYS_CFG_PTA_PINR_BT_ACTIVE_Msk |
-                   HPSYS_CFG_PTA_PINR_BT_COLLISION_Msk |
-                   HPSYS_CFG_PTA_PINR_BT_PRIORITY_Msk |
-                   HPSYS_CFG_PTA_PINR_WLAN_ACTIVE_Msk,
+               HPSYS_CFG_PTA_PINR_BT_COLLISION_Msk |
+               HPSYS_CFG_PTA_PINR_BT_PRIORITY_Msk |
+               HPSYS_CFG_PTA_PINR_WLAN_ACTIVE_Msk,
                value);
 }
 
@@ -1194,7 +1193,8 @@ static inline uint32_t ll_cfg_get_bist_result(HPSYS_CFG_TypeDef *CFGx)
  */
 static inline void ll_cfg_set_rom_compare(HPSYS_CFG_TypeDef *CFGx, uint32_t idx, uint32_t val)
 {
-    if (idx < 3U) {
+    if (idx < 3U)
+    {
         (&CFGx->ROMCR0)[idx] = val;
     }
 }
@@ -1224,36 +1224,45 @@ static inline uint32_t ll_cfg_get_lpirq_flag(HPSYS_CFG_TypeDef *CFGx, uint32_t i
 
 /**
  * @brief Clear the LCPU interrupt status flag (LPIRQ.IF0/IF1, write 1 to clear).
- * @note The SEL bits are preserved; only the rw1c IF bit is written.
+ * @note Both SEL0 and SEL1 (rw source-select fields) are preserved; only the
+ *       target rw1c IF bit is written.
  * @param[in] CFGx HPSYS_CFG instance pointer.
  * @param[in] idx  Interrupt index, 0 or 1.
  */
 static inline void ll_cfg_clear_lpirq_flag(HPSYS_CFG_TypeDef *CFGx, uint32_t idx)
 {
-    if (idx == 0U) {
-        WRITE_REG(CFGx->LPIRQ,
-                  (READ_REG(CFGx->LPIRQ) & HPSYS_CFG_LPIRQ_SEL0) | HPSYS_CFG_LPIRQ_IF0);
-    } else {
-        WRITE_REG(CFGx->LPIRQ,
-                  (READ_REG(CFGx->LPIRQ) & HPSYS_CFG_LPIRQ_SEL1) | HPSYS_CFG_LPIRQ_IF1);
-    }
+    const uint32_t sel_mask = HPSYS_CFG_LPIRQ_SEL0 | HPSYS_CFG_LPIRQ_SEL1;
+    const uint32_t if_bit = (idx == 0U) ? HPSYS_CFG_LPIRQ_IF0 : HPSYS_CFG_LPIRQ_IF1;
+
+    WRITE_REG(CFGx->LPIRQ, (READ_REG(CFGx->LPIRQ) & sel_mask) | if_bit);
 }
 
 /**
  * @brief Set the LCPU interrupt source selection (LPIRQ.SEL0/SEL1).
+ * @note IF0/IF1 are rw1c (write 1 clears a pending flag). A plain read-modify-
+ *       write would write a pending IF bit back as 1 and clear it, so both IF
+ *       bits are forced to 0 here (a no-op for W1C) while the target rw SEL
+ *       field is updated. The other SEL field is preserved.
  * @param[in] CFGx HPSYS_CFG instance pointer.
  * @param[in] idx  Interrupt index, 0 or 1.
  * @param[in] sel  Source select (6 bits).
  */
 static inline void ll_cfg_set_lpirq_select(HPSYS_CFG_TypeDef *CFGx, uint32_t idx, uint32_t sel)
 {
-    if (idx == 0U) {
-        MODIFY_REG(CFGx->LPIRQ, HPSYS_CFG_LPIRQ_SEL0,
-                   MAKE_REG_VAL(sel, HPSYS_CFG_LPIRQ_SEL0_Msk, HPSYS_CFG_LPIRQ_SEL0_Pos));
-    } else {
-        MODIFY_REG(CFGx->LPIRQ, HPSYS_CFG_LPIRQ_SEL1,
-                   MAKE_REG_VAL(sel, HPSYS_CFG_LPIRQ_SEL1_Msk, HPSYS_CFG_LPIRQ_SEL1_Pos));
+    /* Force W1C IF bits to 0; keep all other bits (both SEL fields + RSVD). */
+    uint32_t reg = READ_REG(CFGx->LPIRQ) & ~(HPSYS_CFG_LPIRQ_IF0 | HPSYS_CFG_LPIRQ_IF1);
+
+    if (idx == 0U)
+    {
+        reg = (reg & ~HPSYS_CFG_LPIRQ_SEL0) |
+              MAKE_REG_VAL(sel, HPSYS_CFG_LPIRQ_SEL0_Msk, HPSYS_CFG_LPIRQ_SEL0_Pos);
     }
+    else
+    {
+        reg = (reg & ~HPSYS_CFG_LPIRQ_SEL1) |
+              MAKE_REG_VAL(sel, HPSYS_CFG_LPIRQ_SEL1_Msk, HPSYS_CFG_LPIRQ_SEL1_Pos);
+    }
+    WRITE_REG(CFGx->LPIRQ, reg);
 }
 
 /**
@@ -1446,7 +1455,7 @@ static inline void ll_cfg_set_anau_reserved(HPSYS_CFG_TypeDef *CFGx, uint32_t va
  * @param[in] ur1      ATEST1 unit resistor select (3 bits).
  */
 static inline void ll_cfg_set_analog_test(HPSYS_CFG_TypeDef *CFGx, uint32_t te0, uint32_t ur0,
-                                          uint32_t te1, uint32_t ur1)
+        uint32_t te1, uint32_t ur1)
 {
     MODIFY_REG(CFGx->ANATR,
                HPSYS_CFG_ANATR_DC_TE_ATEST0 | HPSYS_CFG_ANATR_DC_UR_ATEST0 |

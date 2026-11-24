@@ -8,8 +8,7 @@
 #define __LL_DMAC_H
 
 #include <stdint.h>
-#include "dmac.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -159,7 +158,7 @@ static inline uint32_t ll_dmac_get_isr(DMAC_TypeDef *DMACx)
  * @return Non-zero when TCIF is set.
  */
 static inline uint32_t ll_dmac_is_active_flag_tc(DMAC_TypeDef *DMACx,
-                                                  uint32_t ch)
+        uint32_t ch)
 {
     return READ_BIT(DMACx->ISR, (LL_DMAC_FLAG_TC << ll_dmac_channel_flag_shift(ch)));
 }
@@ -171,7 +170,7 @@ static inline uint32_t ll_dmac_is_active_flag_tc(DMAC_TypeDef *DMACx,
  * @return Non-zero when HTIF is set.
  */
 static inline uint32_t ll_dmac_is_active_flag_ht(DMAC_TypeDef *DMACx,
-                                                  uint32_t ch)
+        uint32_t ch)
 {
     return READ_BIT(DMACx->ISR, (LL_DMAC_FLAG_HT << ll_dmac_channel_flag_shift(ch)));
 }
@@ -183,7 +182,7 @@ static inline uint32_t ll_dmac_is_active_flag_ht(DMAC_TypeDef *DMACx,
  * @return Non-zero when TEIF is set.
  */
 static inline uint32_t ll_dmac_is_active_flag_te(DMAC_TypeDef *DMACx,
-                                                  uint32_t ch)
+        uint32_t ch)
 {
     return READ_BIT(DMACx->ISR, (LL_DMAC_FLAG_TE << ll_dmac_channel_flag_shift(ch)));
 }
@@ -195,7 +194,7 @@ static inline uint32_t ll_dmac_is_active_flag_te(DMAC_TypeDef *DMACx,
  * @return Non-zero when GIF is set.
  */
 static inline uint32_t ll_dmac_is_active_flag_gi(DMAC_TypeDef *DMACx,
-                                                  uint32_t ch)
+        uint32_t ch)
 {
     return READ_BIT(DMACx->ISR, (LL_DMAC_FLAG_GI << ll_dmac_channel_flag_shift(ch)));
 }
@@ -251,7 +250,7 @@ static inline void ll_dmac_clear_flag_gi(DMAC_TypeDef *DMACx, uint32_t ch)
  * @return Channel register pointer.
  */
 static inline ll_dmac_channel_t *ll_dmac_get_channel(DMAC_TypeDef *DMACx,
-                                                     uint32_t ch)
+        uint32_t ch)
 {
     if (ch < LL_DMAC_CHANNEL_MIN || ch > LL_DMAC_CHANNEL_MAX)
     {
@@ -267,12 +266,12 @@ static inline ll_dmac_channel_t *ll_dmac_get_channel(DMAC_TypeDef *DMACx,
  * @param[in] cfg Pointer to channel configuration.
  */
 static inline void ll_dmac_config_channel(ll_dmac_channel_t *chx,
-                                          const ll_dmac_channel_config_t *cfg)
+        const ll_dmac_channel_config_t *cfg)
 {
     MODIFY_REG(chx->CCR, LL_DMAC_CCR_CONFIG_MASK,
                cfg->mem2mem | cfg->priority | cfg->msize | cfg->psize |
-                   cfg->minc | cfg->pinc | cfg->circ | cfg->dir | cfg->it_tc |
-                   cfg->it_ht | cfg->it_te);
+               cfg->minc | cfg->pinc | cfg->circ | cfg->dir | cfg->it_tc |
+               cfg->it_ht | cfg->it_te);
 }
 
 /**
@@ -465,7 +464,7 @@ static inline uint32_t ll_dmac_get_channel_request(DMAC_TypeDef *DMACx, uint32_t
  * @param[in] request_id Request source id in range 0..63.
  */
 static inline void ll_dmac_set_channel_request(DMAC_TypeDef *DMACx, uint32_t ch,
-                                               uint32_t request_id)
+        uint32_t request_id)
 {
     uint32_t shift;
     uint32_t req;

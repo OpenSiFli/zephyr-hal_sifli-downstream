@@ -8,8 +8,7 @@
 #define __LL_RNG_H
 
 #include <stdint.h>
-#include "trng.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +20,7 @@ extern "C" {
  */
 static inline void ll_rng_suspend(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_SUSPEND);
+    SET_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_SUSPEND);
 }
 
 /**
@@ -30,7 +29,7 @@ static inline void ll_rng_suspend(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_resume(TRNG_TypeDef *trng)
 {
-	CLEAR_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_SUSPEND);
+    CLEAR_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_SUSPEND);
 }
 
 /**
@@ -40,7 +39,7 @@ static inline void ll_rng_resume(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_stop(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_STOP);
+    SET_BIT(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_STOP);
 }
 
 /**
@@ -50,7 +49,7 @@ static inline void ll_rng_stop(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_stop_seed(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->CTRL, TRNG_CTRL_GEN_SEED_STOP);
+    SET_BIT(trng->CTRL, TRNG_CTRL_GEN_SEED_STOP);
 }
 
 /*==============================================================================
@@ -66,7 +65,7 @@ static inline void ll_rng_stop_seed(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_start(TRNG_TypeDef *trng)
 {
-	WRITE_REG(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_START);
+    WRITE_REG(trng->CTRL, TRNG_CTRL_GEN_RAND_NUM_START);
 }
 
 /**
@@ -89,7 +88,7 @@ static inline void ll_rng_start(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_start_seed(TRNG_TypeDef *trng)
 {
-	WRITE_REG(trng->CTRL, TRNG_CTRL_GEN_SEED_START);
+    WRITE_REG(trng->CTRL, TRNG_CTRL_GEN_SEED_START);
 }
 
 /**
@@ -99,7 +98,7 @@ static inline void ll_rng_start_seed(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_is_data_ready(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->STAT, TRNG_STAT_RAND_NUM_VALID) ? 1UL : 0UL;
+    return READ_BIT(trng->STAT, TRNG_STAT_RAND_NUM_VALID) ? 1UL : 0UL;
 }
 
 /**
@@ -109,7 +108,7 @@ static inline uint32_t ll_rng_is_data_ready(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_is_busy(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->STAT, TRNG_STAT_RAND_NUM_GEN_BUSY) ? 1UL : 0UL;
+    return READ_BIT(trng->STAT, TRNG_STAT_RAND_NUM_GEN_BUSY) ? 1UL : 0UL;
 }
 
 /**
@@ -119,7 +118,7 @@ static inline uint32_t ll_rng_is_busy(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_is_seed_valid(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->STAT, TRNG_STAT_SEED_VALID) ? 1UL : 0UL;
+    return READ_BIT(trng->STAT, TRNG_STAT_SEED_VALID) ? 1UL : 0UL;
 }
 
 /**
@@ -129,7 +128,7 @@ static inline uint32_t ll_rng_is_seed_valid(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_is_seed_busy(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->STAT, TRNG_STAT_SEED_GEN_BUSY) ? 1UL : 0UL;
+    return READ_BIT(trng->STAT, TRNG_STAT_SEED_GEN_BUSY) ? 1UL : 0UL;
 }
 
 /**
@@ -141,8 +140,8 @@ static inline uint32_t ll_rng_is_seed_busy(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_set_reject_threshold(TRNG_TypeDef *trng, uint32_t th)
 {
-	MODIFY_REG(trng->CFG, TRNG_CFG_REJECT_THRESHOLD,
-		   MAKE_REG_VAL(th, TRNG_CFG_REJECT_THRESHOLD_Msk, TRNG_CFG_REJECT_THRESHOLD_Pos));
+    MODIFY_REG(trng->CFG, TRNG_CFG_REJECT_THRESHOLD,
+               MAKE_REG_VAL(th, TRNG_CFG_REJECT_THRESHOLD_Msk, TRNG_CFG_REJECT_THRESHOLD_Pos));
 }
 
 /**
@@ -153,8 +152,8 @@ static inline void ll_rng_set_reject_threshold(TRNG_TypeDef *trng, uint32_t th)
  */
 static inline void ll_rng_set_use_ext_seed(TRNG_TypeDef *trng, uint32_t use_ext)
 {
-	MODIFY_REG(trng->CFG, TRNG_CFG_USE_EXT_SEED,
-		   MAKE_REG_VAL(use_ext, TRNG_CFG_USE_EXT_SEED_Msk, TRNG_CFG_USE_EXT_SEED_Pos));
+    MODIFY_REG(trng->CFG, TRNG_CFG_USE_EXT_SEED,
+               MAKE_REG_VAL(use_ext, TRNG_CFG_USE_EXT_SEED_Msk, TRNG_CFG_USE_EXT_SEED_Pos));
 }
 
 /*==============================================================================
@@ -168,8 +167,8 @@ static inline void ll_rng_set_use_ext_seed(TRNG_TypeDef *trng, uint32_t use_ext)
  */
 static inline void ll_rng_set_auto_clock(TRNG_TypeDef *trng, uint32_t enable)
 {
-	MODIFY_REG(trng->CFG, TRNG_CFG_AUTO_CLOCK_ENABLE,
-		   MAKE_REG_VAL(enable, TRNG_CFG_AUTO_CLOCK_ENABLE_Msk, TRNG_CFG_AUTO_CLOCK_ENABLE_Pos));
+    MODIFY_REG(trng->CFG, TRNG_CFG_AUTO_CLOCK_ENABLE,
+               MAKE_REG_VAL(enable, TRNG_CFG_AUTO_CLOCK_ENABLE_Msk, TRNG_CFG_AUTO_CLOCK_ENABLE_Pos));
 }
 
 /**
@@ -179,12 +178,12 @@ static inline void ll_rng_set_auto_clock(TRNG_TypeDef *trng, uint32_t enable)
  */
 static inline void ll_rng_clear_interrupt_flag(TRNG_TypeDef *trng)
 {
-	/* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
-	WRITE_REG(trng->IRQ,
-		  (READ_REG(trng->IRQ) &
-		   (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
-		    TRNG_IRQ_PRNG_LOCKUP_MSK)) |
-			  TRNG_IRQ_RAND_NUM_AVAIL);
+    /* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
+    WRITE_REG(trng->IRQ,
+              (READ_REG(trng->IRQ) &
+               (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
+                TRNG_IRQ_PRNG_LOCKUP_MSK)) |
+              TRNG_IRQ_RAND_NUM_AVAIL);
 }
 
 /**
@@ -193,12 +192,12 @@ static inline void ll_rng_clear_interrupt_flag(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_clear_seed_done_flag(TRNG_TypeDef *trng)
 {
-	/* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
-	WRITE_REG(trng->IRQ,
-		  (READ_REG(trng->IRQ) &
-		   (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
-		    TRNG_IRQ_PRNG_LOCKUP_MSK)) |
-			  TRNG_IRQ_SEED_GEN_DONE);
+    /* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
+    WRITE_REG(trng->IRQ,
+              (READ_REG(trng->IRQ) &
+               (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
+                TRNG_IRQ_PRNG_LOCKUP_MSK)) |
+              TRNG_IRQ_SEED_GEN_DONE);
 }
 
 /**
@@ -208,7 +207,7 @@ static inline void ll_rng_clear_seed_done_flag(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_enable_lockup_interrupt(TRNG_TypeDef *trng)
 {
-	CLEAR_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP_MSK);
+    CLEAR_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP_MSK);
 }
 
 /**
@@ -218,7 +217,7 @@ static inline void ll_rng_enable_lockup_interrupt(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_disable_lockup_interrupt(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP_MSK);
+    SET_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP_MSK);
 }
 
 /**
@@ -228,12 +227,12 @@ static inline void ll_rng_disable_lockup_interrupt(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_clear_lockup_flag(TRNG_TypeDef *trng)
 {
-	/* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
-	WRITE_REG(trng->IRQ,
-		  (READ_REG(trng->IRQ) &
-		   (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
-		    TRNG_IRQ_PRNG_LOCKUP_MSK)) |
-			  TRNG_IRQ_PRNG_LOCKUP);
+    /* Preserve the _MSK bits and only clear the rw1c flag (write 1 to clear). */
+    WRITE_REG(trng->IRQ,
+              (READ_REG(trng->IRQ) &
+               (TRNG_IRQ_SEED_GEN_DONE_MSK | TRNG_IRQ_RAND_NUM_AVAIL_MSK |
+                TRNG_IRQ_PRNG_LOCKUP_MSK)) |
+              TRNG_IRQ_PRNG_LOCKUP);
 }
 
 /*==============================================================================
@@ -248,7 +247,7 @@ static inline void ll_rng_clear_lockup_flag(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_enable_interrupt(TRNG_TypeDef *trng)
 {
-	CLEAR_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL_MSK);
+    CLEAR_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL_MSK);
 }
 
 /**
@@ -259,7 +258,7 @@ static inline void ll_rng_enable_interrupt(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_disable_interrupt(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL_MSK);
+    SET_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL_MSK);
 }
 
 /**
@@ -269,7 +268,7 @@ static inline void ll_rng_disable_interrupt(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_enable_seed_done_interrupt(TRNG_TypeDef *trng)
 {
-	CLEAR_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE_MSK);
+    CLEAR_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE_MSK);
 }
 
 /**
@@ -279,7 +278,7 @@ static inline void ll_rng_enable_seed_done_interrupt(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_disable_seed_done_interrupt(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE_MSK);
+    SET_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE_MSK);
 }
 
 /**
@@ -289,7 +288,7 @@ static inline void ll_rng_disable_seed_done_interrupt(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_get_lockup_flag(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP) ? 1UL : 0UL;
+    return READ_BIT(trng->IRQ, TRNG_IRQ_PRNG_LOCKUP) ? 1UL : 0UL;
 }
 
 /**
@@ -299,7 +298,7 @@ static inline uint32_t ll_rng_get_lockup_flag(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_get_interrupt_flag(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL) ? 1UL : 0UL;
+    return READ_BIT(trng->IRQ, TRNG_IRQ_RAND_NUM_AVAIL) ? 1UL : 0UL;
 }
 
 /**
@@ -309,7 +308,7 @@ static inline uint32_t ll_rng_get_interrupt_flag(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_get_seed_done_flag(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE) ? 1UL : 0UL;
+    return READ_BIT(trng->IRQ, TRNG_IRQ_SEED_GEN_DONE) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -326,8 +325,8 @@ static inline uint32_t ll_rng_get_seed_done_flag(TRNG_TypeDef *trng)
  */
 static inline uint32_t ll_rng_read_seed(TRNG_TypeDef *trng, uint32_t idx)
 {
-	const volatile uint32_t *seed_regs = &trng->RAND_SEED0;
-	return (idx < 8U) ? seed_regs[idx] : 0UL;
+    const volatile uint32_t *seed_regs = &trng->RAND_SEED0;
+    return (idx < 8U) ? seed_regs[idx] : 0UL;
 }
 
 /**
@@ -340,10 +339,11 @@ static inline uint32_t ll_rng_read_seed(TRNG_TypeDef *trng, uint32_t idx)
  */
 static inline void ll_rng_write_seed(TRNG_TypeDef *trng, uint32_t idx, uint32_t val)
 {
-	volatile uint32_t *seed_regs = &trng->RAND_SEED0;
-	if (idx < 8U) {
-		seed_regs[idx] = val;
-	}
+    volatile uint32_t *seed_regs = &trng->RAND_SEED0;
+    if (idx < 8U)
+    {
+        seed_regs[idx] = val;
+    }
 }
 
 /*==============================================================================
@@ -355,8 +355,8 @@ static inline void ll_rng_write_seed(TRNG_TypeDef *trng, uint32_t idx, uint32_t 
  */
 static inline uint32_t ll_rng_read_word(TRNG_TypeDef *trng, uint32_t idx)
 {
-	const volatile uint32_t *rand_regs = &trng->RAND_NUM0;
-	return (idx < 8U) ? rand_regs[idx] : 0UL;
+    const volatile uint32_t *rand_regs = &trng->RAND_NUM0;
+    return (idx < 8U) ? rand_regs[idx] : 0UL;
 }
 
 /**
@@ -364,14 +364,14 @@ static inline uint32_t ll_rng_read_word(TRNG_TypeDef *trng, uint32_t idx)
  */
 static inline void ll_rng_read_all(TRNG_TypeDef *trng, uint32_t *buf)
 {
-	buf[0] = trng->RAND_NUM0;
-	buf[1] = trng->RAND_NUM1;
-	buf[2] = trng->RAND_NUM2;
-	buf[3] = trng->RAND_NUM3;
-	buf[4] = trng->RAND_NUM4;
-	buf[5] = trng->RAND_NUM5;
-	buf[6] = trng->RAND_NUM6;
-	buf[7] = trng->RAND_NUM7;
+    buf[0] = trng->RAND_NUM0;
+    buf[1] = trng->RAND_NUM1;
+    buf[2] = trng->RAND_NUM2;
+    buf[3] = trng->RAND_NUM3;
+    buf[4] = trng->RAND_NUM4;
+    buf[5] = trng->RAND_NUM5;
+    buf[6] = trng->RAND_NUM6;
+    buf[7] = trng->RAND_NUM7;
 }
 
 /*==============================================================================
@@ -387,8 +387,8 @@ static inline void ll_rng_read_all(TRNG_TypeDef *trng, uint32_t *buf)
  */
 static inline void ll_rng_set_calibration_length(TRNG_TypeDef *trng, uint32_t len)
 {
-	MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_LENGTH,
-		   MAKE_REG_VAL(len, TRNG_CAL_CFG_LENGTH_Msk, TRNG_CAL_CFG_LENGTH_Pos));
+    MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_LENGTH,
+               MAKE_REG_VAL(len, TRNG_CAL_CFG_LENGTH_Msk, TRNG_CAL_CFG_LENGTH_Pos));
 }
 
 /**
@@ -398,7 +398,7 @@ static inline void ll_rng_set_calibration_length(TRNG_TypeDef *trng, uint32_t le
  */
 static inline uint32_t ll_rng_is_calibration_done(TRNG_TypeDef *trng)
 {
-	return READ_BIT(trng->CAL_CFG, TRNG_CAL_CFG_DONE) ? 1UL : 0UL;
+    return READ_BIT(trng->CAL_CFG, TRNG_CAL_CFG_DONE) ? 1UL : 0UL;
 }
 
 /**
@@ -407,7 +407,7 @@ static inline uint32_t ll_rng_is_calibration_done(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_start_calibration(TRNG_TypeDef *trng)
 {
-	SET_BIT(trng->CAL_CFG, TRNG_CAL_CFG_ENABLE);
+    SET_BIT(trng->CAL_CFG, TRNG_CAL_CFG_ENABLE);
 }
 
 /**
@@ -416,7 +416,7 @@ static inline void ll_rng_start_calibration(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_stop_calibration(TRNG_TypeDef *trng)
 {
-	CLEAR_BIT(trng->CAL_CFG, TRNG_CAL_CFG_ENABLE);
+    CLEAR_BIT(trng->CAL_CFG, TRNG_CAL_CFG_ENABLE);
 }
 
 /**
@@ -426,8 +426,8 @@ static inline void ll_rng_stop_calibration(TRNG_TypeDef *trng)
  */
 static inline void ll_rng_set_calibration_osc_clk_sel(TRNG_TypeDef *trng, uint32_t sel)
 {
-	MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_OSC_CLK_SEL,
-		   MAKE_REG_VAL(sel, TRNG_CAL_CFG_OSC_CLK_SEL_Msk, TRNG_CAL_CFG_OSC_CLK_SEL_Pos));
+    MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_OSC_CLK_SEL,
+               MAKE_REG_VAL(sel, TRNG_CAL_CFG_OSC_CLK_SEL_Msk, TRNG_CAL_CFG_OSC_CLK_SEL_Pos));
 }
 
 /**
@@ -436,10 +436,10 @@ static inline void ll_rng_set_calibration_osc_clk_sel(TRNG_TypeDef *trng, uint32
  * @param[in] force Non-zero to force the oscillator clock on.
  */
 static inline void ll_rng_set_calibration_osc_clk_force_on(TRNG_TypeDef *trng,
-							   uint32_t force)
+        uint32_t force)
 {
-	MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_OSC_CLK_FORCE_ON,
-		   force ? TRNG_CAL_CFG_OSC_CLK_FORCE_ON : 0UL);
+    MODIFY_REG(trng->CAL_CFG, TRNG_CAL_CFG_OSC_CLK_FORCE_ON,
+               force ? TRNG_CAL_CFG_OSC_CLK_FORCE_ON : 0UL);
 }
 
 /**
@@ -449,8 +449,8 @@ static inline void ll_rng_set_calibration_osc_clk_force_on(TRNG_TypeDef *trng,
  */
 static inline uint32_t ll_rng_get_calibration_result(TRNG_TypeDef *trng)
 {
-	return READ_REG(trng->CAL_RESULT) &
-	       (TRNG_CAL_RESULT_OSC_CNT | TRNG_CAL_RESULT_PCLK_CNT);
+    return READ_REG(trng->CAL_RESULT) &
+           (TRNG_CAL_RESULT_OSC_CNT | TRNG_CAL_RESULT_PCLK_CNT);
 }
 
 #ifdef __cplusplus

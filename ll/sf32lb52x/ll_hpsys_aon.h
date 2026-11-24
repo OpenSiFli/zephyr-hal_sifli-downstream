@@ -9,8 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "hpsys_aon.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,13 +29,15 @@ extern "C" {
 #define LL_AON_PM_ACTIVE  (0U) /**< Active mode */
 #define LL_AON_PM_LIGHT   (1U) /**< Light sleep mode */
 #define LL_AON_PM_DEEP    (2U) /**< Deep sleep mode */
-#define LL_AON_PM_STANDBY (3U) /**
+#define LL_AON_PM_STANDBY (3U) /**< Standby mode */
+
+/**
  * @brief Force entering low power mode (PMR.FORCE_SLEEP, auto-cleared).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
 static inline void ll_aon_pm_force_sleep_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_SLEEP);
+    SET_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_SLEEP);
 }
 
 /**
@@ -45,7 +46,7 @@ static inline void ll_aon_pm_force_sleep_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_pm_force_sleep_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_SLEEP);
+    CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_SLEEP);
 }
 
 /**
@@ -54,7 +55,7 @@ static inline void ll_aon_pm_force_sleep_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_pm_force_lcpu_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
+    SET_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
 }
 
 /**
@@ -63,10 +64,9 @@ static inline void ll_aon_pm_force_lcpu_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_pm_force_lcpu_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
+    CLEAR_BIT(AONx->PMR, HPSYS_AON_PMR_FORCE_LCPU);
 }
 
-/**< Standby mode */
 /** @} */
 
 /**
@@ -76,8 +76,8 @@ static inline void ll_aon_pm_force_lcpu_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_pm_set_mode(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	MODIFY_REG(AONx->PMR, HPSYS_AON_PMR_MODE,
-		   MAKE_REG_VAL(mode, HPSYS_AON_PMR_MODE_Msk, HPSYS_AON_PMR_MODE_Pos));
+    MODIFY_REG(AONx->PMR, HPSYS_AON_PMR_MODE,
+               MAKE_REG_VAL(mode, HPSYS_AON_PMR_MODE_Msk, HPSYS_AON_PMR_MODE_Pos));
 }
 
 /**
@@ -87,7 +87,7 @@ static inline void ll_aon_pm_set_mode(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline uint32_t ll_aon_pm_get_mode(HPSYS_AON_TypeDef *AONx)
 {
-	return GET_REG_VAL2(AONx->PMR, HPSYS_AON_PMR_MODE);
+    return GET_REG_VAL2(AONx->PMR, HPSYS_AON_PMR_MODE);
 }
 
 /*==============================================================================
@@ -112,15 +112,20 @@ static inline uint32_t ll_aon_pm_get_mode(HPSYS_AON_TypeDef *AONx)
  */
 static inline volatile uint32_t *ll_aon_cr_reg(HPSYS_AON_TypeDef *AONx, uint32_t pin)
 {
-	if (pin <= 7U) {
-		return &AONx->CR1;
-	} else if (pin <= 15U) {
-		return &AONx->CR2;
-	} else if (pin <= 20U) {
-		return &AONx->CR3;
-	}
+    if (pin <= 7U)
+    {
+        return &AONx->CR1;
+    }
+    else if (pin <= 15U)
+    {
+        return &AONx->CR2;
+    }
+    else if (pin <= 20U)
+    {
+        return &AONx->CR3;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 /**
@@ -131,15 +136,16 @@ static inline volatile uint32_t *ll_aon_cr_reg(HPSYS_AON_TypeDef *AONx, uint32_t
  */
 static inline void ll_aon_cfg_set_pin_mode(HPSYS_AON_TypeDef *AONx, uint32_t pin, uint32_t mode)
 {
-	volatile uint32_t *reg = ll_aon_cr_reg(AONx, pin);
-	uint32_t pos;
+    volatile uint32_t *reg = ll_aon_cr_reg(AONx, pin);
+    uint32_t pos;
 
-	if (reg == NULL) {
-		return;
-	}
+    if (reg == NULL)
+    {
+        return;
+    }
 
-	pos = (pin % 8U) * 3U;
-	MODIFY_REG(*reg, 0x7UL << pos, (mode & 0x7UL) << pos);
+    pos = (pin % 8U) * 3U;
+    MODIFY_REG(*reg, 0x7UL << pos, (mode & 0x7UL) << pos);
 }
 
 /*==============================================================================
@@ -150,13 +156,15 @@ static inline void ll_aon_cfg_set_pin_mode(HPSYS_AON_TypeDef *AONx, uint32_t pin
 /** @{ */
 #define LL_AON_PINOUT_DISABLED (0x0U) /**< No output routed to PBR */
 #define LL_AON_PINOUT_LPTIM1   (0x2U) /**< LPTIM1 PWM output (SEL1: inverted) */
-#define LL_AON_PINOUT_LPTIM2   (0x3U) /**
+#define LL_AON_PINOUT_LPTIM2   (0x3U) /**< LPTIM2 PWM output (SEL1: inverted) */
+
+/**
  * @brief Enable the global timer (CR1.GTIM_EN).
  * @param[in] AONx HPSYS_AON instance pointer.
  */
 static inline void ll_aon_cfg_gtim_enable(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
+    SET_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
 }
 
 /**
@@ -165,7 +173,7 @@ static inline void ll_aon_cfg_gtim_enable(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_cfg_gtim_disable(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
+    CLEAR_BIT(AONx->CR1, HPSYS_AON_CR1_GTIM_EN);
 }
 
 /**
@@ -175,11 +183,10 @@ static inline void ll_aon_cfg_gtim_disable(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_cfg_set_pinout_sel1(HPSYS_AON_TypeDef *AONx, uint32_t sel)
 {
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL1,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL1_Msk, HPSYS_AON_CR1_PINOUT_SEL1_Pos));
+    MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL1,
+               MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL1_Msk, HPSYS_AON_CR1_PINOUT_SEL1_Pos));
 }
 
-/**< LPTIM2 PWM output (SEL1: inverted) */
 /** @} */
 
 /**
@@ -189,8 +196,8 @@ static inline void ll_aon_cfg_set_pinout_sel1(HPSYS_AON_TypeDef *AONx, uint32_t 
  */
 static inline void ll_aon_cfg_set_pinout_sel0(HPSYS_AON_TypeDef *AONx, uint32_t sel)
 {
-	MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL0,
-		   MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL0_Msk, HPSYS_AON_CR1_PINOUT_SEL0_Pos));
+    MODIFY_REG(AONx->CR1, HPSYS_AON_CR1_PINOUT_SEL0,
+               MAKE_REG_VAL(sel, HPSYS_AON_CR1_PINOUT_SEL0_Msk, HPSYS_AON_CR1_PINOUT_SEL0_Pos));
 }
 
 /*==============================================================================
@@ -207,17 +214,18 @@ static inline void ll_aon_cfg_set_pinout_sel0(HPSYS_AON_TypeDef *AONx, uint32_t 
  */
 static inline volatile uint32_t *ll_aon_req_reg(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	switch (mode) {
-	case LL_AON_PM_LIGHT:
-		return &AONx->LSCR;
-	case LL_AON_PM_DEEP:
-		return &AONx->DSCR;
-	case LL_AON_PM_STANDBY:
-		return &AONx->SBCR;
-	case LL_AON_PM_ACTIVE:
-	default:
-		return &AONx->ACR;
-	}
+    switch (mode)
+    {
+    case LL_AON_PM_LIGHT:
+        return &AONx->LSCR;
+    case LL_AON_PM_DEEP:
+        return &AONx->DSCR;
+    case LL_AON_PM_STANDBY:
+        return &AONx->SBCR;
+    case LL_AON_PM_ACTIVE:
+    default:
+        return &AONx->ACR;
+    }
 }
 
 /**
@@ -227,7 +235,7 @@ static inline volatile uint32_t *ll_aon_req_reg(HPSYS_AON_TypeDef *AONx, uint32_
  */
 static inline uint32_t ll_aon_hxt48_is_ready(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HXT48_RDY) != 0UL;
+    return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HXT48_RDY) != 0UL;
 }
 
 /**
@@ -237,7 +245,7 @@ static inline uint32_t ll_aon_hxt48_is_ready(HPSYS_AON_TypeDef *AONx)
  */
 static inline uint32_t ll_aon_hrc48_is_ready(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HRC48_RDY) != 0UL;
+    return READ_BIT(AONx->ACR, HPSYS_AON_ACR_HRC48_RDY) != 0UL;
 }
 
 /**
@@ -247,7 +255,7 @@ static inline uint32_t ll_aon_hrc48_is_ready(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_extpwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
+    SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
 }
 
 /**
@@ -257,7 +265,7 @@ static inline void ll_aon_extpwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline void ll_aon_extpwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
+    CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_EXTPWR_REQ);
 }
 
 /**
@@ -267,7 +275,7 @@ static inline void ll_aon_extpwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mod
  */
 static inline void ll_aon_pwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
+    SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
 }
 
 /**
@@ -277,7 +285,7 @@ static inline void ll_aon_pwr_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline void ll_aon_pwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
+    CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_PWR_REQ);
 }
 
 /**
@@ -287,7 +295,7 @@ static inline void ll_aon_pwr_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline void ll_aon_hxt48_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HXT48_REQ);
+    SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HXT48_REQ);
 }
 
 /**
@@ -297,7 +305,7 @@ static inline void ll_aon_hxt48_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline void ll_aon_hxt48_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HXT48_REQ);
+    CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HXT48_REQ);
 }
 
 /**
@@ -307,7 +315,7 @@ static inline void ll_aon_hxt48_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode
  */
 static inline void ll_aon_hrc48_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HRC48_REQ);
+    SET_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HRC48_REQ);
 }
 
 /**
@@ -317,7 +325,7 @@ static inline void ll_aon_hrc48_req_set(HPSYS_AON_TypeDef *AONx, uint32_t mode)
  */
 static inline void ll_aon_hrc48_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode)
 {
-	CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HRC48_REQ);
+    CLEAR_BIT(*ll_aon_req_reg(AONx, mode), HPSYS_AON_ACR_HRC48_REQ);
 }
 
 /*==============================================================================
@@ -340,7 +348,7 @@ static inline void ll_aon_hrc48_req_clear(HPSYS_AON_TypeDef *AONx, uint32_t mode
  */
 static inline void ll_aon_ram_pd_set(HPSYS_AON_TypeDef *AONx, uint32_t ram_mask)
 {
-	SET_BIT(AONx->SBCR, ram_mask);
+    SET_BIT(AONx->SBCR, ram_mask);
 }
 
 /**
@@ -350,7 +358,7 @@ static inline void ll_aon_ram_pd_set(HPSYS_AON_TypeDef *AONx, uint32_t ram_mask)
  */
 static inline void ll_aon_ram_pd_clear(HPSYS_AON_TypeDef *AONx, uint32_t ram_mask)
 {
-	CLEAR_BIT(AONx->SBCR, ram_mask);
+    CLEAR_BIT(AONx->SBCR, ram_mask);
 }
 
 /*==============================================================================
@@ -399,7 +407,7 @@ static inline void ll_aon_ram_pd_clear(HPSYS_AON_TypeDef *AONx, uint32_t ram_mas
  */
 static inline void ll_aon_wakeup_enable(HPSYS_AON_TypeDef *AONx, uint32_t mask)
 {
-	SET_BIT(AONx->WER, mask);
+    SET_BIT(AONx->WER, mask);
 }
 
 /**
@@ -409,7 +417,7 @@ static inline void ll_aon_wakeup_enable(HPSYS_AON_TypeDef *AONx, uint32_t mask)
  */
 static inline void ll_aon_wakeup_disable(HPSYS_AON_TypeDef *AONx, uint32_t mask)
 {
-	CLEAR_BIT(AONx->WER, mask);
+    CLEAR_BIT(AONx->WER, mask);
 }
 
 /**
@@ -419,7 +427,7 @@ static inline void ll_aon_wakeup_disable(HPSYS_AON_TypeDef *AONx, uint32_t mask)
  */
 static inline uint32_t ll_aon_get_wakeup_status(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_REG(AONx->WSR);
+    return READ_REG(AONx->WSR);
 }
 
 /**
@@ -430,7 +438,7 @@ static inline uint32_t ll_aon_get_wakeup_status(HPSYS_AON_TypeDef *AONx)
  */
 static inline uint32_t ll_aon_is_wakeup_pending(HPSYS_AON_TypeDef *AONx, uint32_t mask)
 {
-	return READ_BIT(AONx->WSR, mask) != 0UL;
+    return READ_BIT(AONx->WSR, mask) != 0UL;
 }
 
 /**
@@ -440,7 +448,7 @@ static inline uint32_t ll_aon_is_wakeup_pending(HPSYS_AON_TypeDef *AONx, uint32_
  */
 static inline void ll_aon_clear_wakeup_flag(HPSYS_AON_TypeDef *AONx, uint32_t mask)
 {
-	WRITE_REG(AONx->WCR, mask);
+    WRITE_REG(AONx->WCR, mask);
 }
 
 /**
@@ -450,7 +458,7 @@ static inline void ll_aon_clear_wakeup_flag(HPSYS_AON_TypeDef *AONx, uint32_t ma
  */
 static inline uint32_t ll_aon_issr_is_lp_active(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP_ACTIVE) != 0UL;
+    return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP_ACTIVE) != 0UL;
 }
 
 /**
@@ -459,7 +467,7 @@ static inline uint32_t ll_aon_issr_is_lp_active(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_issr_hp_active_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
+    SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
 }
 
 /**
@@ -468,7 +476,7 @@ static inline void ll_aon_issr_hp_active_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_issr_hp_active_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
+    CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP_ACTIVE);
 }
 
 /**
@@ -478,7 +486,7 @@ static inline void ll_aon_issr_hp_active_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline uint32_t ll_aon_issr_is_lp2hp_req(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP2HP_REQ) != 0UL;
+    return READ_BIT(AONx->ISSR, HPSYS_AON_ISSR_LP2HP_REQ) != 0UL;
 }
 
 /*==============================================================================
@@ -491,7 +499,7 @@ static inline uint32_t ll_aon_issr_is_lp2hp_req(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_issr_hp2lp_req_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP2LP_REQ);
+    SET_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP2LP_REQ);
 }
 
 /**
@@ -500,7 +508,7 @@ static inline void ll_aon_issr_hp2lp_req_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_issr_hp2lp_req_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP2LP_REQ);
+    CLEAR_BIT(AONx->ISSR, HPSYS_AON_ISSR_HP2LP_REQ);
 }
 
 /**
@@ -509,7 +517,7 @@ static inline void ll_aon_issr_hp2lp_req_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_anacr_vhp_iso_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
+    SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
 }
 
 /**
@@ -518,7 +526,7 @@ static inline void ll_aon_anacr_vhp_iso_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
+    CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_VHP_ISO);
 }
 
 /*==============================================================================
@@ -531,7 +539,7 @@ static inline void ll_aon_anacr_vhp_iso_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_anacr_pa_iso_set(HPSYS_AON_TypeDef *AONx)
 {
-	SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
+    SET_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
 }
 
 /**
@@ -540,7 +548,7 @@ static inline void ll_aon_anacr_pa_iso_set(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_anacr_pa_iso_clear(HPSYS_AON_TypeDef *AONx)
 {
-	CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
+    CLEAR_BIT(AONx->ANACR, HPSYS_AON_ANACR_PA_ISO);
 }
 
 /*==============================================================================
@@ -554,7 +562,7 @@ static inline void ll_aon_anacr_pa_iso_clear(HPSYS_AON_TypeDef *AONx)
  */
 static inline uint32_t ll_aon_gtim_get_count(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_REG(AONx->GTIMR);
+    return READ_REG(AONx->GTIMR);
 }
 
 /**
@@ -564,7 +572,7 @@ static inline uint32_t ll_aon_gtim_get_count(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_set_reserve0(HPSYS_AON_TypeDef *AONx, uint32_t value)
 {
-	WRITE_REG(AONx->RESERVE0, value);
+    WRITE_REG(AONx->RESERVE0, value);
 }
 
 /**
@@ -574,7 +582,7 @@ static inline void ll_aon_set_reserve0(HPSYS_AON_TypeDef *AONx, uint32_t value)
  */
 static inline uint32_t ll_aon_get_reserve0(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_REG(AONx->RESERVE0);
+    return READ_REG(AONx->RESERVE0);
 }
 
 /**
@@ -584,7 +592,7 @@ static inline uint32_t ll_aon_get_reserve0(HPSYS_AON_TypeDef *AONx)
  */
 static inline void ll_aon_set_reserve1(HPSYS_AON_TypeDef *AONx, uint32_t value)
 {
-	WRITE_REG(AONx->RESERVE1, value);
+    WRITE_REG(AONx->RESERVE1, value);
 }
 
 /**
@@ -594,7 +602,7 @@ static inline void ll_aon_set_reserve1(HPSYS_AON_TypeDef *AONx, uint32_t value)
  */
 static inline uint32_t ll_aon_get_reserve1(HPSYS_AON_TypeDef *AONx)
 {
-	return READ_REG(AONx->RESERVE1);
+    return READ_REG(AONx->RESERVE1);
 }
 
 #ifdef __cplusplus

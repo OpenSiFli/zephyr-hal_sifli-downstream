@@ -8,8 +8,7 @@
 #define __LL_GPTIM_H
 
 #include <stdint.h>
-#include "gpt.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,22 +117,22 @@ extern "C" {
 #define LL_GPTIM_RCR_REP_Msk (0xFFUL)
 static inline void ll_gptim_enable_uif_remap(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_UIFREMAP);
+    SET_BIT(tim->CR1, GPT_CR1_UIFREMAP);
 }
 
 static inline void ll_gptim_disable_uif_remap(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_UIFREMAP);
+    CLEAR_BIT(tim->CR1, GPT_CR1_UIFREMAP);
 }
 
 static inline void ll_gptim_enable_auto_reload_preload(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_ARPE);
+    SET_BIT(tim->CR1, GPT_CR1_ARPE);
 }
 
 static inline void ll_gptim_disable_auto_reload_preload(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_ARPE);
+    CLEAR_BIT(tim->CR1, GPT_CR1_ARPE);
 }
 
 /*==============================================================================
@@ -142,24 +141,24 @@ static inline void ll_gptim_disable_auto_reload_preload(GPT_TypeDef *tim)
 
 static inline void ll_gptim_set_counter_mode(GPT_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CR1, GPT_CR1_CMS,
-		   MAKE_REG_VAL(mode, GPT_CR1_CMS_Msk, GPT_CR1_CMS_Pos));
+    MODIFY_REG(tim->CR1, GPT_CR1_CMS,
+               MAKE_REG_VAL(mode, GPT_CR1_CMS_Msk, GPT_CR1_CMS_Pos));
 }
 
 static inline void ll_gptim_set_direction(GPT_TypeDef *tim, uint32_t dir)
 {
-	MODIFY_REG(tim->CR1, GPT_CR1_DIR,
-		   MAKE_REG_VAL(dir, GPT_CR1_DIR_Msk, GPT_CR1_DIR_Pos));
+    MODIFY_REG(tim->CR1, GPT_CR1_DIR,
+               MAKE_REG_VAL(dir, GPT_CR1_DIR_Msk, GPT_CR1_DIR_Pos));
 }
 
 static inline void ll_gptim_enable_one_pulse(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_OPM);
+    SET_BIT(tim->CR1, GPT_CR1_OPM);
 }
 
 static inline void ll_gptim_disable_one_pulse(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_OPM);
+    CLEAR_BIT(tim->CR1, GPT_CR1_OPM);
 }
 
 /**
@@ -169,12 +168,12 @@ static inline void ll_gptim_disable_one_pulse(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_set_update_request_overflow_only(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_URS);
+    SET_BIT(tim->CR1, GPT_CR1_URS);
 }
 
 static inline void ll_gptim_set_update_request_any_event(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_URS);
+    CLEAR_BIT(tim->CR1, GPT_CR1_URS);
 }
 
 /**
@@ -184,12 +183,12 @@ static inline void ll_gptim_set_update_request_any_event(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_disable_update_event(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_UDIS);
+    SET_BIT(tim->CR1, GPT_CR1_UDIS);
 }
 
 static inline void ll_gptim_enable_update_event(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_UDIS);
+    CLEAR_BIT(tim->CR1, GPT_CR1_UDIS);
 }
 
 /** @} */
@@ -203,7 +202,7 @@ static inline void ll_gptim_enable_update_event(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_enable(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR1, GPT_CR1_CEN);
+    SET_BIT(tim->CR1, GPT_CR1_CEN);
 }
 
 /**
@@ -211,7 +210,7 @@ static inline void ll_gptim_enable(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_disable(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR1, GPT_CR1_CEN);
+    CLEAR_BIT(tim->CR1, GPT_CR1_CEN);
 }
 
 /**
@@ -219,7 +218,7 @@ static inline void ll_gptim_disable(GPT_TypeDef *tim)
  */
 static inline uint32_t ll_gptim_is_enabled(GPT_TypeDef *tim)
 {
-	return READ_BIT(tim->CR1, GPT_CR1_CEN) ? 1UL : 0UL;
+    return READ_BIT(tim->CR1, GPT_CR1_CEN) ? 1UL : 0UL;
 }
 
 /**
@@ -228,7 +227,7 @@ static inline uint32_t ll_gptim_is_enabled(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_ti1_selection_enable(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->CR2, GPT_CR2_TI1S);
+    SET_BIT(tim->CR2, GPT_CR2_TI1S);
 }
 
 /**
@@ -237,13 +236,13 @@ static inline void ll_gptim_ti1_selection_enable(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_ti1_selection_disable(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->CR2, GPT_CR2_TI1S);
+    CLEAR_BIT(tim->CR2, GPT_CR2_TI1S);
 }
 
 static inline void ll_gptim_set_master_mode(GPT_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->CR2, GPT_CR2_MMS,
-		   MAKE_REG_VAL(mode, GPT_CR2_MMS_Msk, GPT_CR2_MMS_Pos));
+    MODIFY_REG(tim->CR2, GPT_CR2_MMS,
+               MAKE_REG_VAL(mode, GPT_CR2_MMS_Msk, GPT_CR2_MMS_Pos));
 }
 
 /**
@@ -252,10 +251,10 @@ static inline void ll_gptim_set_master_mode(GPT_TypeDef *tim, uint32_t mode)
  * @param[in] selection 0 for CC event, 1 for update event.
  */
 static inline void ll_gptim_set_capture_compare_dma_selection(GPT_TypeDef *tim,
-								      uint32_t selection)
+        uint32_t selection)
 {
-	MODIFY_REG(tim->CR2, GPT_CR2_CCDS,
-		   MAKE_REG_VAL(selection, GPT_CR2_CCDS_Msk, GPT_CR2_CCDS_Pos));
+    MODIFY_REG(tim->CR2, GPT_CR2_CCDS,
+               MAKE_REG_VAL(selection, GPT_CR2_CCDS_Msk, GPT_CR2_CCDS_Pos));
 }
 
 /*==============================================================================
@@ -264,125 +263,127 @@ static inline void ll_gptim_set_capture_compare_dma_selection(GPT_TypeDef *tim,
 
 static inline void ll_gptim_set_slave_mode(GPT_TypeDef *tim, uint32_t mode)
 {
-	MODIFY_REG(tim->SMCR, GPT_SMCR_SMS,
-		   MAKE_REG_VAL(mode, GPT_SMCR_SMS_Msk, GPT_SMCR_SMS_Pos));
+    MODIFY_REG(tim->SMCR, GPT_SMCR_SMS,
+               MAKE_REG_VAL(mode, GPT_SMCR_SMS_Msk, GPT_SMCR_SMS_Pos));
 }
 
 static inline void ll_gptim_set_external_trigger_polarity(GPT_TypeDef *tim,
-								  uint32_t polarity)
+        uint32_t polarity)
 {
-	MODIFY_REG(tim->SMCR, GPT_SMCR_ETP,
-		   MAKE_REG_VAL(polarity, GPT_SMCR_ETP_Msk, GPT_SMCR_ETP_Pos));
+    MODIFY_REG(tim->SMCR, GPT_SMCR_ETP,
+               MAKE_REG_VAL(polarity, GPT_SMCR_ETP_Msk, GPT_SMCR_ETP_Pos));
 }
 
 static inline void ll_gptim_enable_external_clock(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, GPT_SMCR_ECE);
+    SET_BIT(tim->SMCR, GPT_SMCR_ECE);
 }
 
 static inline void ll_gptim_disable_external_clock(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, GPT_SMCR_ECE);
+    CLEAR_BIT(tim->SMCR, GPT_SMCR_ECE);
 }
 
 static inline void ll_gptim_set_external_trigger_prescaler(GPT_TypeDef *tim,
-								    uint32_t prescaler)
+        uint32_t prescaler)
 {
-	MODIFY_REG(tim->SMCR, GPT_SMCR_ETPS,
-		   MAKE_REG_VAL(prescaler, GPT_SMCR_ETPS_Msk, GPT_SMCR_ETPS_Pos));
+    MODIFY_REG(tim->SMCR, GPT_SMCR_ETPS,
+               MAKE_REG_VAL(prescaler, GPT_SMCR_ETPS_Msk, GPT_SMCR_ETPS_Pos));
 }
 
 static inline void ll_gptim_set_external_trigger_filter(GPT_TypeDef *tim,
-								 uint32_t filter)
+        uint32_t filter)
 {
-	MODIFY_REG(tim->SMCR, GPT_SMCR_ETF,
-		   MAKE_REG_VAL(filter, GPT_SMCR_ETF_Msk, GPT_SMCR_ETF_Pos));
+    MODIFY_REG(tim->SMCR, GPT_SMCR_ETF,
+               MAKE_REG_VAL(filter, GPT_SMCR_ETF_Msk, GPT_SMCR_ETF_Pos));
 }
 
 static inline void ll_gptim_enable_master_slave_mode(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->SMCR, GPT_SMCR_MSM);
+    SET_BIT(tim->SMCR, GPT_SMCR_MSM);
 }
 
 static inline void ll_gptim_disable_master_slave_mode(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->SMCR, GPT_SMCR_MSM);
+    CLEAR_BIT(tim->SMCR, GPT_SMCR_MSM);
 }
 
 static inline void ll_gptim_set_trigger_source(GPT_TypeDef *tim, uint32_t src)
 {
-	MODIFY_REG(tim->SMCR, GPT_SMCR_TS,
-		   MAKE_REG_VAL(src, GPT_SMCR_TS_Msk, GPT_SMCR_TS_Pos));
+    MODIFY_REG(tim->SMCR, GPT_SMCR_TS,
+               MAKE_REG_VAL(src, GPT_SMCR_TS_Msk, GPT_SMCR_TS_Pos));
 }
 
 static inline void ll_gptim_enable_trigger_dma(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, GPT_DIER_TDE);
+    SET_BIT(tim->DIER, GPT_DIER_TDE);
 }
 
 static inline void ll_gptim_disable_trigger_dma(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, GPT_DIER_TDE);
+    CLEAR_BIT(tim->DIER, GPT_DIER_TDE);
 }
 
 static inline void ll_gptim_enable_channel_dma(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		SET_BIT(tim->DIER, GPT_DIER_CC1DE);
-		break;
-	case 2:
-		SET_BIT(tim->DIER, GPT_DIER_CC2DE);
-		break;
-	case 3:
-		SET_BIT(tim->DIER, GPT_DIER_CC3DE);
-		break;
-	case 4:
-		SET_BIT(tim->DIER, GPT_DIER_CC4DE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        SET_BIT(tim->DIER, GPT_DIER_CC1DE);
+        break;
+    case 2:
+        SET_BIT(tim->DIER, GPT_DIER_CC2DE);
+        break;
+    case 3:
+        SET_BIT(tim->DIER, GPT_DIER_CC3DE);
+        break;
+    case 4:
+        SET_BIT(tim->DIER, GPT_DIER_CC4DE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_gptim_disable_channel_dma(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC1DE);
-		break;
-	case 2:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC2DE);
-		break;
-	case 3:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC3DE);
-		break;
-	case 4:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC4DE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC1DE);
+        break;
+    case 2:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC2DE);
+        break;
+    case 3:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC3DE);
+        break;
+    case 4:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC4DE);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_gptim_enable_update_dma(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, GPT_DIER_UDE);
+    SET_BIT(tim->DIER, GPT_DIER_UDE);
 }
 
 static inline void ll_gptim_disable_update_dma(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, GPT_DIER_UDE);
+    CLEAR_BIT(tim->DIER, GPT_DIER_UDE);
 }
 
 static inline void ll_gptim_enable_trigger_interrupt(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, GPT_DIER_TIE);
+    SET_BIT(tim->DIER, GPT_DIER_TIE);
 }
 
 static inline void ll_gptim_disable_trigger_interrupt(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, GPT_DIER_TIE);
+    CLEAR_BIT(tim->DIER, GPT_DIER_TIE);
 }
 
 /**
@@ -393,22 +394,23 @@ static inline void ll_gptim_disable_trigger_interrupt(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_enable_channel_interrupt(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		SET_BIT(tim->DIER, GPT_DIER_CC1IE);
-		break;
-	case 2:
-		SET_BIT(tim->DIER, GPT_DIER_CC2IE);
-		break;
-	case 3:
-		SET_BIT(tim->DIER, GPT_DIER_CC3IE);
-		break;
-	case 4:
-		SET_BIT(tim->DIER, GPT_DIER_CC4IE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        SET_BIT(tim->DIER, GPT_DIER_CC1IE);
+        break;
+    case 2:
+        SET_BIT(tim->DIER, GPT_DIER_CC2IE);
+        break;
+    case 3:
+        SET_BIT(tim->DIER, GPT_DIER_CC3IE);
+        break;
+    case 4:
+        SET_BIT(tim->DIER, GPT_DIER_CC4IE);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -419,22 +421,23 @@ static inline void ll_gptim_enable_channel_interrupt(GPT_TypeDef *tim, uint32_t 
  */
 static inline void ll_gptim_disable_channel_interrupt(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC1IE);
-		break;
-	case 2:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC2IE);
-		break;
-	case 3:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC3IE);
-		break;
-	case 4:
-		CLEAR_BIT(tim->DIER, GPT_DIER_CC4IE);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC1IE);
+        break;
+    case 2:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC2IE);
+        break;
+    case 3:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC3IE);
+        break;
+    case 4:
+        CLEAR_BIT(tim->DIER, GPT_DIER_CC4IE);
+        break;
+    default:
+        break;
+    }
 }
 
 /*==============================================================================
@@ -446,58 +449,60 @@ static inline void ll_gptim_disable_channel_interrupt(GPT_TypeDef *tim, uint32_t
  */
 static inline void ll_gptim_enable_update_interrupt(GPT_TypeDef *tim)
 {
-	SET_BIT(tim->DIER, GPT_DIER_UIE);
+    SET_BIT(tim->DIER, GPT_DIER_UIE);
 }
 
 static inline void ll_gptim_disable_update_interrupt(GPT_TypeDef *tim)
 {
-	CLEAR_BIT(tim->DIER, GPT_DIER_UIE);
+    CLEAR_BIT(tim->DIER, GPT_DIER_UIE);
 }
 
 static inline uint32_t ll_gptim_get_overcapture_flag(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		return READ_BIT(tim->SR, GPT_SR_CC1OF) ? 1UL : 0UL;
-	case 2:
-		return READ_BIT(tim->SR, GPT_SR_CC2OF) ? 1UL : 0UL;
-	case 3:
-		return READ_BIT(tim->SR, GPT_SR_CC3OF) ? 1UL : 0UL;
-	case 4:
-		return READ_BIT(tim->SR, GPT_SR_CC4OF) ? 1UL : 0UL;
-	default:
-		return 0UL;
-	}
+    switch (ch)
+    {
+    case 1:
+        return READ_BIT(tim->SR, GPT_SR_CC1OF) ? 1UL : 0UL;
+    case 2:
+        return READ_BIT(tim->SR, GPT_SR_CC2OF) ? 1UL : 0UL;
+    case 3:
+        return READ_BIT(tim->SR, GPT_SR_CC3OF) ? 1UL : 0UL;
+    case 4:
+        return READ_BIT(tim->SR, GPT_SR_CC4OF) ? 1UL : 0UL;
+    default:
+        return 0UL;
+    }
 }
 
 static inline void ll_gptim_clear_overcapture_flag(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		WRITE_REG(tim->SR, ~GPT_SR_CC1OF);
-		break;
-	case 2:
-		WRITE_REG(tim->SR, ~GPT_SR_CC2OF);
-		break;
-	case 3:
-		WRITE_REG(tim->SR, ~GPT_SR_CC3OF);
-		break;
-	case 4:
-		WRITE_REG(tim->SR, ~GPT_SR_CC4OF);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        WRITE_REG(tim->SR, ~GPT_SR_CC1OF);
+        break;
+    case 2:
+        WRITE_REG(tim->SR, ~GPT_SR_CC2OF);
+        break;
+    case 3:
+        WRITE_REG(tim->SR, ~GPT_SR_CC3OF);
+        break;
+    case 4:
+        WRITE_REG(tim->SR, ~GPT_SR_CC4OF);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline uint32_t ll_gptim_get_trigger_flag(GPT_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, GPT_SR_TIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, GPT_SR_TIF) ? 1UL : 0UL;
 }
 
 static inline void ll_gptim_clear_trigger_flag(GPT_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~GPT_SR_TIF);
+    WRITE_REG(tim->SR, ~GPT_SR_TIF);
 }
 
 /**
@@ -508,73 +513,76 @@ static inline void ll_gptim_clear_trigger_flag(GPT_TypeDef *tim)
  */
 static inline uint32_t ll_gptim_get_channel_flag(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		return READ_BIT(tim->SR, GPT_SR_CC1IF) ? 1UL : 0UL;
-	case 2:
-		return READ_BIT(tim->SR, GPT_SR_CC2IF) ? 1UL : 0UL;
-	case 3:
-		return READ_BIT(tim->SR, GPT_SR_CC3IF) ? 1UL : 0UL;
-	case 4:
-		return READ_BIT(tim->SR, GPT_SR_CC4IF) ? 1UL : 0UL;
-	default:
-		return 0UL;
-	}
+    switch (ch)
+    {
+    case 1:
+        return READ_BIT(tim->SR, GPT_SR_CC1IF) ? 1UL : 0UL;
+    case 2:
+        return READ_BIT(tim->SR, GPT_SR_CC2IF) ? 1UL : 0UL;
+    case 3:
+        return READ_BIT(tim->SR, GPT_SR_CC3IF) ? 1UL : 0UL;
+    case 4:
+        return READ_BIT(tim->SR, GPT_SR_CC4IF) ? 1UL : 0UL;
+    default:
+        return 0UL;
+    }
 }
 
 static inline void ll_gptim_clear_channel_flag(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		WRITE_REG(tim->SR, ~GPT_SR_CC1IF);
-		break;
-	case 2:
-		WRITE_REG(tim->SR, ~GPT_SR_CC2IF);
-		break;
-	case 3:
-		WRITE_REG(tim->SR, ~GPT_SR_CC3IF);
-		break;
-	case 4:
-		WRITE_REG(tim->SR, ~GPT_SR_CC4IF);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        WRITE_REG(tim->SR, ~GPT_SR_CC1IF);
+        break;
+    case 2:
+        WRITE_REG(tim->SR, ~GPT_SR_CC2IF);
+        break;
+    case 3:
+        WRITE_REG(tim->SR, ~GPT_SR_CC3IF);
+        break;
+    case 4:
+        WRITE_REG(tim->SR, ~GPT_SR_CC4IF);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline uint32_t ll_gptim_get_update_flag(GPT_TypeDef *tim)
 {
-	return READ_BIT(tim->SR, GPT_SR_UIF) ? 1UL : 0UL;
+    return READ_BIT(tim->SR, GPT_SR_UIF) ? 1UL : 0UL;
 }
 
 static inline void ll_gptim_clear_update_flag(GPT_TypeDef *tim)
 {
-	WRITE_REG(tim->SR, ~GPT_SR_UIF);
+    WRITE_REG(tim->SR, ~GPT_SR_UIF);
 }
 
 static inline void ll_gptim_generate_trigger_event(GPT_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, GPT_EGR_TG);
+    WRITE_REG(tim->EGR, GPT_EGR_TG);
 }
 
 static inline void ll_gptim_generate_channel_event(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		WRITE_REG(tim->EGR, GPT_EGR_CC1G);
-		break;
-	case 2:
-		WRITE_REG(tim->EGR, GPT_EGR_CC2G);
-		break;
-	case 3:
-		WRITE_REG(tim->EGR, GPT_EGR_CC3G);
-		break;
-	case 4:
-		WRITE_REG(tim->EGR, GPT_EGR_CC4G);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        WRITE_REG(tim->EGR, GPT_EGR_CC1G);
+        break;
+    case 2:
+        WRITE_REG(tim->EGR, GPT_EGR_CC2G);
+        break;
+    case 3:
+        WRITE_REG(tim->EGR, GPT_EGR_CC3G);
+        break;
+    case 4:
+        WRITE_REG(tim->EGR, GPT_EGR_CC4G);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -582,7 +590,7 @@ static inline void ll_gptim_generate_channel_event(GPT_TypeDef *tim, uint32_t ch
  */
 static inline void ll_gptim_generate_update(GPT_TypeDef *tim)
 {
-	WRITE_REG(tim->EGR, GPT_EGR_UG);
+    WRITE_REG(tim->EGR, GPT_EGR_UG);
 }
 
 /**
@@ -594,26 +602,27 @@ static inline void ll_gptim_generate_update(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_set_output_compare_mode(GPT_TypeDef *tim, uint32_t ch, uint32_t mode)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1M,
-			   MAKE_REG_VAL(mode, GPT_CCMR1_OC1M_Msk, GPT_CCMR1_OC1M_Pos));
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2M,
-			   MAKE_REG_VAL(mode, GPT_CCMR1_OC2M_Msk, GPT_CCMR1_OC2M_Pos));
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3M,
-			   MAKE_REG_VAL(mode, GPT_CCMR2_OC3M_Msk, GPT_CCMR2_OC3M_Pos));
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4M,
-			   MAKE_REG_VAL(mode, GPT_CCMR2_OC4M_Msk, GPT_CCMR2_OC4M_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1M,
+                   MAKE_REG_VAL(mode, GPT_CCMR1_OC1M_Msk, GPT_CCMR1_OC1M_Pos));
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2M,
+                   MAKE_REG_VAL(mode, GPT_CCMR1_OC2M_Msk, GPT_CCMR1_OC2M_Pos));
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3M,
+                   MAKE_REG_VAL(mode, GPT_CCMR2_OC3M_Msk, GPT_CCMR2_OC3M_Pos));
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4M,
+                   MAKE_REG_VAL(mode, GPT_CCMR2_OC4M_Msk, GPT_CCMR2_OC4M_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -625,42 +634,44 @@ static inline void ll_gptim_set_output_compare_mode(GPT_TypeDef *tim, uint32_t c
  */
 static inline void ll_gptim_set_output_compare_preload(GPT_TypeDef *tim, uint32_t ch, uint32_t en)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1PE, en ? GPT_CCMR1_OC1PE : 0UL);
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2PE, en ? GPT_CCMR1_OC2PE : 0UL);
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3PE, en ? GPT_CCMR2_OC3PE : 0UL);
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4PE, en ? GPT_CCMR2_OC4PE : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1PE, en ? GPT_CCMR1_OC1PE : 0UL);
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2PE, en ? GPT_CCMR1_OC2PE : 0UL);
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3PE, en ? GPT_CCMR2_OC3PE : 0UL);
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4PE, en ? GPT_CCMR2_OC4PE : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_gptim_set_channel_clear(GPT_TypeDef *tim, uint32_t ch, uint32_t en)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1CE, en ? GPT_CCMR1_OC1CE : 0UL);
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2CE, en ? GPT_CCMR1_OC2CE : 0UL);
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3CE, en ? GPT_CCMR2_OC3CE : 0UL);
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4CE, en ? GPT_CCMR2_OC4CE : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC1CE, en ? GPT_CCMR1_OC1CE : 0UL);
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_OC2CE, en ? GPT_CCMR1_OC2CE : 0UL);
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC3CE, en ? GPT_CCMR2_OC3CE : 0UL);
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_OC4CE, en ? GPT_CCMR2_OC4CE : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -672,32 +683,33 @@ static inline void ll_gptim_set_channel_clear(GPT_TypeDef *tim, uint32_t ch, uin
  * @note Invalid channel numbers are ignored.
  */
 static inline void ll_gptim_set_input_capture_config(GPT_TypeDef *tim, uint32_t ch,
-						     uint32_t prescaler, uint32_t filter)
+        uint32_t prescaler, uint32_t filter)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_IC1PSC | GPT_CCMR1_IC1F,
-			   (prescaler << GPT_CCMR1_IC1PSC_Pos) |
-			   (filter << GPT_CCMR1_IC1F_Pos));
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_IC2PSC | GPT_CCMR1_IC2F,
-			   (prescaler << GPT_CCMR1_IC2PSC_Pos) |
-			   (filter << GPT_CCMR1_IC2F_Pos));
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_IC3PSC | GPT_CCMR2_IC3F,
-			   (prescaler << GPT_CCMR2_IC3PSC_Pos) |
-			   (filter << GPT_CCMR2_IC3F_Pos));
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_IC4PSC | GPT_CCMR2_IC4F,
-			   (prescaler << GPT_CCMR2_IC4PSC_Pos) |
-			   (filter << GPT_CCMR2_IC4F_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_IC1PSC | GPT_CCMR1_IC1F,
+                   MAKE_REG_VAL(prescaler, GPT_CCMR1_IC1PSC_Msk, GPT_CCMR1_IC1PSC_Pos) |
+                   MAKE_REG_VAL(filter, GPT_CCMR1_IC1F_Msk, GPT_CCMR1_IC1F_Pos));
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_IC2PSC | GPT_CCMR1_IC2F,
+                   MAKE_REG_VAL(prescaler, GPT_CCMR1_IC2PSC_Msk, GPT_CCMR1_IC2PSC_Pos) |
+                   MAKE_REG_VAL(filter, GPT_CCMR1_IC2F_Msk, GPT_CCMR1_IC2F_Pos));
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_IC3PSC | GPT_CCMR2_IC3F,
+                   MAKE_REG_VAL(prescaler, GPT_CCMR2_IC3PSC_Msk, GPT_CCMR2_IC3PSC_Pos) |
+                   MAKE_REG_VAL(filter, GPT_CCMR2_IC3F_Msk, GPT_CCMR2_IC3F_Pos));
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_IC4PSC | GPT_CCMR2_IC4F,
+                   MAKE_REG_VAL(prescaler, GPT_CCMR2_IC4PSC_Msk, GPT_CCMR2_IC4PSC_Pos) |
+                   MAKE_REG_VAL(filter, GPT_CCMR2_IC4F_Msk, GPT_CCMR2_IC4F_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 /*==============================================================================
@@ -713,47 +725,49 @@ static inline void ll_gptim_set_input_capture_config(GPT_TypeDef *tim, uint32_t 
  */
 static inline void ll_gptim_set_channel_direction(GPT_TypeDef *tim, uint32_t ch, uint32_t dir)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_CC1S,
-			   MAKE_REG_VAL(dir, GPT_CCMR1_CC1S_Msk, GPT_CCMR1_CC1S_Pos));
-		break;
-	case 2:
-		MODIFY_REG(tim->CCMR1, GPT_CCMR1_CC2S,
-			   MAKE_REG_VAL(dir, GPT_CCMR1_CC2S_Msk, GPT_CCMR1_CC2S_Pos));
-		break;
-	case 3:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_CC3S,
-			   MAKE_REG_VAL(dir, GPT_CCMR2_CC3S_Msk, GPT_CCMR2_CC3S_Pos));
-		break;
-	case 4:
-		MODIFY_REG(tim->CCMR2, GPT_CCMR2_CC4S,
-			   MAKE_REG_VAL(dir, GPT_CCMR2_CC4S_Msk, GPT_CCMR2_CC4S_Pos));
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_CC1S,
+                   MAKE_REG_VAL(dir, GPT_CCMR1_CC1S_Msk, GPT_CCMR1_CC1S_Pos));
+        break;
+    case 2:
+        MODIFY_REG(tim->CCMR1, GPT_CCMR1_CC2S,
+                   MAKE_REG_VAL(dir, GPT_CCMR1_CC2S_Msk, GPT_CCMR1_CC2S_Pos));
+        break;
+    case 3:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_CC3S,
+                   MAKE_REG_VAL(dir, GPT_CCMR2_CC3S_Msk, GPT_CCMR2_CC3S_Pos));
+        break;
+    case 4:
+        MODIFY_REG(tim->CCMR2, GPT_CCMR2_CC4S,
+                   MAKE_REG_VAL(dir, GPT_CCMR2_CC4S_Msk, GPT_CCMR2_CC4S_Pos));
+        break;
+    default:
+        break;
+    }
 }
 
 static inline void ll_gptim_set_channel_complementary_polarity(GPT_TypeDef *tim,
-									 uint32_t ch, uint32_t pol)
+        uint32_t ch, uint32_t pol)
 {
-	switch (ch) {
-	case 1U:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC1NP, pol ? GPT_CCER_CC1NP : 0UL);
-		break;
-	case 2U:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC2NP, pol ? GPT_CCER_CC2NP : 0UL);
-		break;
-	case 3U:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC3NP, pol ? GPT_CCER_CC3NP : 0UL);
-		break;
-	case 4U:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC4NP, pol ? GPT_CCER_CC4NP : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1U:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC1NP, pol ? GPT_CCER_CC1NP : 0UL);
+        break;
+    case 2U:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC2NP, pol ? GPT_CCER_CC2NP : 0UL);
+        break;
+    case 3U:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC3NP, pol ? GPT_CCER_CC3NP : 0UL);
+        break;
+    case 4U:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC4NP, pol ? GPT_CCER_CC4NP : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -765,22 +779,23 @@ static inline void ll_gptim_set_channel_complementary_polarity(GPT_TypeDef *tim,
  */
 static inline void ll_gptim_set_channel_polarity(GPT_TypeDef *tim, uint32_t ch, uint32_t pol)
 {
-	switch (ch) {
-	case 1:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC1P, pol ? GPT_CCER_CC1P : 0UL);
-		break;
-	case 2:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC2P, pol ? GPT_CCER_CC2P : 0UL);
-		break;
-	case 3:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC3P, pol ? GPT_CCER_CC3P : 0UL);
-		break;
-	case 4:
-		MODIFY_REG(tim->CCER, GPT_CCER_CC4P, pol ? GPT_CCER_CC4P : 0UL);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC1P, pol ? GPT_CCER_CC1P : 0UL);
+        break;
+    case 2:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC2P, pol ? GPT_CCER_CC2P : 0UL);
+        break;
+    case 3:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC3P, pol ? GPT_CCER_CC3P : 0UL);
+        break;
+    case 4:
+        MODIFY_REG(tim->CCER, GPT_CCER_CC4P, pol ? GPT_CCER_CC4P : 0UL);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -791,22 +806,23 @@ static inline void ll_gptim_set_channel_polarity(GPT_TypeDef *tim, uint32_t ch, 
  */
 static inline void ll_gptim_enable_channel(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		SET_BIT(tim->CCER, GPT_CCER_CC1E);
-		break;
-	case 2:
-		SET_BIT(tim->CCER, GPT_CCER_CC2E);
-		break;
-	case 3:
-		SET_BIT(tim->CCER, GPT_CCER_CC3E);
-		break;
-	case 4:
-		SET_BIT(tim->CCER, GPT_CCER_CC4E);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        SET_BIT(tim->CCER, GPT_CCER_CC1E);
+        break;
+    case 2:
+        SET_BIT(tim->CCER, GPT_CCER_CC2E);
+        break;
+    case 3:
+        SET_BIT(tim->CCER, GPT_CCER_CC3E);
+        break;
+    case 4:
+        SET_BIT(tim->CCER, GPT_CCER_CC4E);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -817,27 +833,28 @@ static inline void ll_gptim_enable_channel(GPT_TypeDef *tim, uint32_t ch)
  */
 static inline void ll_gptim_disable_channel(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		CLEAR_BIT(tim->CCER, GPT_CCER_CC1E);
-		break;
-	case 2:
-		CLEAR_BIT(tim->CCER, GPT_CCER_CC2E);
-		break;
-	case 3:
-		CLEAR_BIT(tim->CCER, GPT_CCER_CC3E);
-		break;
-	case 4:
-		CLEAR_BIT(tim->CCER, GPT_CCER_CC4E);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        CLEAR_BIT(tim->CCER, GPT_CCER_CC1E);
+        break;
+    case 2:
+        CLEAR_BIT(tim->CCER, GPT_CCER_CC2E);
+        break;
+    case 3:
+        CLEAR_BIT(tim->CCER, GPT_CCER_CC3E);
+        break;
+    case 4:
+        CLEAR_BIT(tim->CCER, GPT_CCER_CC4E);
+        break;
+    default:
+        break;
+    }
 }
 
 static inline uint32_t ll_gptim_get_counter_uif_copy(GPT_TypeDef *tim)
 {
-	return READ_BIT(tim->CNT, GPT_CNT_UIFCPY) ? 1UL : 0UL;
+    return READ_BIT(tim->CNT, GPT_CNT_UIFCPY) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -846,12 +863,12 @@ static inline uint32_t ll_gptim_get_counter_uif_copy(GPT_TypeDef *tim)
 
 static inline void ll_gptim_set_counter(GPT_TypeDef *tim, uint16_t cnt)
 {
-	WRITE_REG(tim->CNT, ((uint32_t)cnt & GPT_CNT_CNT));
+    WRITE_REG(tim->CNT, ((uint32_t)cnt & GPT_CNT_CNT));
 }
 
 static inline uint16_t ll_gptim_get_counter(GPT_TypeDef *tim)
 {
-	return (uint16_t)GET_REG_VAL(READ_REG(tim->CNT), GPT_CNT_CNT_Msk, GPT_CNT_CNT_Pos);
+    return (uint16_t)GET_REG_VAL(READ_REG(tim->CNT), GPT_CNT_CNT_Msk, GPT_CNT_CNT_Pos);
 }
 
 /*==============================================================================
@@ -863,12 +880,12 @@ static inline uint16_t ll_gptim_get_counter(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_set_prescaler(GPT_TypeDef *tim, uint16_t psc)
 {
-	WRITE_REG(tim->PSC, psc);
+    WRITE_REG(tim->PSC, psc);
 }
 
 static inline uint16_t ll_gptim_get_prescaler(GPT_TypeDef *tim)
 {
-	return (uint16_t)READ_REG(tim->PSC);
+    return (uint16_t)READ_REG(tim->PSC);
 }
 
 /**
@@ -876,12 +893,12 @@ static inline uint16_t ll_gptim_get_prescaler(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_set_auto_reload(GPT_TypeDef *tim, uint16_t arr)
 {
-	WRITE_REG(tim->ARR, arr);
+    WRITE_REG(tim->ARR, arr);
 }
 
 static inline uint16_t ll_gptim_get_auto_reload(GPT_TypeDef *tim)
 {
-	return (uint16_t)READ_REG(tim->ARR);
+    return (uint16_t)READ_REG(tim->ARR);
 }
 
 /**
@@ -889,7 +906,7 @@ static inline uint16_t ll_gptim_get_auto_reload(GPT_TypeDef *tim)
  */
 static inline void ll_gptim_set_repetition(GPT_TypeDef *tim, uint8_t rep)
 {
-	MODIFY_REG(tim->RCR, LL_GPTIM_RCR_REP_Msk, rep);
+    MODIFY_REG(tim->RCR, LL_GPTIM_RCR_REP_Msk, rep);
 }
 
 /*==============================================================================
@@ -905,22 +922,23 @@ static inline void ll_gptim_set_repetition(GPT_TypeDef *tim, uint8_t rep)
  */
 static inline void ll_gptim_set_compare(GPT_TypeDef *tim, uint32_t ch, uint16_t val)
 {
-	switch (ch) {
-	case 1:
-		WRITE_REG(tim->CCR1, val);
-		break;
-	case 2:
-		WRITE_REG(tim->CCR2, val);
-		break;
-	case 3:
-		WRITE_REG(tim->CCR3, val);
-		break;
-	case 4:
-		WRITE_REG(tim->CCR4, val);
-		break;
-	default:
-		break;
-	}
+    switch (ch)
+    {
+    case 1:
+        WRITE_REG(tim->CCR1, val);
+        break;
+    case 2:
+        WRITE_REG(tim->CCR2, val);
+        break;
+    case 3:
+        WRITE_REG(tim->CCR3, val);
+        break;
+    case 4:
+        WRITE_REG(tim->CCR4, val);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -931,30 +949,31 @@ static inline void ll_gptim_set_compare(GPT_TypeDef *tim, uint32_t ch, uint16_t 
  */
 static inline uint16_t ll_gptim_get_capture(GPT_TypeDef *tim, uint32_t ch)
 {
-	switch (ch) {
-	case 1:
-		return (uint16_t)READ_REG(tim->CCR1);
-	case 2:
-		return (uint16_t)READ_REG(tim->CCR2);
-	case 3:
-		return (uint16_t)READ_REG(tim->CCR3);
-	case 4:
-		return (uint16_t)READ_REG(tim->CCR4);
-	default:
-		return 0U;
-	}
+    switch (ch)
+    {
+    case 1:
+        return (uint16_t)READ_REG(tim->CCR1);
+    case 2:
+        return (uint16_t)READ_REG(tim->CCR2);
+    case 3:
+        return (uint16_t)READ_REG(tim->CCR3);
+    case 4:
+        return (uint16_t)READ_REG(tim->CCR4);
+    default:
+        return 0U;
+    }
 }
 
 static inline void ll_gptim_set_debug_selection(GPT_TypeDef *tim, uint32_t selection)
 {
-	MODIFY_REG(tim->DBGSEL, GPT_DBGSEL_DBGSEL,
-		   MAKE_REG_VAL(selection, GPT_DBGSEL_DBGSEL_Msk, GPT_DBGSEL_DBGSEL_Pos));
+    MODIFY_REG(tim->DBGSEL, GPT_DBGSEL_DBGSEL,
+               MAKE_REG_VAL(selection, GPT_DBGSEL_DBGSEL_Msk, GPT_DBGSEL_DBGSEL_Pos));
 }
 
 static inline uint32_t ll_gptim_get_debug_selection(GPT_TypeDef *tim)
 {
-	return GET_REG_VAL(READ_REG(tim->DBGSEL), GPT_DBGSEL_DBGSEL_Msk,
-			   GPT_DBGSEL_DBGSEL_Pos);
+    return GET_REG_VAL(READ_REG(tim->DBGSEL), GPT_DBGSEL_DBGSEL_Msk,
+                       GPT_DBGSEL_DBGSEL_Pos);
 }
 
 /*==============================================================================
@@ -970,7 +989,7 @@ static inline uint32_t ll_gptim_get_debug_selection(GPT_TypeDef *tim)
  */
 static inline uint32_t ll_gptim_calc_update_freq(uint32_t clk_freq, uint16_t psc, uint16_t arr)
 {
-	return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
+    return (uint32_t)(clk_freq / (((uint64_t)psc + 1U) * ((uint64_t)arr + 1U)));
 }
 
 /**
@@ -981,14 +1000,15 @@ static inline uint32_t ll_gptim_calc_update_freq(uint32_t clk_freq, uint16_t psc
  */
 static inline uint16_t ll_gptim_calc_pwm_duty(uint16_t arr, uint32_t permille)
 {
-	uint32_t cmp;
+    uint32_t cmp;
 
-	if (permille >= 1000U) {
-		return arr;
-	}
+    if (permille >= 1000U)
+    {
+        return arr;
+    }
 
-	cmp = ((uint32_t)(arr + 1U) * permille) / 1000U;
-	return (uint16_t)cmp;
+    cmp = ((uint32_t)(arr + 1U) * permille) / 1000U;
+    return (uint16_t)cmp;
 }
 
 #ifdef __cplusplus

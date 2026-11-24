@@ -8,8 +8,7 @@
 #define __LL_I2S_H
 
 #include <stdint.h>
-#include "i2s.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -172,7 +171,7 @@ extern "C"
  */
 typedef struct
 {
-    uint32_t timing;    /**< Timing mode, use @ref LL_I2S_TIMING_I2S to @ref LL_I2S_TIMING_DSP. */
+    uint32_t timing;    /**< Timing mode, use @ref LL_I2S_TIMING_I2S, LL_I2S_TIMING_LEFT_J or LL_I2S_TIMING_RIGHT_J (TIMING=3 is reserved). */
     uint32_t role;      /**< Master/slave, use @ref LL_I2S_MASTER or @ref LL_I2S_SLAVE. */
     uint32_t lrck_pol;  /**< LRCK polarity, use @ref LL_I2S_LRCK_POL_NORMAL or @ref LL_I2S_LRCK_POL_INVERT. */
 } ll_i2s_tx_timing_config_t;
@@ -192,13 +191,13 @@ typedef struct
  * @param[in] cfg  Pointer to TX PCM format configuration.
  */
 static inline void ll_i2s_config_tx_pcm_format(I2S_TypeDef *I2Sx,
-                                                const ll_i2s_tx_pcm_format_config_t *cfg)
+        const ll_i2s_tx_pcm_format_config_t *cfg)
 {
     MODIFY_REG(I2Sx->TX_PCM_FORMAT,
                I2S_TX_PCM_FORMAT_DW | I2S_TX_PCM_FORMAT_TRACK_FLAG,
                ((cfg->data_width << I2S_TX_PCM_FORMAT_DW_Pos) &
                 I2S_TX_PCM_FORMAT_DW) |
-                   cfg->track_flag);
+               cfg->track_flag);
 }
 
 /**
@@ -244,11 +243,11 @@ static inline void ll_i2s_set_tx_ch_sel(I2S_TypeDef *I2Sx,
 {
     MODIFY_REG(I2Sx->TX_PCM_CH_SEL,
                I2S_TX_PCM_CH_SEL_RIGHT_CHANNEL_SEL |
-                   I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL,
+               I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL,
                ((right_sel << I2S_TX_PCM_CH_SEL_RIGHT_CHANNEL_SEL_Pos) &
                 I2S_TX_PCM_CH_SEL_RIGHT_CHANNEL_SEL) |
-                   ((left_sel << I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL_Pos) &
-                    I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL));
+               ((left_sel << I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL_Pos) &
+                I2S_TX_PCM_CH_SEL_LEFT_CHANNEL_SEL));
 }
 
 /**
@@ -269,14 +268,14 @@ static inline void ll_i2s_set_tx_volume(I2S_TypeDef *I2Sx, uint32_t vol)
  * @param[in] enable   Balance mode, use @ref LL_I2S_BALANCE_DISABLE to @ref LL_I2S_BALANCE_R_ONLY.
  */
 static inline void ll_i2s_set_tx_balance(I2S_TypeDef *I2Sx,
-                                         uint32_t bal_vol,
-                                         uint32_t enable)
+        uint32_t bal_vol,
+        uint32_t enable)
 {
     MODIFY_REG(I2Sx->TX_LR_BAL_CTRL,
                I2S_TX_LR_BAL_CTRL_BAL_VOL | I2S_TX_LR_BAL_CTRL_EN,
                ((bal_vol << I2S_TX_LR_BAL_CTRL_BAL_VOL_Pos) &
                 I2S_TX_LR_BAL_CTRL_BAL_VOL) |
-                   enable);
+               enable);
 }
 
 /**
@@ -286,14 +285,14 @@ static inline void ll_i2s_set_tx_balance(I2S_TypeDef *I2Sx,
  * @param[in] duty_high  LRCK high duty.
  */
 static inline void ll_i2s_set_tx_lrck_div(I2S_TypeDef *I2Sx,
-                                          uint32_t duty_low,
-                                          uint32_t duty_high)
+        uint32_t duty_low,
+        uint32_t duty_high)
 {
     WRITE_REG(I2Sx->AUDIO_TX_LRCK_DIV,
               ((duty_low << I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW_Pos) &
                I2S_AUDIO_TX_LRCK_DIV_DUTY_LOW) |
-                  ((duty_high << I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH_Pos) &
-                   I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH));
+              ((duty_high << I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH_Pos) &
+               I2S_AUDIO_TX_LRCK_DIV_DUTY_HIGH));
 }
 
 /**
@@ -314,7 +313,7 @@ static inline void ll_i2s_set_tx_bclk_div(I2S_TypeDef *I2Sx, uint32_t duty)
  * @param[in] data_width PCM data width.
  */
 static inline void ll_i2s_set_tx_audio_data_width(I2S_TypeDef *I2Sx,
-                                                   uint32_t data_width)
+        uint32_t data_width)
 {
     MODIFY_REG(I2Sx->AUDIO_TX_FORMAT, I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH,
                ((data_width << I2S_AUDIO_TX_FORMAT_PCM_DATA_WIDTH_Pos) &
@@ -327,12 +326,12 @@ static inline void ll_i2s_set_tx_audio_data_width(I2S_TypeDef *I2Sx,
  * @param[in] cfg  Pointer to TX timing configuration.
  */
 static inline void ll_i2s_config_tx_timing(I2S_TypeDef *I2Sx,
-                                           const ll_i2s_tx_timing_config_t *cfg)
+        const ll_i2s_tx_timing_config_t *cfg)
 {
     MODIFY_REG(I2Sx->AUDIO_SERIAL_TIMING,
                I2S_AUDIO_SERIAL_TIMING_TIMING |
-                   I2S_AUDIO_SERIAL_TIMING_SLAVE_EN |
-                   I2S_AUDIO_SERIAL_TIMING_LRCK_POL,
+               I2S_AUDIO_SERIAL_TIMING_SLAVE_EN |
+               I2S_AUDIO_SERIAL_TIMING_LRCK_POL,
                cfg->timing | cfg->role | cfg->lrck_pol);
 }
 
@@ -394,7 +393,7 @@ static inline void ll_i2s_set_sl_merge(I2S_TypeDef *I2Sx, uint32_t merge)
  */
 typedef struct
 {
-    uint32_t timing;    /**< Timing mode, use @ref LL_I2S_TIMING_I2S to @ref LL_I2S_TIMING_DSP. */
+    uint32_t timing;    /**< Timing mode, use @ref LL_I2S_TIMING_I2S, LL_I2S_TIMING_LEFT_J or LL_I2S_TIMING_RIGHT_J (TIMING=3 is reserved). */
     uint32_t role;      /**< Master/slave, use @ref LL_I2S_MASTER or @ref LL_I2S_SLAVE. */
     uint32_t lrck_pol;  /**< LRCK polarity, use @ref LL_I2S_LRCK_POL_NORMAL or @ref LL_I2S_LRCK_POL_INVERT. */
 } ll_i2s_rx_timing_config_t;
@@ -417,7 +416,7 @@ static inline void ll_i2s_enable_rx(I2S_TypeDef *I2Sx, uint32_t intf_sel)
 {
     WRITE_REG(I2Sx->AUDIO_RX_FUNC_EN,
               I2S_AUDIO_RX_FUNC_EN_RX_EN |
-                  (intf_sel & I2S_AUDIO_RX_FUNC_EN_RX_INTF_SEL));
+              (intf_sel & I2S_AUDIO_RX_FUNC_EN_RX_INTF_SEL));
 }
 
 /**
@@ -444,12 +443,12 @@ static inline void ll_i2s_resume_rx(I2S_TypeDef *I2Sx)
  * @param[in] cfg  Pointer to RX timing configuration.
  */
 static inline void ll_i2s_config_rx_timing(I2S_TypeDef *I2Sx,
-                                           const ll_i2s_rx_timing_config_t *cfg)
+        const ll_i2s_rx_timing_config_t *cfg)
 {
     MODIFY_REG(I2Sx->AUDIO_RX_SERIAL_TIMING,
                I2S_AUDIO_RX_SERIAL_TIMING_TIMING |
-                   I2S_AUDIO_RX_SERIAL_TIMING_SLAVE_EN |
-                   I2S_AUDIO_RX_SERIAL_TIMING_LRCK_POL,
+               I2S_AUDIO_RX_SERIAL_TIMING_SLAVE_EN |
+               I2S_AUDIO_RX_SERIAL_TIMING_LRCK_POL,
                cfg->timing | cfg->role | cfg->lrck_pol);
 }
 
@@ -459,7 +458,7 @@ static inline void ll_i2s_config_rx_timing(I2S_TypeDef *I2Sx,
  * @param[in] data_width PCM data width (0..31).
  */
 static inline void ll_i2s_set_rx_pcm_data_width(I2S_TypeDef *I2Sx,
-                                                 uint32_t data_width)
+        uint32_t data_width)
 {
     MODIFY_REG(I2Sx->AUDIO_RX_PCM_DW, I2S_AUDIO_RX_PCM_DW_PCM_DATA_WIDTH,
                ((data_width << I2S_AUDIO_RX_PCM_DW_PCM_DATA_WIDTH_Pos) &
@@ -473,14 +472,14 @@ static inline void ll_i2s_set_rx_pcm_data_width(I2S_TypeDef *I2Sx,
  * @param[in] duty_high  LRCK high duty.
  */
 static inline void ll_i2s_set_rx_lrck_div(I2S_TypeDef *I2Sx,
-                                          uint32_t duty_low,
-                                          uint32_t duty_high)
+        uint32_t duty_low,
+        uint32_t duty_high)
 {
     WRITE_REG(I2Sx->AUDIO_RX_LRCK_DIV,
               ((duty_low << I2S_AUDIO_RX_LRCK_DIV_DUTY_LOW_Pos) &
                I2S_AUDIO_RX_LRCK_DIV_DUTY_LOW) |
-                  ((duty_high << I2S_AUDIO_RX_LRCK_DIV_DUTY_HIGH_Pos) &
-                   I2S_AUDIO_RX_LRCK_DIV_DUTY_HIGH));
+              ((duty_high << I2S_AUDIO_RX_LRCK_DIV_DUTY_HIGH_Pos) &
+               I2S_AUDIO_RX_LRCK_DIV_DUTY_HIGH));
 }
 
 /**
@@ -542,15 +541,15 @@ static inline void ll_i2s_set_rx_rs_smooth(I2S_TypeDef *I2Sx, uint32_t enable)
  * @param[in] track      Track flag.
  */
 static inline void ll_i2s_set_record_format(I2S_TypeDef *I2Sx,
-                                            uint32_t data_width,
-                                            uint32_t track)
+        uint32_t data_width,
+        uint32_t track)
 {
     MODIFY_REG(I2Sx->RECORD_FORMAT,
                I2S_RECORD_FORMAT_DW | I2S_RECORD_FORMAT_TRACK,
                ((data_width << I2S_RECORD_FORMAT_DW_Pos) &
                 I2S_RECORD_FORMAT_DW) |
-                   ((track << I2S_RECORD_FORMAT_TRACK_Pos) &
-                    I2S_RECORD_FORMAT_TRACK));
+               ((track << I2S_RECORD_FORMAT_TRACK_Pos) &
+                I2S_RECORD_FORMAT_TRACK));
 }
 
 /**
@@ -567,11 +566,11 @@ static inline void ll_i2s_set_rx_ch_sel(I2S_TypeDef *I2Sx,
 {
     MODIFY_REG(I2Sx->RX_CH_SEL,
                I2S_RX_CH_SEL_RIGHT_CHANNEL_SEL |
-                   I2S_RX_CH_SEL_LEFT_CHANNEL_SEL,
+               I2S_RX_CH_SEL_LEFT_CHANNEL_SEL,
                ((right_sel << I2S_RX_CH_SEL_RIGHT_CHANNEL_SEL_Pos) &
                 I2S_RX_CH_SEL_RIGHT_CHANNEL_SEL) |
-                   ((left_sel << I2S_RX_CH_SEL_LEFT_CHANNEL_SEL_Pos) &
-                    I2S_RX_CH_SEL_LEFT_CHANNEL_SEL));
+               ((left_sel << I2S_RX_CH_SEL_LEFT_CHANNEL_SEL_Pos) &
+                I2S_RX_CH_SEL_LEFT_CHANNEL_SEL));
 }
 
 /*==============================================================================
@@ -605,11 +604,11 @@ static inline void ll_i2s_disable_bt_phone(I2S_TypeDef *I2Sx)
  * @param[in] cfg  Pointer to BT phone configuration.
  */
 static inline void ll_i2s_enable_bt_phone(I2S_TypeDef *I2Sx,
-                                          const ll_i2s_bt_phone_config_t *cfg)
+        const ll_i2s_bt_phone_config_t *cfg)
 {
     WRITE_REG(I2Sx->BT_PHONE_CTRL,
               I2S_BT_PHONE_CTRL_BT_PH_EN | cfg->back_mix | cfg->mix_smooth |
-                  cfg->path | cfg->pcm_bps | cfg->bb_bps_to_cdc);
+              cfg->path | cfg->pcm_bps | cfg->bb_bps_to_cdc);
 }
 
 /**
@@ -623,17 +622,17 @@ static inline void ll_i2s_enable_bt_phone(I2S_TypeDef *I2Sx,
  * @param[in] clk_pol    Clock polarity, use @ref LL_I2S_BB_PCM_CLK_POL_NORMAL or @ref LL_I2S_BB_PCM_CLK_POL_RISE.
  */
 static inline void ll_i2s_config_bb_pcm_format(I2S_TypeDef *I2Sx,
-                                               uint32_t data_width,
-                                               uint32_t tim_sel,
-                                               uint32_t sync_flag,
-                                               uint32_t lsb_flag,
-                                               uint32_t lrck_pol,
-                                               uint32_t clk_pol)
+        uint32_t data_width,
+        uint32_t tim_sel,
+        uint32_t sync_flag,
+        uint32_t lsb_flag,
+        uint32_t lrck_pol,
+        uint32_t clk_pol)
 {
     WRITE_REG(I2Sx->BB_PCM_FORMAT,
               ((data_width << I2S_BB_PCM_FORMAT_PCM_DW_Pos) &
                I2S_BB_PCM_FORMAT_PCM_DW) |
-                  tim_sel | sync_flag | lsb_flag | lrck_pol | clk_pol);
+              tim_sel | sync_flag | lsb_flag | lrck_pol | clk_pol);
 }
 
 /**
@@ -642,7 +641,7 @@ static inline void ll_i2s_config_bb_pcm_format(I2S_TypeDef *I2Sx,
  * @param[in] data_width PCM data width (0..31).
  */
 static inline void ll_i2s_set_bt_pcm_data_width(I2S_TypeDef *I2Sx,
-                                                 uint32_t data_width)
+        uint32_t data_width)
 {
     MODIFY_REG(I2Sx->BT_PCM_DW, I2S_BT_PCM_DW_DW,
                ((data_width << I2S_BT_PCM_DW_DW_Pos) & I2S_BT_PCM_DW_DW));
@@ -656,13 +655,13 @@ static inline void ll_i2s_set_bt_pcm_data_width(I2S_TypeDef *I2Sx,
  * @param[in] clk_pol   Clock polarity, use @ref LL_I2S_BT_CLK_POL_NORMAL or @ref LL_I2S_BT_CLK_POL_INVERT.
  */
 static inline void ll_i2s_config_bt_pcm_timing(I2S_TypeDef *I2Sx,
-                                               uint32_t lsb_flag,
-                                               uint32_t sync_flag,
-                                               uint32_t clk_pol)
+        uint32_t lsb_flag,
+        uint32_t sync_flag,
+        uint32_t clk_pol)
 {
     MODIFY_REG(I2Sx->BT_PCM_TIMING,
                I2S_BT_PCM_TIMING_LSB_FLAG | I2S_BT_PCM_TIMING_SYNC_FLAG |
-                   I2S_BT_PCM_TIMING_CLK_POL,
+               I2S_BT_PCM_TIMING_CLK_POL,
                lsb_flag | sync_flag | clk_pol);
 }
 
@@ -672,7 +671,7 @@ static inline void ll_i2s_config_bt_pcm_timing(I2S_TypeDef *I2Sx,
  * @param[in] clk_duty  Clock duty value.
  */
 static inline void ll_i2s_set_bt_pcm_clk_duty(I2S_TypeDef *I2Sx,
-                                               uint32_t clk_duty)
+        uint32_t clk_duty)
 {
     MODIFY_REG(I2Sx->BT_PCM_CLK_DUTY, I2S_BT_PCM_CLK_DUTY_CLK_DUTY,
                ((clk_duty << I2S_BT_PCM_CLK_DUTY_CLK_DUTY_Pos) &
@@ -685,7 +684,7 @@ static inline void ll_i2s_set_bt_pcm_clk_duty(I2S_TypeDef *I2Sx,
  * @param[in] sync_duty  Sync duty value.
  */
 static inline void ll_i2s_set_bt_pcm_sync_duty(I2S_TypeDef *I2Sx,
-                                                uint32_t sync_duty)
+        uint32_t sync_duty)
 {
     MODIFY_REG(I2Sx->BT_PCM_SYNC_DUTY, I2S_BT_PCM_SYNC_DUTY_SYNC_DUTY,
                ((sync_duty << I2S_BT_PCM_SYNC_DUTY_SYNC_DUTY_Pos) &
@@ -705,7 +704,7 @@ static inline void ll_i2s_set_bt_volume(I2S_TypeDef *I2Sx,
     MODIFY_REG(I2Sx->BT_VOL_CTRL,
                I2S_BT_VOL_CTRL_VOL | I2S_BT_VOL_CTRL_VOL_ADJ_EN,
                ((vol << I2S_BT_VOL_CTRL_VOL_Pos) & I2S_BT_VOL_CTRL_VOL) |
-                   adj_en);
+               adj_en);
 }
 
 /**
@@ -784,28 +783,54 @@ static inline uint32_t ll_i2s_is_active_flag_rx_overflow(I2S_TypeDef *I2Sx)
     return READ_BIT(I2Sx->INT_STATUS, I2S_INT_STATUS_RX_FIFO_OVERFLOW);
 }
 
+/**
+ * @brief Write a PCM data sample to the TX FIFO data port (TX_DMA_ENTRY).
+ * @note TX_DMA_ENTRY is a write-only data port, NOT a DMA address register.
+ *       To let DMA feed it, configure the DMA destination with the port
+ *       address returned by @ref ll_i2s_get_tx_dma_port_addr.
+ * @param[in] I2Sx  I2S instance pointer.
+ * @param[in] data  PCM data sample to write.
+ */
+static inline void ll_i2s_write_tx_data(I2S_TypeDef *I2Sx, uint32_t data)
+{
+    WRITE_REG(I2Sx->TX_DMA_ENTRY, data);
+}
+
+/**
+ * @brief Read a PCM data sample from the RX FIFO data port (RX_DMA_ENTRY).
+ * @note RX_DMA_ENTRY is a read-only data port, NOT a DMA address register.
+ *       Reading it consumes one sample. To let DMA drain it, configure the
+ *       DMA source with @ref ll_i2s_get_rx_dma_port_addr.
+ * @param[in] I2Sx I2S instance pointer.
+ * @return The PCM data sample read from the RX FIFO.
+ */
+static inline uint32_t ll_i2s_read_rx_data(I2S_TypeDef *I2Sx)
+{
+    return READ_REG(I2Sx->RX_DMA_ENTRY);
+}
+
 /*==============================================================================
  * DMA
  *============================================================================*/
 
 /**
- * @brief Set TX DMA entry address (TX_DMA_ENTRY).
- * @param[in] I2Sx  I2S instance pointer.
- * @param[in] addr  DMA entry address.
+ * @brief Get the TX FIFO data-port address for DMA destination configuration.
+ * @param[in] I2Sx I2S instance pointer.
+ * @return Address of TX_DMA_ENTRY (pass to DMA as the destination).
  */
-static inline void ll_i2s_set_tx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
+static inline uint32_t ll_i2s_get_tx_dma_port_addr(I2S_TypeDef *I2Sx)
 {
-    WRITE_REG(I2Sx->TX_DMA_ENTRY, addr);
+    return (uint32_t)&I2Sx->TX_DMA_ENTRY;
 }
 
 /**
- * @brief Set RX DMA entry address (RX_DMA_ENTRY).
- * @param[in] I2Sx  I2S instance pointer.
- * @param[in] addr  DMA entry address.
+ * @brief Get the RX FIFO data-port address for DMA source configuration.
+ * @param[in] I2Sx I2S instance pointer.
+ * @return Address of RX_DMA_ENTRY (pass to DMA as the source).
  */
-static inline void ll_i2s_set_rx_dma_entry(I2S_TypeDef *I2Sx, uint32_t addr)
+static inline uint32_t ll_i2s_get_rx_dma_port_addr(I2S_TypeDef *I2Sx)
 {
-    WRITE_REG(I2Sx->RX_DMA_ENTRY, addr);
+    return (uint32_t)&I2Sx->RX_DMA_ENTRY;
 }
 
 /**
@@ -858,16 +883,16 @@ static inline void ll_i2s_disable_dma_rx(I2S_TypeDef *I2Sx)
  * @param[in] clk_div SP clock divider.
  */
 static inline void ll_i2s_set_debug_loop(I2S_TypeDef *I2Sx,
-                                         uint32_t loops,
-                                         uint32_t clk_sel,
-                                         uint32_t clk_div)
+        uint32_t loops,
+        uint32_t clk_sel,
+        uint32_t clk_div)
 {
     WRITE_REG(I2Sx->DEBUG_LOOP,
               loops | ((clk_sel << I2S_DEBUG_LOOP_SP_CLK_SEL_Pos) &
-                        I2S_DEBUG_LOOP_SP_CLK_SEL) |
-                  I2S_DEBUG_LOOP_SP_CLK_DIV_UPDATE |
-                  ((clk_div << I2S_DEBUG_LOOP_SP_CLK_DIV_Pos) &
-                   I2S_DEBUG_LOOP_SP_CLK_DIV));
+                       I2S_DEBUG_LOOP_SP_CLK_SEL) |
+              I2S_DEBUG_LOOP_SP_CLK_DIV_UPDATE |
+              ((clk_div << I2S_DEBUG_LOOP_SP_CLK_DIV_Pos) &
+               I2S_DEBUG_LOOP_SP_CLK_DIV));
 }
 
 /*==============================================================================
@@ -913,23 +938,23 @@ static inline void ll_i2s_disable_tx_equalizer(I2S_TypeDef *I2Sx)
  * @param[in] g6  Band 6 gain.
  */
 static inline void ll_i2s_set_tx_eq_gain1(I2S_TypeDef *I2Sx,
-                                          uint32_t g1, uint32_t g2,
-                                          uint32_t g3, uint32_t g4,
-                                          uint32_t g5, uint32_t g6)
+        uint32_t g1, uint32_t g2,
+        uint32_t g3, uint32_t g4,
+        uint32_t g5, uint32_t g6)
 {
     WRITE_REG(I2Sx->TX_EQUALIZER_GAIN1,
               ((g1 << I2S_TX_EQUALIZER_GAIN1_BAND1_GAIN_Pos) &
                I2S_TX_EQUALIZER_GAIN1_BAND1_GAIN) |
-                  ((g2 << I2S_TX_EQUALIZER_GAIN1_BAND2_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN1_BAND2_GAIN) |
-                  ((g3 << I2S_TX_EQUALIZER_GAIN1_BAND3_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN1_BAND3_GAIN) |
-                  ((g4 << I2S_TX_EQUALIZER_GAIN1_BAND4_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN1_BAND4_GAIN) |
-                  ((g5 << I2S_TX_EQUALIZER_GAIN1_BAND5_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN1_BAND5_GAIN) |
-                  ((g6 << I2S_TX_EQUALIZER_GAIN1_BAND6_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN1_BAND6_GAIN));
+              ((g2 << I2S_TX_EQUALIZER_GAIN1_BAND2_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN1_BAND2_GAIN) |
+              ((g3 << I2S_TX_EQUALIZER_GAIN1_BAND3_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN1_BAND3_GAIN) |
+              ((g4 << I2S_TX_EQUALIZER_GAIN1_BAND4_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN1_BAND4_GAIN) |
+              ((g5 << I2S_TX_EQUALIZER_GAIN1_BAND5_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN1_BAND5_GAIN) |
+              ((g6 << I2S_TX_EQUALIZER_GAIN1_BAND6_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN1_BAND6_GAIN));
 }
 
 /**
@@ -941,18 +966,18 @@ static inline void ll_i2s_set_tx_eq_gain1(I2S_TypeDef *I2Sx,
  * @param[in] g10 Band 10 gain.
  */
 static inline void ll_i2s_set_tx_eq_gain2(I2S_TypeDef *I2Sx,
-                                          uint32_t g7, uint32_t g8,
-                                          uint32_t g9, uint32_t g10)
+        uint32_t g7, uint32_t g8,
+        uint32_t g9, uint32_t g10)
 {
     WRITE_REG(I2Sx->TX_EQUALIZER_GAIN2,
               ((g7 << I2S_TX_EQUALIZER_GAIN2_BAND7_GAIN_Pos) &
                I2S_TX_EQUALIZER_GAIN2_BAND7_GAIN) |
-                  ((g8 << I2S_TX_EQUALIZER_GAIN2_BAND8_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN2_BAND8_GAIN) |
-                  ((g9 << I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN) |
-                  ((g10 << I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN_Pos) &
-                   I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN));
+              ((g8 << I2S_TX_EQUALIZER_GAIN2_BAND8_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN2_BAND8_GAIN) |
+              ((g9 << I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN2_BAND9_GAIN) |
+              ((g10 << I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN_Pos) &
+               I2S_TX_EQUALIZER_GAIN2_BAND10_GAIN));
 }
 
 #ifdef __cplusplus

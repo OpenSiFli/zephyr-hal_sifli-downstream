@@ -8,8 +8,7 @@
 #define __LL_LCDC_H
 
 #include <stdint.h>
-#include "lcd_if.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,9 +64,9 @@ extern "C" {
  */
 static inline void ll_lcdc_set_interface_mode(LCD_IF_TypeDef *lcd, uint32_t mode)
 {
-	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_LCD_INTF_SEL,
-		   MAKE_REG_VAL(mode, LCD_IF_LCD_CONF_LCD_INTF_SEL_Msk,
-				LCD_IF_LCD_CONF_LCD_INTF_SEL_Pos));
+    MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_LCD_INTF_SEL,
+               MAKE_REG_VAL(mode, LCD_IF_LCD_CONF_LCD_INTF_SEL_Msk,
+                            LCD_IF_LCD_CONF_LCD_INTF_SEL_Pos));
 }
 
 /**
@@ -77,7 +76,7 @@ static inline void ll_lcdc_set_interface_mode(LCD_IF_TypeDef *lcd, uint32_t mode
  */
 static inline uint32_t ll_lcdc_get_interface_mode(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->LCD_CONF, LCD_IF_LCD_CONF_LCD_INTF_SEL);
+    return GET_REG_VAL2(lcd->LCD_CONF, LCD_IF_LCD_CONF_LCD_INTF_SEL);
 }
 
 /**
@@ -87,9 +86,9 @@ static inline uint32_t ll_lcdc_get_interface_mode(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_set_target_lcd(LCD_IF_TypeDef *lcd, uint32_t target)
 {
-	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_TARGET_LCD,
-		   MAKE_REG_VAL(target, LCD_IF_LCD_CONF_TARGET_LCD_Msk,
-				LCD_IF_LCD_CONF_TARGET_LCD_Pos));
+    MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_TARGET_LCD,
+               MAKE_REG_VAL(target, LCD_IF_LCD_CONF_TARGET_LCD_Msk,
+                            LCD_IF_LCD_CONF_TARGET_LCD_Pos));
 }
 
 /*==============================================================================
@@ -114,12 +113,12 @@ static inline void ll_lcdc_set_target_lcd(LCD_IF_TypeDef *lcd, uint32_t target)
 #define LL_LCDC_IRQ_RAW_Pos  (16U)
 static inline void ll_lcdc_reset(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->COMMAND, LCD_IF_COMMAND_RESET);
+    SET_BIT(lcd->COMMAND, LCD_IF_COMMAND_RESET);
 }
 
 static inline void ll_lcdc_release_reset(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->COMMAND, LCD_IF_COMMAND_RESET);
+    CLEAR_BIT(lcd->COMMAND, LCD_IF_COMMAND_RESET);
 }
 
 /** @} */
@@ -130,7 +129,7 @@ static inline void ll_lcdc_release_reset(LCD_IF_TypeDef *lcd)
 
 static inline void ll_lcdc_start(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->COMMAND, LCD_IF_COMMAND_START);
+    SET_BIT(lcd->COMMAND, LCD_IF_COMMAND_START);
 }
 
 /**
@@ -140,17 +139,17 @@ static inline void ll_lcdc_start(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_is_running(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->STATUS, LCD_IF_STATUS_JDI_PAR_RUN) ? 1UL : 0UL;
+    return READ_BIT(lcd->STATUS, LCD_IF_STATUS_JDI_PAR_RUN) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lcdc_dpi_is_running(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->STATUS, LCD_IF_STATUS_DPI_RUN) ? 1UL : 0UL;
+    return READ_BIT(lcd->STATUS, LCD_IF_STATUS_DPI_RUN) ? 1UL : 0UL;
 }
 
 static inline uint32_t ll_lcdc_is_busy(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->STATUS, LCD_IF_STATUS_LCD_BUSY) ? 1UL : 0UL;
+    return READ_BIT(lcd->STATUS, LCD_IF_STATUS_LCD_BUSY) ? 1UL : 0UL;
 }
 
 /**
@@ -161,25 +160,25 @@ static inline uint32_t ll_lcdc_is_busy(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_clear_interrupt_status(LCD_IF_TypeDef *lcd, uint32_t mask)
 {
-	WRITE_REG(lcd->IRQ, mask);
+    WRITE_REG(lcd->IRQ, mask);
 }
 
 static inline uint32_t ll_lcdc_get_interrupt_raw(LCD_IF_TypeDef *lcd)
 {
-	return (READ_REG(lcd->IRQ) &
-		(LCD_IF_IRQ_LINE_DONE_RAW_STAT | LCD_IF_IRQ_JDI_PAR_UDR_RAW_STAT |
-		 LCD_IF_IRQ_JDI_PARL_INTR_RAW_STAT | LCD_IF_IRQ_DPI_UDR_RAW_STAT |
-		 LCD_IF_IRQ_DPIL_INTR_RAW_STAT | LCD_IF_IRQ_ICB_OF_RAW_STAT |
-		 LCD_IF_IRQ_EOF_RAW_STAT)) >> LCD_IF_IRQ_EOF_RAW_STAT_Pos;
+    return (READ_REG(lcd->IRQ) &
+            (LCD_IF_IRQ_LINE_DONE_RAW_STAT | LCD_IF_IRQ_JDI_PAR_UDR_RAW_STAT |
+             LCD_IF_IRQ_JDI_PARL_INTR_RAW_STAT | LCD_IF_IRQ_DPI_UDR_RAW_STAT |
+             LCD_IF_IRQ_DPIL_INTR_RAW_STAT | LCD_IF_IRQ_ICB_OF_RAW_STAT |
+             LCD_IF_IRQ_EOF_RAW_STAT)) >> LCD_IF_IRQ_EOF_RAW_STAT_Pos;
 }
 
 static inline uint32_t ll_lcdc_get_interrupt_status(LCD_IF_TypeDef *lcd)
 {
-	return READ_REG(lcd->IRQ) &
-	       (LCD_IF_IRQ_LINE_DONE_STAT | LCD_IF_IRQ_JDI_PAR_UDR_STAT |
-		LCD_IF_IRQ_JDI_PARL_INTR_STAT | LCD_IF_IRQ_DPI_UDR_STAT |
-		LCD_IF_IRQ_DPIL_INTR_STAT | LCD_IF_IRQ_ICB_OF_STAT |
-		LCD_IF_IRQ_EOF_STAT);
+    return READ_REG(lcd->IRQ) &
+           (LCD_IF_IRQ_LINE_DONE_STAT | LCD_IF_IRQ_JDI_PAR_UDR_STAT |
+            LCD_IF_IRQ_JDI_PARL_INTR_STAT | LCD_IF_IRQ_DPI_UDR_STAT |
+            LCD_IF_IRQ_DPIL_INTR_STAT | LCD_IF_IRQ_ICB_OF_STAT |
+            LCD_IF_IRQ_EOF_STAT);
 }
 
 /**
@@ -189,9 +188,9 @@ static inline uint32_t ll_lcdc_get_interrupt_status(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_set_line_done_num(LCD_IF_TypeDef *lcd, uint32_t line_no)
 {
-	MODIFY_REG(lcd->SETTING, LCD_IF_SETTING_LINE_DONE_NUM,
-		   MAKE_REG_VAL(line_no, LCD_IF_SETTING_LINE_DONE_NUM_Msk,
-				LCD_IF_SETTING_LINE_DONE_NUM_Pos));
+    MODIFY_REG(lcd->SETTING, LCD_IF_SETTING_LINE_DONE_NUM,
+               MAKE_REG_VAL(line_no, LCD_IF_SETTING_LINE_DONE_NUM_Msk,
+                            LCD_IF_SETTING_LINE_DONE_NUM_Pos));
 }
 
 /**
@@ -201,8 +200,8 @@ static inline void ll_lcdc_set_line_done_num(LCD_IF_TypeDef *lcd, uint32_t line_
  */
 static inline void ll_lcdc_set_auto_gate(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	MODIFY_REG(lcd->SETTING, LCD_IF_SETTING_AUTO_GATE_EN,
-		   en ? LCD_IF_SETTING_AUTO_GATE_EN : 0UL);
+    MODIFY_REG(lcd->SETTING, LCD_IF_SETTING_AUTO_GATE_EN,
+               en ? LCD_IF_SETTING_AUTO_GATE_EN : 0UL);
 }
 
 /*==============================================================================
@@ -215,28 +214,28 @@ static inline void ll_lcdc_set_auto_gate(LCD_IF_TypeDef *lcd, uint32_t en)
  */
 static inline void ll_lcdc_enable_interrupt(LCD_IF_TypeDef *lcd, uint32_t mask)
 {
-	const uint32_t valid_mask = LCD_IF_SETTING_LINE_DONE_MASK |
-					LCD_IF_SETTING_JDI_PAR_UDR_MASK |
-					LCD_IF_SETTING_JDI_PARL_INTR_MASK |
-					LCD_IF_SETTING_DPI_UDR_MASK |
-					LCD_IF_SETTING_DPIL_INTR_MASK |
-					LCD_IF_SETTING_ICB_OF_MASK |
-					LCD_IF_SETTING_EOF_MASK;
+    const uint32_t valid_mask = LCD_IF_SETTING_LINE_DONE_MASK |
+                                LCD_IF_SETTING_JDI_PAR_UDR_MASK |
+                                LCD_IF_SETTING_JDI_PARL_INTR_MASK |
+                                LCD_IF_SETTING_DPI_UDR_MASK |
+                                LCD_IF_SETTING_DPIL_INTR_MASK |
+                                LCD_IF_SETTING_ICB_OF_MASK |
+                                LCD_IF_SETTING_EOF_MASK;
 
-	SET_BIT(lcd->SETTING, mask & valid_mask);
+    SET_BIT(lcd->SETTING, mask & valid_mask);
 }
 
 static inline void ll_lcdc_disable_interrupt(LCD_IF_TypeDef *lcd, uint32_t mask)
 {
-	const uint32_t valid_mask = LCD_IF_SETTING_LINE_DONE_MASK |
-					LCD_IF_SETTING_JDI_PAR_UDR_MASK |
-					LCD_IF_SETTING_JDI_PARL_INTR_MASK |
-					LCD_IF_SETTING_DPI_UDR_MASK |
-					LCD_IF_SETTING_DPIL_INTR_MASK |
-					LCD_IF_SETTING_ICB_OF_MASK |
-					LCD_IF_SETTING_EOF_MASK;
+    const uint32_t valid_mask = LCD_IF_SETTING_LINE_DONE_MASK |
+                                LCD_IF_SETTING_JDI_PAR_UDR_MASK |
+                                LCD_IF_SETTING_JDI_PARL_INTR_MASK |
+                                LCD_IF_SETTING_DPI_UDR_MASK |
+                                LCD_IF_SETTING_DPIL_INTR_MASK |
+                                LCD_IF_SETTING_ICB_OF_MASK |
+                                LCD_IF_SETTING_EOF_MASK;
 
-	CLEAR_BIT(lcd->SETTING, mask & valid_mask);
+    CLEAR_BIT(lcd->SETTING, mask & valid_mask);
 }
 
 /*==============================================================================
@@ -244,18 +243,18 @@ static inline void ll_lcdc_disable_interrupt(LCD_IF_TypeDef *lcd, uint32_t mask)
  *============================================================================*/
 
 static inline void ll_lcdc_set_canvas_pos(LCD_IF_TypeDef *lcd, uint16_t x0, uint16_t y0,
-					  uint16_t x1, uint16_t y1)
+        uint16_t x1, uint16_t y1)
 {
-	WRITE_REG(lcd->CANVAS_TL_POS,
-		  MAKE_REG_VAL(x0, LCD_IF_CANVAS_TL_POS_X0_Msk,
-			       LCD_IF_CANVAS_TL_POS_X0_Pos) |
-		  MAKE_REG_VAL(y0, LCD_IF_CANVAS_TL_POS_Y0_Msk,
-			       LCD_IF_CANVAS_TL_POS_Y0_Pos));
-	WRITE_REG(lcd->CANVAS_BR_POS,
-		  MAKE_REG_VAL(x1, LCD_IF_CANVAS_BR_POS_X1_Msk,
-			       LCD_IF_CANVAS_BR_POS_X1_Pos) |
-		  MAKE_REG_VAL(y1, LCD_IF_CANVAS_BR_POS_Y1_Msk,
-			       LCD_IF_CANVAS_BR_POS_Y1_Pos));
+    WRITE_REG(lcd->CANVAS_TL_POS,
+              MAKE_REG_VAL(x0, LCD_IF_CANVAS_TL_POS_X0_Msk,
+                           LCD_IF_CANVAS_TL_POS_X0_Pos) |
+              MAKE_REG_VAL(y0, LCD_IF_CANVAS_TL_POS_Y0_Msk,
+                           LCD_IF_CANVAS_TL_POS_Y0_Pos));
+    WRITE_REG(lcd->CANVAS_BR_POS,
+              MAKE_REG_VAL(x1, LCD_IF_CANVAS_BR_POS_X1_Msk,
+                           LCD_IF_CANVAS_BR_POS_X1_Pos) |
+              MAKE_REG_VAL(y1, LCD_IF_CANVAS_BR_POS_Y1_Msk,
+                           LCD_IF_CANVAS_BR_POS_Y1_Pos));
 }
 
 /**
@@ -264,7 +263,7 @@ static inline void ll_lcdc_set_canvas_pos(LCD_IF_TypeDef *lcd, uint16_t x0, uint
  */
 static inline void ll_lcdc_set_canvas_bg_h_mirror(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_H_MIRROR);
+    SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_H_MIRROR);
 }
 
 /**
@@ -273,7 +272,7 @@ static inline void ll_lcdc_set_canvas_bg_h_mirror(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_clear_canvas_bg_h_mirror(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_H_MIRROR);
+    CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_H_MIRROR);
 }
 
 /**
@@ -282,7 +281,7 @@ static inline void ll_lcdc_clear_canvas_bg_h_mirror(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_set_canvas_bg_lb_bypass(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_LB_BYPASS);
+    SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_LB_BYPASS);
 }
 
 /**
@@ -291,7 +290,7 @@ static inline void ll_lcdc_set_canvas_bg_lb_bypass(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_clear_canvas_bg_lb_bypass(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_LB_BYPASS);
+    CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_LB_BYPASS);
 }
 
 /**
@@ -300,7 +299,7 @@ static inline void ll_lcdc_clear_canvas_bg_lb_bypass(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_set_canvas_bg_all_blending_bypass(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_ALL_BLENDING_BYPASS);
+    SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_ALL_BLENDING_BYPASS);
 }
 
 /**
@@ -309,7 +308,7 @@ static inline void ll_lcdc_set_canvas_bg_all_blending_bypass(LCD_IF_TypeDef *lcd
  */
 static inline void ll_lcdc_clear_canvas_bg_all_blending_bypass(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_ALL_BLENDING_BYPASS);
+    CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_ALL_BLENDING_BYPASS);
 }
 
 /**
@@ -318,7 +317,7 @@ static inline void ll_lcdc_clear_canvas_bg_all_blending_bypass(LCD_IF_TypeDef *l
  */
 static inline void ll_lcdc_set_canvas_bg_blending_bypass(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_BG_BLENDING_BYPASS);
+    SET_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_BG_BLENDING_BYPASS);
 }
 
 /**
@@ -327,14 +326,14 @@ static inline void ll_lcdc_set_canvas_bg_blending_bypass(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_clear_canvas_bg_blending_bypass(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_BG_BLENDING_BYPASS);
+    CLEAR_BIT(lcd->CANVAS_BG, LCD_IF_CANVAS_BG_BG_BLENDING_BYPASS);
 }
 
 static inline void ll_lcdc_set_canvas_bg(LCD_IF_TypeDef *lcd, uint8_t r, uint8_t g, uint8_t b)
 {
-	MODIFY_REG(lcd->CANVAS_BG,
-		   LCD_IF_CANVAS_BG_RED | LCD_IF_CANVAS_BG_GREEN | LCD_IF_CANVAS_BG_BLUE,
-		   ((uint32_t)b) | (((uint32_t)g) << 8U) | (((uint32_t)r) << 16U));
+    MODIFY_REG(lcd->CANVAS_BG,
+               LCD_IF_CANVAS_BG_RED | LCD_IF_CANVAS_BG_GREEN | LCD_IF_CANVAS_BG_BLUE,
+               ((uint32_t)b) | (((uint32_t)g) << 8U) | (((uint32_t)r) << 16U));
 }
 
 /**
@@ -345,13 +344,16 @@ static inline void ll_lcdc_set_canvas_bg(LCD_IF_TypeDef *lcd, uint8_t r, uint8_t
  */
 static inline void ll_lcdc_layer_set_v_mirror(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t en)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_V_MIRROR,
-			   en ? LCD_IF_LAYER0_CONFIG_V_MIRROR : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_V_MIRROR,
-			   en ? LCD_IF_LAYER1_CONFIG_V_MIRROR : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_V_MIRROR,
+                   en ? LCD_IF_LAYER0_CONFIG_V_MIRROR : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_V_MIRROR,
+                   en ? LCD_IF_LAYER1_CONFIG_V_MIRROR : 0UL);
+    }
 }
 
 /**
@@ -361,15 +363,18 @@ static inline void ll_lcdc_layer_set_v_mirror(LCD_IF_TypeDef *lcd, uint32_t laye
  * @param[in] mode  Alpha blending mode (1 bit).
  */
 static inline void ll_lcdc_layer_set_alpha_blend(LCD_IF_TypeDef *lcd, uint32_t layer,
-						 uint32_t mode)
+        uint32_t mode)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ALPHA_BLEND,
-			   mode ? LCD_IF_LAYER0_CONFIG_ALPHA_BLEND : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ALPHA_BLEND,
-			   mode ? LCD_IF_LAYER1_CONFIG_ALPHA_BLEND : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ALPHA_BLEND,
+                   mode ? LCD_IF_LAYER0_CONFIG_ALPHA_BLEND : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ALPHA_BLEND,
+                   mode ? LCD_IF_LAYER1_CONFIG_ALPHA_BLEND : 0UL);
+    }
 }
 
 /**
@@ -381,13 +386,16 @@ static inline void ll_lcdc_layer_set_alpha_blend(LCD_IF_TypeDef *lcd, uint32_t l
  */
 static inline void ll_lcdc_layer_set_active(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t en)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ACTIVE,
-			   en ? LCD_IF_LAYER0_CONFIG_ACTIVE : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ACTIVE,
-			   en ? LCD_IF_LAYER1_CONFIG_ACTIVE : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ACTIVE,
+                   en ? LCD_IF_LAYER0_CONFIG_ACTIVE : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ACTIVE,
+                   en ? LCD_IF_LAYER1_CONFIG_ACTIVE : 0UL);
+    }
 }
 
 /**
@@ -397,15 +405,18 @@ static inline void ll_lcdc_layer_set_active(LCD_IF_TypeDef *lcd, uint32_t layer,
  * @param[in] mode  Line fetch mode (1 bit).
  */
 static inline void ll_lcdc_layer_set_line_fetch_mode(LCD_IF_TypeDef *lcd, uint32_t layer,
-						     uint32_t mode)
+        uint32_t mode)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_LINE_FETCH_MODE,
-			   mode ? LCD_IF_LAYER0_CONFIG_LINE_FETCH_MODE : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_LINE_FETCH_MODE,
-			   mode ? LCD_IF_LAYER1_CONFIG_LINE_FETCH_MODE : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_LINE_FETCH_MODE,
+                   mode ? LCD_IF_LAYER0_CONFIG_LINE_FETCH_MODE : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_LINE_FETCH_MODE,
+                   mode ? LCD_IF_LAYER1_CONFIG_LINE_FETCH_MODE : 0UL);
+    }
 }
 
 /**
@@ -416,13 +427,16 @@ static inline void ll_lcdc_layer_set_line_fetch_mode(LCD_IF_TypeDef *lcd, uint32
  */
 static inline void ll_lcdc_layer_set_prefetch(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t en)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_PREFETCH_EN,
-			   en ? LCD_IF_LAYER0_CONFIG_PREFETCH_EN : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_PREFETCH_EN,
-			   en ? LCD_IF_LAYER1_CONFIG_PREFETCH_EN : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_PREFETCH_EN,
+                   en ? LCD_IF_LAYER0_CONFIG_PREFETCH_EN : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_PREFETCH_EN,
+                   en ? LCD_IF_LAYER1_CONFIG_PREFETCH_EN : 0UL);
+    }
 }
 
 /*==============================================================================
@@ -435,28 +449,33 @@ static inline void ll_lcdc_layer_set_prefetch(LCD_IF_TypeDef *lcd, uint32_t laye
  * @note Invalid layer indices are ignored.
  */
 static inline void ll_lcdc_layer_config(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t format,
-					uint8_t alpha, uint16_t width, uint32_t filter_en)
+                                        uint8_t alpha, uint16_t width, uint32_t filter_en)
 {
-	if ((layer != 0U) && (layer != 1U)) {
-		return;
-	}
-	uint32_t val = MAKE_REG_VAL(format, LCD_IF_LAYER0_CONFIG_FORMAT_Msk, LCD_IF_LAYER0_CONFIG_FORMAT_Pos) |
-		       MAKE_REG_VAL(alpha, LCD_IF_LAYER0_CONFIG_ALPHA_Msk, LCD_IF_LAYER0_CONFIG_ALPHA_Pos) |
-		       MAKE_REG_VAL(width, LCD_IF_LAYER0_CONFIG_WIDTH_Msk, LCD_IF_LAYER0_CONFIG_WIDTH_Pos);
-	if (filter_en) {
-		val |= LCD_IF_LAYER0_CONFIG_FILTER_EN;
-	}
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG,
-			   LCD_IF_LAYER0_CONFIG_FORMAT | LCD_IF_LAYER0_CONFIG_ALPHA |
-				   LCD_IF_LAYER0_CONFIG_WIDTH | LCD_IF_LAYER0_CONFIG_FILTER_EN,
-			   val);
-	} else {
-		MODIFY_REG(lcd->LAYER1_CONFIG,
-			   LCD_IF_LAYER1_CONFIG_FORMAT | LCD_IF_LAYER1_CONFIG_ALPHA |
-				   LCD_IF_LAYER1_CONFIG_WIDTH | LCD_IF_LAYER1_CONFIG_FILTER_EN,
-			   val);
-	}
+    if ((layer != 0U) && (layer != 1U))
+    {
+        return;
+    }
+    uint32_t val = MAKE_REG_VAL(format, LCD_IF_LAYER0_CONFIG_FORMAT_Msk, LCD_IF_LAYER0_CONFIG_FORMAT_Pos) |
+                   MAKE_REG_VAL(alpha, LCD_IF_LAYER0_CONFIG_ALPHA_Msk, LCD_IF_LAYER0_CONFIG_ALPHA_Pos) |
+                   MAKE_REG_VAL(width, LCD_IF_LAYER0_CONFIG_WIDTH_Msk, LCD_IF_LAYER0_CONFIG_WIDTH_Pos);
+    if (filter_en)
+    {
+        val |= LCD_IF_LAYER0_CONFIG_FILTER_EN;
+    }
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG,
+                   LCD_IF_LAYER0_CONFIG_FORMAT | LCD_IF_LAYER0_CONFIG_ALPHA |
+                   LCD_IF_LAYER0_CONFIG_WIDTH | LCD_IF_LAYER0_CONFIG_FILTER_EN,
+                   val);
+    }
+    else
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG,
+                   LCD_IF_LAYER1_CONFIG_FORMAT | LCD_IF_LAYER1_CONFIG_ALPHA |
+                   LCD_IF_LAYER1_CONFIG_WIDTH | LCD_IF_LAYER1_CONFIG_FILTER_EN,
+                   val);
+    }
 }
 
 /**
@@ -466,43 +485,49 @@ static inline void ll_lcdc_layer_config(LCD_IF_TypeDef *lcd, uint32_t layer, uin
  * @param[in] sel   Alpha source select (1 bit).
  */
 static inline void ll_lcdc_layer_set_alpha_sel(LCD_IF_TypeDef *lcd, uint32_t layer,
-					       uint32_t sel)
+        uint32_t sel)
 {
-	if (layer == 0U) {
-		MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ALPHA_SEL,
-			   sel ? LCD_IF_LAYER0_CONFIG_ALPHA_SEL : 0UL);
-	} else if (layer == 1U) {
-		MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ALPHA_SEL,
-			   sel ? LCD_IF_LAYER1_CONFIG_ALPHA_SEL : 0UL);
-	}
+    if (layer == 0U)
+    {
+        MODIFY_REG(lcd->LAYER0_CONFIG, LCD_IF_LAYER0_CONFIG_ALPHA_SEL,
+                   sel ? LCD_IF_LAYER0_CONFIG_ALPHA_SEL : 0UL);
+    }
+    else if (layer == 1U)
+    {
+        MODIFY_REG(lcd->LAYER1_CONFIG, LCD_IF_LAYER1_CONFIG_ALPHA_SEL,
+                   sel ? LCD_IF_LAYER1_CONFIG_ALPHA_SEL : 0UL);
+    }
 }
 
 static inline void ll_lcdc_layer_set_position(LCD_IF_TypeDef *lcd, uint32_t layer, uint16_t x0,
-					      uint16_t y0, uint16_t x1, uint16_t y1)
+        uint16_t y0, uint16_t x1, uint16_t y1)
 {
-	if (layer == 0U) {
-		WRITE_REG(lcd->LAYER0_TL_POS,
-			  MAKE_REG_VAL(x0, LCD_IF_LAYER0_TL_POS_X0_Msk,
-				       LCD_IF_LAYER0_TL_POS_X0_Pos) |
-			  MAKE_REG_VAL(y0, LCD_IF_LAYER0_TL_POS_Y0_Msk,
-				       LCD_IF_LAYER0_TL_POS_Y0_Pos));
-		WRITE_REG(lcd->LAYER0_BR_POS,
-			  MAKE_REG_VAL(x1, LCD_IF_LAYER0_BR_POS_X1_Msk,
-				       LCD_IF_LAYER0_BR_POS_X1_Pos) |
-			  MAKE_REG_VAL(y1, LCD_IF_LAYER0_BR_POS_Y1_Msk,
-				       LCD_IF_LAYER0_BR_POS_Y1_Pos));
-	} else if (layer == 1U) {
-		WRITE_REG(lcd->LAYER1_TL_POS,
-			  MAKE_REG_VAL(x0, LCD_IF_LAYER1_TL_POS_X0_Msk,
-				       LCD_IF_LAYER1_TL_POS_X0_Pos) |
-			  MAKE_REG_VAL(y0, LCD_IF_LAYER1_TL_POS_Y0_Msk,
-				       LCD_IF_LAYER1_TL_POS_Y0_Pos));
-		WRITE_REG(lcd->LAYER1_BR_POS,
-			  MAKE_REG_VAL(x1, LCD_IF_LAYER1_BR_POS_X1_Msk,
-				       LCD_IF_LAYER1_BR_POS_X1_Pos) |
-			  MAKE_REG_VAL(y1, LCD_IF_LAYER1_BR_POS_Y1_Msk,
-				       LCD_IF_LAYER1_BR_POS_Y1_Pos));
-	}
+    if (layer == 0U)
+    {
+        WRITE_REG(lcd->LAYER0_TL_POS,
+                  MAKE_REG_VAL(x0, LCD_IF_LAYER0_TL_POS_X0_Msk,
+                               LCD_IF_LAYER0_TL_POS_X0_Pos) |
+                  MAKE_REG_VAL(y0, LCD_IF_LAYER0_TL_POS_Y0_Msk,
+                               LCD_IF_LAYER0_TL_POS_Y0_Pos));
+        WRITE_REG(lcd->LAYER0_BR_POS,
+                  MAKE_REG_VAL(x1, LCD_IF_LAYER0_BR_POS_X1_Msk,
+                               LCD_IF_LAYER0_BR_POS_X1_Pos) |
+                  MAKE_REG_VAL(y1, LCD_IF_LAYER0_BR_POS_Y1_Msk,
+                               LCD_IF_LAYER0_BR_POS_Y1_Pos));
+    }
+    else if (layer == 1U)
+    {
+        WRITE_REG(lcd->LAYER1_TL_POS,
+                  MAKE_REG_VAL(x0, LCD_IF_LAYER1_TL_POS_X0_Msk,
+                               LCD_IF_LAYER1_TL_POS_X0_Pos) |
+                  MAKE_REG_VAL(y0, LCD_IF_LAYER1_TL_POS_Y0_Msk,
+                               LCD_IF_LAYER1_TL_POS_Y0_Pos));
+        WRITE_REG(lcd->LAYER1_BR_POS,
+                  MAKE_REG_VAL(x1, LCD_IF_LAYER1_BR_POS_X1_Msk,
+                               LCD_IF_LAYER1_BR_POS_X1_Pos) |
+                  MAKE_REG_VAL(y1, LCD_IF_LAYER1_BR_POS_Y1_Msk,
+                               LCD_IF_LAYER1_BR_POS_Y1_Pos));
+    }
 }
 
 /**
@@ -513,28 +538,34 @@ static inline void ll_lcdc_layer_set_position(LCD_IF_TypeDef *lcd, uint32_t laye
  */
 static inline void ll_lcdc_layer_set_filter(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t filt)
 {
-	if (layer == 0U) {
-		WRITE_REG(lcd->LAYER0_FILTER,
-			  filt & (LCD_IF_LAYER0_FILTER_FILTER_MASK |
-				   LCD_IF_LAYER0_FILTER_FILTER_R |
-				   LCD_IF_LAYER0_FILTER_FILTER_G |
-				   LCD_IF_LAYER0_FILTER_FILTER_B));
-	} else if (layer == 1U) {
-		WRITE_REG(lcd->LAYER1_FILTER,
-			  filt & (LCD_IF_LAYER1_FILTER_FILTER_MASK |
-				   LCD_IF_LAYER1_FILTER_FILTER_R |
-				   LCD_IF_LAYER1_FILTER_FILTER_G |
-				   LCD_IF_LAYER1_FILTER_FILTER_B));
-	}
+    if (layer == 0U)
+    {
+        WRITE_REG(lcd->LAYER0_FILTER,
+                  filt & (LCD_IF_LAYER0_FILTER_FILTER_MASK |
+                          LCD_IF_LAYER0_FILTER_FILTER_R |
+                          LCD_IF_LAYER0_FILTER_FILTER_G |
+                          LCD_IF_LAYER0_FILTER_FILTER_B));
+    }
+    else if (layer == 1U)
+    {
+        WRITE_REG(lcd->LAYER1_FILTER,
+                  filt & (LCD_IF_LAYER1_FILTER_FILTER_MASK |
+                          LCD_IF_LAYER1_FILTER_FILTER_R |
+                          LCD_IF_LAYER1_FILTER_FILTER_G |
+                          LCD_IF_LAYER1_FILTER_FILTER_B));
+    }
 }
 
 static inline void ll_lcdc_layer_set_src(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t addr)
 {
-	if (layer == 0U) {
-		WRITE_REG(lcd->LAYER0_SRC, addr);
-	} else if (layer == 1U) {
-		WRITE_REG(lcd->LAYER1_SRC, addr);
-	}
+    if (layer == 0U)
+    {
+        WRITE_REG(lcd->LAYER0_SRC, addr);
+    }
+    else if (layer == 1U)
+    {
+        WRITE_REG(lcd->LAYER1_SRC, addr);
+    }
 }
 
 /**
@@ -545,17 +576,20 @@ static inline void ll_lcdc_layer_set_src(LCD_IF_TypeDef *lcd, uint32_t layer, ui
  */
 static inline void ll_lcdc_layer_set_fill(LCD_IF_TypeDef *lcd, uint32_t layer, uint32_t fill)
 {
-	if (layer == 0U) {
-		WRITE_REG(lcd->LAYER0_FILL,
-			  fill & (LCD_IF_LAYER0_FILL_ENDIAN | LCD_IF_LAYER0_FILL_BG_MODE |
-				   LCD_IF_LAYER0_FILL_BG_R | LCD_IF_LAYER0_FILL_BG_G |
-				   LCD_IF_LAYER0_FILL_BG_B));
-	} else if (layer == 1U) {
-		WRITE_REG(lcd->LAYER1_FILL,
-			  fill & (LCD_IF_LAYER1_FILL_ENDIAN | LCD_IF_LAYER1_FILL_BG_MODE |
-				   LCD_IF_LAYER1_FILL_BG_R | LCD_IF_LAYER1_FILL_BG_G |
-				   LCD_IF_LAYER1_FILL_BG_B));
-	}
+    if (layer == 0U)
+    {
+        WRITE_REG(lcd->LAYER0_FILL,
+                  fill & (LCD_IF_LAYER0_FILL_ENDIAN | LCD_IF_LAYER0_FILL_BG_MODE |
+                          LCD_IF_LAYER0_FILL_BG_R | LCD_IF_LAYER0_FILL_BG_G |
+                          LCD_IF_LAYER0_FILL_BG_B));
+    }
+    else if (layer == 1U)
+    {
+        WRITE_REG(lcd->LAYER1_FILL,
+                  fill & (LCD_IF_LAYER1_FILL_ENDIAN | LCD_IF_LAYER1_FILL_BG_MODE |
+                          LCD_IF_LAYER1_FILL_BG_R | LCD_IF_LAYER1_FILL_BG_G |
+                          LCD_IF_LAYER1_FILL_BG_B));
+    }
 }
 
 /*==============================================================================
@@ -573,14 +607,14 @@ static inline void ll_lcdc_layer_set_fill(LCD_IF_TypeDef *lcd, uint32_t layer, u
  *       module, not to these LCDC registers.
  */
 static inline void ll_lcdc_ezip_set_config(LCD_IF_TypeDef *lcd, uint16_t col_size,
-					   uint16_t target_words, uint32_t en)
+        uint16_t target_words, uint32_t en)
 {
-	WRITE_REG(lcd->LAYER0_DECOMP,
-		  MAKE_REG_VAL(en, LCD_IF_LAYER0_DECOMP_ENABLE_Msk, LCD_IF_LAYER0_DECOMP_ENABLE_Pos) |
-		  MAKE_REG_VAL(target_words, LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Msk,
-			       LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Pos) |
-		  MAKE_REG_VAL(col_size, LCD_IF_LAYER0_DECOMP_COL_SIZE_Msk,
-			       LCD_IF_LAYER0_DECOMP_COL_SIZE_Pos));
+    WRITE_REG(lcd->LAYER0_DECOMP,
+              MAKE_REG_VAL(en, LCD_IF_LAYER0_DECOMP_ENABLE_Msk, LCD_IF_LAYER0_DECOMP_ENABLE_Pos) |
+              MAKE_REG_VAL(target_words, LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Msk,
+                           LCD_IF_LAYER0_DECOMP_TARGET_WORDS_Pos) |
+              MAKE_REG_VAL(col_size, LCD_IF_LAYER0_DECOMP_COL_SIZE_Msk,
+                           LCD_IF_LAYER0_DECOMP_COL_SIZE_Pos));
 }
 
 /**
@@ -590,8 +624,8 @@ static inline void ll_lcdc_ezip_set_config(LCD_IF_TypeDef *lcd, uint16_t col_siz
  */
 static inline uint32_t ll_lcdc_ezip_get_cfg0_reserved(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG0,
-			    LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED);
+    return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG0,
+                        LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED);
 }
 
 /**
@@ -601,10 +635,10 @@ static inline uint32_t ll_lcdc_ezip_get_cfg0_reserved(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_ezip_set_cfg0_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
 {
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
-		   LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED,
-		   MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Pos));
+    MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
+               LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED,
+               MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_CFG0_RESERVED_Pos));
 }
 
 /*==============================================================================
@@ -621,25 +655,25 @@ static inline void ll_lcdc_ezip_set_cfg0_reserved(LCD_IF_TypeDef *lcd, uint32_t 
  * @param[in] lossless_qidx2 Condition to decrease qidx (4 bits).
  */
 static inline void ll_lcdc_ezip_set_cfg0(LCD_IF_TypeDef *lcd, uint32_t extra_high,
-					 uint32_t extra_threshold, uint32_t use_lossless,
-					 uint32_t lossless_qidx1, uint32_t lossless_qidx2)
+        uint32_t extra_threshold, uint32_t use_lossless,
+        uint32_t lossless_qidx1, uint32_t lossless_qidx2)
 {
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
-		   LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH |
-			   LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD |
-			   LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1 |
-			   LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2,
-		   MAKE_REG_VAL(extra_high, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Pos) |
-		   MAKE_REG_VAL(extra_threshold, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Pos) |
-		   MAKE_REG_VAL(use_lossless, LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Pos) |
-		   MAKE_REG_VAL(lossless_qidx1, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Pos) |
-		   MAKE_REG_VAL(lossless_qidx2, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Pos));
+    MODIFY_REG(lcd->LAYER0_DECOMP_CFG0,
+               LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH |
+               LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD |
+               LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX |
+               LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1 |
+               LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2,
+               MAKE_REG_VAL(extra_high, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_HIGH_Pos) |
+               MAKE_REG_VAL(extra_threshold, LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_EXTRA_THRESHOLD_Pos) |
+               MAKE_REG_VAL(use_lossless, LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_USE_LOSSLESS_QIDX_Pos) |
+               MAKE_REG_VAL(lossless_qidx1, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX1_Pos) |
+               MAKE_REG_VAL(lossless_qidx2, LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG0_LOSSLESS_QIDX2_Pos));
 }
 
 /**
@@ -655,34 +689,34 @@ static inline void ll_lcdc_ezip_set_cfg0(LCD_IF_TypeDef *lcd, uint32_t extra_hig
  * @param[in] block_width     Block size: 0 = 16 pixels, 1 = 32 pixels.
  */
 static inline void ll_lcdc_ezip_set_cfg1(LCD_IF_TypeDef *lcd, uint32_t extra_low,
-					 uint32_t block_min_qidx, uint32_t line_min_qidx,
-					 uint32_t failover_r, uint32_t failover_g,
-					 uint32_t failover_b, uint32_t dither,
-					 uint32_t block_width)
+        uint32_t block_min_qidx, uint32_t line_min_qidx,
+        uint32_t failover_r, uint32_t failover_g,
+        uint32_t failover_b, uint32_t dither,
+        uint32_t block_width)
 {
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
-		   LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW |
-			   LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G |
-			   LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B |
-			   LCD_IF_LAYER0_DECOMP_CFG1_DITHER |
-			   LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH,
-		   MAKE_REG_VAL(extra_low, LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Pos) |
-		   MAKE_REG_VAL(block_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Pos) |
-		   MAKE_REG_VAL(line_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Pos) |
-		   MAKE_REG_VAL(failover_r, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Pos) |
-		   MAKE_REG_VAL(failover_g, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Pos) |
-		   MAKE_REG_VAL(failover_b, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Pos) |
-		   (dither ? LCD_IF_LAYER0_DECOMP_CFG1_DITHER : 0UL) |
-		   (block_width ? LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH : 0UL));
+    MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
+               LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW |
+               LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX |
+               LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX |
+               LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R |
+               LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G |
+               LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B |
+               LCD_IF_LAYER0_DECOMP_CFG1_DITHER |
+               LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH,
+               MAKE_REG_VAL(extra_low, LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_EXTRA_LOW_Pos) |
+               MAKE_REG_VAL(block_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_MIN_QIDX_Pos) |
+               MAKE_REG_VAL(line_min_qidx, LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_LINE_MIN_QIDX_Pos) |
+               MAKE_REG_VAL(failover_r, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_R_Pos) |
+               MAKE_REG_VAL(failover_g, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_G_Pos) |
+               MAKE_REG_VAL(failover_b, LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_FAILOVER_BITS_B_Pos) |
+               (dither ? LCD_IF_LAYER0_DECOMP_CFG1_DITHER : 0UL) |
+               (block_width ? LCD_IF_LAYER0_DECOMP_CFG1_BLOCK_WIDTH : 0UL));
 }
 
 /**
@@ -692,8 +726,8 @@ static inline void ll_lcdc_ezip_set_cfg1(LCD_IF_TypeDef *lcd, uint32_t extra_low
  */
 static inline uint32_t ll_lcdc_ezip_get_cfg1_reserved(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG1,
-			    LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED);
+    return GET_REG_VAL2(lcd->LAYER0_DECOMP_CFG1,
+                        LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED);
 }
 
 /**
@@ -703,10 +737,10 @@ static inline uint32_t ll_lcdc_ezip_get_cfg1_reserved(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_ezip_set_cfg1_reserved(LCD_IF_TypeDef *lcd, uint32_t value)
 {
-	MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
-		   LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED,
-		   MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Msk,
-				LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Pos));
+    MODIFY_REG(lcd->LAYER0_DECOMP_CFG1,
+               LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED,
+               MAKE_REG_VAL(value, LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Msk,
+                            LCD_IF_LAYER0_DECOMP_CFG1_CFG1_RESERVED_Pos));
 }
 
 /**
@@ -714,7 +748,7 @@ static inline void ll_lcdc_ezip_set_cfg1_reserved(LCD_IF_TypeDef *lcd, uint32_t 
  */
 static inline uint32_t ll_lcdc_ezip_get_status(LCD_IF_TypeDef *lcd)
 {
-	return READ_REG(lcd->LAYER0_DECOMP_STAT);
+    return READ_REG(lcd->LAYER0_DECOMP_STAT);
 }
 
 /**
@@ -723,7 +757,7 @@ static inline uint32_t ll_lcdc_ezip_get_status(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_dither_lfsr_load(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_LFSR_LOAD);
+    SET_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_LFSR_LOAD);
 }
 
 /**
@@ -733,9 +767,9 @@ static inline void ll_lcdc_dither_lfsr_load(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_dither_set_lfsr_load_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
 {
-	MODIFY_REG(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_LFSR_LOAD_SEL,
-		   MAKE_REG_VAL(sel, LCD_IF_DITHER_CONF_LFSR_LOAD_SEL_Msk,
-				LCD_IF_DITHER_CONF_LFSR_LOAD_SEL_Pos));
+    MODIFY_REG(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_LFSR_LOAD_SEL,
+               MAKE_REG_VAL(sel, LCD_IF_DITHER_CONF_LFSR_LOAD_SEL_Msk,
+                            LCD_IF_DITHER_CONF_LFSR_LOAD_SEL_Pos));
 }
 
 /**
@@ -746,13 +780,13 @@ static inline void ll_lcdc_dither_set_lfsr_load_sel(LCD_IF_TypeDef *lcd, uint32_
  * @param[in] w_b Blue channel dither width (3 bits).
  */
 static inline void ll_lcdc_dither_set_width(LCD_IF_TypeDef *lcd, uint32_t w_r,
-					    uint32_t w_g, uint32_t w_b)
+        uint32_t w_g, uint32_t w_b)
 {
-	MODIFY_REG(lcd->DITHER_CONF,
-		   LCD_IF_DITHER_CONF_W_R | LCD_IF_DITHER_CONF_W_G | LCD_IF_DITHER_CONF_W_B,
-		   MAKE_REG_VAL(w_r, LCD_IF_DITHER_CONF_W_R_Msk, LCD_IF_DITHER_CONF_W_R_Pos) |
-		   MAKE_REG_VAL(w_g, LCD_IF_DITHER_CONF_W_G_Msk, LCD_IF_DITHER_CONF_W_G_Pos) |
-		   MAKE_REG_VAL(w_b, LCD_IF_DITHER_CONF_W_B_Msk, LCD_IF_DITHER_CONF_W_B_Pos));
+    MODIFY_REG(lcd->DITHER_CONF,
+               LCD_IF_DITHER_CONF_W_R | LCD_IF_DITHER_CONF_W_G | LCD_IF_DITHER_CONF_W_B,
+               MAKE_REG_VAL(w_r, LCD_IF_DITHER_CONF_W_R_Msk, LCD_IF_DITHER_CONF_W_R_Pos) |
+               MAKE_REG_VAL(w_g, LCD_IF_DITHER_CONF_W_G_Msk, LCD_IF_DITHER_CONF_W_G_Pos) |
+               MAKE_REG_VAL(w_b, LCD_IF_DITHER_CONF_W_B_Msk, LCD_IF_DITHER_CONF_W_B_Pos));
 }
 
 /*==============================================================================
@@ -765,7 +799,7 @@ static inline void ll_lcdc_dither_set_width(LCD_IF_TypeDef *lcd, uint32_t w_r,
  */
 static inline void ll_lcdc_dither_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_EN);
+    SET_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_EN);
 }
 
 /**
@@ -774,7 +808,7 @@ static inline void ll_lcdc_dither_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_dither_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_EN);
+    CLEAR_BIT(lcd->DITHER_CONF, LCD_IF_DITHER_CONF_EN);
 }
 
 /**
@@ -784,7 +818,7 @@ static inline void ll_lcdc_dither_disable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_dither_set_lfsr_init(LCD_IF_TypeDef *lcd, uint32_t value)
 {
-	WRITE_REG(lcd->DITHER_LFSR, value);
+    WRITE_REG(lcd->DITHER_LFSR, value);
 }
 
 /**
@@ -794,9 +828,9 @@ static inline void ll_lcdc_dither_set_lfsr_init(LCD_IF_TypeDef *lcd, uint32_t va
  */
 static inline void ll_lcdc_set_spi_rd_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
 {
-	MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_SPI_RD_SEL,
-		   MAKE_REG_VAL(sel, LCD_IF_LCD_CONF_SPI_RD_SEL_Msk,
-				LCD_IF_LCD_CONF_SPI_RD_SEL_Pos));
+    MODIFY_REG(lcd->LCD_CONF, LCD_IF_LCD_CONF_SPI_RD_SEL,
+               MAKE_REG_VAL(sel, LCD_IF_LCD_CONF_SPI_RD_SEL_Msk,
+                            LCD_IF_LCD_CONF_SPI_RD_SEL_Pos));
 }
 
 /**
@@ -809,19 +843,19 @@ static inline void ll_lcdc_set_spi_rd_sel(LCD_IF_TypeDef *lcd, uint32_t sel)
  * @param[in] endian   Endianness (0 = little, 1 = big).
  */
 static inline void ll_lcdc_set_output_format(LCD_IF_TypeDef *lcd, uint32_t spi_fmt,
-					     uint32_t dpi_fmt, uint32_t lcd_fmt, uint32_t endian)
+        uint32_t dpi_fmt, uint32_t lcd_fmt, uint32_t endian)
 {
-	MODIFY_REG(lcd->LCD_CONF,
-		   LCD_IF_LCD_CONF_LCD_FORMAT | LCD_IF_LCD_CONF_AHB_FORMAT |
-			   LCD_IF_LCD_CONF_SPI_LCD_FORMAT | LCD_IF_LCD_CONF_DPI_LCD_FORMAT |
-			   LCD_IF_LCD_CONF_JDI_SER_FORMAT | LCD_IF_LCD_CONF_ENDIAN,
-		   MAKE_REG_VAL(spi_fmt, LCD_IF_LCD_CONF_SPI_LCD_FORMAT_Msk,
-				LCD_IF_LCD_CONF_SPI_LCD_FORMAT_Pos) |
-		   MAKE_REG_VAL(dpi_fmt, LCD_IF_LCD_CONF_DPI_LCD_FORMAT_Msk,
-				LCD_IF_LCD_CONF_DPI_LCD_FORMAT_Pos) |
-		   MAKE_REG_VAL(lcd_fmt, LCD_IF_LCD_CONF_LCD_FORMAT_Msk,
-				LCD_IF_LCD_CONF_LCD_FORMAT_Pos) |
-		   (endian ? LCD_IF_LCD_CONF_ENDIAN : 0UL));
+    MODIFY_REG(lcd->LCD_CONF,
+               LCD_IF_LCD_CONF_LCD_FORMAT |
+               LCD_IF_LCD_CONF_SPI_LCD_FORMAT | LCD_IF_LCD_CONF_DPI_LCD_FORMAT |
+               LCD_IF_LCD_CONF_ENDIAN,
+               MAKE_REG_VAL(spi_fmt, LCD_IF_LCD_CONF_SPI_LCD_FORMAT_Msk,
+                            LCD_IF_LCD_CONF_SPI_LCD_FORMAT_Pos) |
+               MAKE_REG_VAL(dpi_fmt, LCD_IF_LCD_CONF_DPI_LCD_FORMAT_Msk,
+                            LCD_IF_LCD_CONF_DPI_LCD_FORMAT_Pos) |
+               MAKE_REG_VAL(lcd_fmt, LCD_IF_LCD_CONF_LCD_FORMAT_Msk,
+                            LCD_IF_LCD_CONF_LCD_FORMAT_Pos) |
+               (endian ? LCD_IF_LCD_CONF_ENDIAN : 0UL));
 }
 
 /**
@@ -830,7 +864,7 @@ static inline void ll_lcdc_set_output_format(LCD_IF_TypeDef *lcd, uint32_t spi_f
  */
 static inline void ll_lcdc_direct_intf_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->LCD_CONF, LCD_IF_LCD_CONF_DIRECT_INTF_EN);
+    SET_BIT(lcd->LCD_CONF, LCD_IF_LCD_CONF_DIRECT_INTF_EN);
 }
 
 /**
@@ -839,7 +873,7 @@ static inline void ll_lcdc_direct_intf_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_direct_intf_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->LCD_CONF, LCD_IF_LCD_CONF_DIRECT_INTF_EN);
+    CLEAR_BIT(lcd->LCD_CONF, LCD_IF_LCD_CONF_DIRECT_INTF_EN);
 }
 
 /**
@@ -849,8 +883,8 @@ static inline void ll_lcdc_direct_intf_disable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_set_control_delay(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_CTRL_DLY_SET,
-		   en ? LCD_IF_LCD_IF_CONF_CTRL_DLY_SET : 0UL);
+    MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_CTRL_DLY_SET,
+               en ? LCD_IF_LCD_IF_CONF_CTRL_DLY_SET : 0UL);
 }
 
 /**
@@ -860,8 +894,8 @@ static inline void ll_lcdc_set_control_delay(LCD_IF_TypeDef *lcd, uint32_t en)
  */
 static inline void ll_lcdc_set_data_delay(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_DO_DLY_SET,
-		   en ? LCD_IF_LCD_IF_CONF_DO_DLY_SET : 0UL);
+    MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_DO_DLY_SET,
+               en ? LCD_IF_LCD_IF_CONF_DO_DLY_SET : 0UL);
 }
 
 /**
@@ -871,8 +905,8 @@ static inline void ll_lcdc_set_data_delay(LCD_IF_TypeDef *lcd, uint32_t en)
  */
 static inline void ll_lcdc_set_lcd_reset_pin(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_LCD_RSTB,
-		   en ? 0UL : LCD_IF_LCD_IF_CONF_LCD_RSTB);
+    MODIFY_REG(lcd->LCD_IF_CONF, LCD_IF_LCD_IF_CONF_LCD_RSTB,
+               en ? 0UL : LCD_IF_LCD_IF_CONF_LCD_RSTB);
 }
 
 /**
@@ -885,18 +919,18 @@ static inline void ll_lcdc_set_lcd_reset_pin(LCD_IF_TypeDef *lcd, uint32_t en)
  * @param[in] cs0_pol LCD0 CS polarity.
  */
 static inline void ll_lcdc_set_signal_polarity(LCD_IF_TypeDef *lcd, uint32_t rd_pol,
-						       uint32_t wr_pol, uint32_t rs_pol,
-						       uint32_t cs1_pol, uint32_t cs0_pol)
+        uint32_t wr_pol, uint32_t rs_pol,
+        uint32_t cs1_pol, uint32_t cs0_pol)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF,
-		   LCD_IF_LCD_IF_CONF_RD_POL | LCD_IF_LCD_IF_CONF_WR_POL |
-			   LCD_IF_LCD_IF_CONF_RS_POL | LCD_IF_LCD_IF_CONF_CS1_POL |
-			   LCD_IF_LCD_IF_CONF_CS0_POL,
-		   (rd_pol ? LCD_IF_LCD_IF_CONF_RD_POL : 0UL) |
-		   (wr_pol ? LCD_IF_LCD_IF_CONF_WR_POL : 0UL) |
-		   (rs_pol ? LCD_IF_LCD_IF_CONF_RS_POL : 0UL) |
-		   (cs1_pol ? LCD_IF_LCD_IF_CONF_CS1_POL : 0UL) |
-		   (cs0_pol ? LCD_IF_LCD_IF_CONF_CS0_POL : 0UL));
+    MODIFY_REG(lcd->LCD_IF_CONF,
+               LCD_IF_LCD_IF_CONF_RD_POL | LCD_IF_LCD_IF_CONF_WR_POL |
+               LCD_IF_LCD_IF_CONF_RS_POL | LCD_IF_LCD_IF_CONF_CS1_POL |
+               LCD_IF_LCD_IF_CONF_CS0_POL,
+               (rd_pol ? LCD_IF_LCD_IF_CONF_RD_POL : 0UL) |
+               (wr_pol ? LCD_IF_LCD_IF_CONF_WR_POL : 0UL) |
+               (rs_pol ? LCD_IF_LCD_IF_CONF_RS_POL : 0UL) |
+               (cs1_pol ? LCD_IF_LCD_IF_CONF_CS1_POL : 0UL) |
+               (cs0_pol ? LCD_IF_LCD_IF_CONF_CS0_POL : 0UL));
 }
 
 /**
@@ -908,13 +942,15 @@ static inline void ll_lcdc_set_signal_polarity(LCD_IF_TypeDef *lcd, uint32_t rd_
  * @param[in] pwh Inactive cycles of LCD_WR/LCD_RD, 0 to 63.
  */
 static inline void ll_lcdc_set_bus_timing(LCD_IF_TypeDef *lcd, uint32_t tas, uint32_t tah,
-					  uint32_t pwl, uint32_t pwh)
+        uint32_t pwl, uint32_t pwh)
 {
-	WRITE_REG(lcd->LCD_IF_CONF,
-		  MAKE_REG_VAL(tas, LCD_IF_LCD_IF_CONF_TAS_Msk, LCD_IF_LCD_IF_CONF_TAS_Pos) |
-		  MAKE_REG_VAL(tah, LCD_IF_LCD_IF_CONF_TAH_Msk, LCD_IF_LCD_IF_CONF_TAH_Pos) |
-		  MAKE_REG_VAL(pwl, LCD_IF_LCD_IF_CONF_PWL_Msk, LCD_IF_LCD_IF_CONF_PWL_Pos) |
-		  MAKE_REG_VAL(pwh, LCD_IF_LCD_IF_CONF_PWH_Msk, LCD_IF_LCD_IF_CONF_PWH_Pos));
+    MODIFY_REG(lcd->LCD_IF_CONF,
+               LCD_IF_LCD_IF_CONF_TAS | LCD_IF_LCD_IF_CONF_TAH |
+               LCD_IF_LCD_IF_CONF_PWL | LCD_IF_LCD_IF_CONF_PWH,
+               MAKE_REG_VAL(tas, LCD_IF_LCD_IF_CONF_TAS_Msk, LCD_IF_LCD_IF_CONF_TAS_Pos) |
+               MAKE_REG_VAL(tah, LCD_IF_LCD_IF_CONF_TAH_Msk, LCD_IF_LCD_IF_CONF_TAH_Pos) |
+               MAKE_REG_VAL(pwl, LCD_IF_LCD_IF_CONF_PWL_Msk, LCD_IF_LCD_IF_CONF_PWL_Pos) |
+               MAKE_REG_VAL(pwh, LCD_IF_LCD_IF_CONF_PWH_Msk, LCD_IF_LCD_IF_CONF_PWH_Pos));
 }
 
 /**
@@ -925,10 +961,10 @@ static inline void ll_lcdc_set_bus_timing(LCD_IF_TypeDef *lcd, uint32_t tas, uin
  */
 static inline void ll_lcdc_set_bus_pwl_pwh(LCD_IF_TypeDef *lcd, uint32_t pwl, uint32_t pwh)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF,
-		   LCD_IF_LCD_IF_CONF_PWL | LCD_IF_LCD_IF_CONF_PWH,
-		   MAKE_REG_VAL(pwl, LCD_IF_LCD_IF_CONF_PWL_Msk, LCD_IF_LCD_IF_CONF_PWL_Pos) |
-		   MAKE_REG_VAL(pwh, LCD_IF_LCD_IF_CONF_PWH_Msk, LCD_IF_LCD_IF_CONF_PWH_Pos));
+    MODIFY_REG(lcd->LCD_IF_CONF,
+               LCD_IF_LCD_IF_CONF_PWL | LCD_IF_LCD_IF_CONF_PWH,
+               MAKE_REG_VAL(pwl, LCD_IF_LCD_IF_CONF_PWL_Msk, LCD_IF_LCD_IF_CONF_PWL_Pos) |
+               MAKE_REG_VAL(pwh, LCD_IF_LCD_IF_CONF_PWH_Msk, LCD_IF_LCD_IF_CONF_PWH_Pos));
 }
 
 /**
@@ -939,10 +975,10 @@ static inline void ll_lcdc_set_bus_pwl_pwh(LCD_IF_TypeDef *lcd, uint32_t pwl, ui
  */
 static inline void ll_lcdc_set_bus_tas_tah(LCD_IF_TypeDef *lcd, uint32_t tas, uint32_t tah)
 {
-	MODIFY_REG(lcd->LCD_IF_CONF,
-		   LCD_IF_LCD_IF_CONF_TAS | LCD_IF_LCD_IF_CONF_TAH,
-		   MAKE_REG_VAL(tas, LCD_IF_LCD_IF_CONF_TAS_Msk, LCD_IF_LCD_IF_CONF_TAS_Pos) |
-		   MAKE_REG_VAL(tah, LCD_IF_LCD_IF_CONF_TAH_Msk, LCD_IF_LCD_IF_CONF_TAH_Pos));
+    MODIFY_REG(lcd->LCD_IF_CONF,
+               LCD_IF_LCD_IF_CONF_TAS | LCD_IF_LCD_IF_CONF_TAH,
+               MAKE_REG_VAL(tas, LCD_IF_LCD_IF_CONF_TAS_Msk, LCD_IF_LCD_IF_CONF_TAS_Pos) |
+               MAKE_REG_VAL(tah, LCD_IF_LCD_IF_CONF_TAH_Msk, LCD_IF_LCD_IF_CONF_TAH_Pos));
 }
 
 /*==============================================================================
@@ -956,7 +992,7 @@ static inline void ll_lcdc_set_bus_tas_tah(LCD_IF_TypeDef *lcd, uint32_t tas, ui
  */
 static inline void ll_lcdc_set_mem_addr(LCD_IF_TypeDef *lcd, uint32_t addr)
 {
-	WRITE_REG(lcd->LCD_MEM, addr);
+    WRITE_REG(lcd->LCD_MEM, addr);
 }
 
 /*==============================================================================
@@ -970,7 +1006,7 @@ static inline void ll_lcdc_set_mem_addr(LCD_IF_TypeDef *lcd, uint32_t addr)
  */
 static inline void ll_lcdc_set_mem_line_offset(LCD_IF_TypeDef *lcd, uint16_t offset)
 {
-	WRITE_REG(lcd->LCD_O_WIDTH, offset);
+    WRITE_REG(lcd->LCD_O_WIDTH, offset);
 }
 
 /**
@@ -980,7 +1016,7 @@ static inline void ll_lcdc_set_mem_line_offset(LCD_IF_TypeDef *lcd, uint16_t off
  */
 static inline uint32_t ll_lcdc_is_single_busy(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->LCD_SINGLE, LCD_IF_LCD_SINGLE_LCD_BUSY) != 0UL;
+    return READ_BIT(lcd->LCD_SINGLE, LCD_IF_LCD_SINGLE_LCD_BUSY) != 0UL;
 }
 
 /**
@@ -990,9 +1026,9 @@ static inline uint32_t ll_lcdc_is_single_busy(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_single_trigger(LCD_IF_TypeDef *lcd, uint32_t val)
 {
-	WRITE_REG(lcd->LCD_SINGLE,
-		  val & (LCD_IF_LCD_SINGLE_RD_TRIG | LCD_IF_LCD_SINGLE_WR_TRIG |
-			  LCD_IF_LCD_SINGLE_TYPE));
+    WRITE_REG(lcd->LCD_SINGLE,
+              val & (LCD_IF_LCD_SINGLE_RD_TRIG | LCD_IF_LCD_SINGLE_WR_TRIG |
+                     LCD_IF_LCD_SINGLE_TYPE));
 }
 
 /*==============================================================================
@@ -1006,7 +1042,7 @@ static inline void ll_lcdc_single_trigger(LCD_IF_TypeDef *lcd, uint32_t val)
  */
 static inline void ll_lcdc_write_data(LCD_IF_TypeDef *lcd, uint32_t data)
 {
-	WRITE_REG(lcd->LCD_WR, data);
+    WRITE_REG(lcd->LCD_WR, data);
 }
 
 /**
@@ -1016,7 +1052,7 @@ static inline void ll_lcdc_write_data(LCD_IF_TypeDef *lcd, uint32_t data)
  */
 static inline uint32_t ll_lcdc_read_data(LCD_IF_TypeDef *lcd)
 {
-	return READ_REG(lcd->LCD_RD);
+    return READ_REG(lcd->LCD_RD);
 }
 
 /**
@@ -1026,21 +1062,21 @@ static inline uint32_t ll_lcdc_read_data(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_spi_set_bus_config(LCD_IF_TypeDef *lcd, uint32_t conf)
 {
-	const uint32_t valid_mask = LCD_IF_SPI_IF_CONF_SPI_CLK_INIT |
-					LCD_IF_SPI_IF_CONF_SPI_CLK_POL |
-					LCD_IF_SPI_IF_CONF_SPI_CS_POL |
-					LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS |
-					LCD_IF_SPI_IF_CONF_SPI_CS_NO_IDLE |
-					LCD_IF_SPI_IF_CONF_SPI_CLK_AUTO_DIS |
-					LCD_IF_SPI_IF_CONF_SPI_RD_MODE |
-					LCD_IF_SPI_IF_CONF_WR_LEN |
-					LCD_IF_SPI_IF_CONF_RD_LEN |
-					LCD_IF_SPI_IF_CONF_LINE |
-					LCD_IF_SPI_IF_CONF_DUMMY_CYCLE |
-					LCD_IF_SPI_IF_CONF_CLK_DIV |
-					LCD_IF_SPI_IF_CONF_WAIT_CYCLE;
+    const uint32_t valid_mask = LCD_IF_SPI_IF_CONF_SPI_CLK_INIT |
+                                LCD_IF_SPI_IF_CONF_SPI_CLK_POL |
+                                LCD_IF_SPI_IF_CONF_SPI_CS_POL |
+                                LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS |
+                                LCD_IF_SPI_IF_CONF_SPI_CS_NO_IDLE |
+                                LCD_IF_SPI_IF_CONF_SPI_CLK_AUTO_DIS |
+                                LCD_IF_SPI_IF_CONF_SPI_RD_MODE |
+                                LCD_IF_SPI_IF_CONF_WR_LEN |
+                                LCD_IF_SPI_IF_CONF_RD_LEN |
+                                LCD_IF_SPI_IF_CONF_LINE |
+                                LCD_IF_SPI_IF_CONF_DUMMY_CYCLE |
+                                LCD_IF_SPI_IF_CONF_CLK_DIV |
+                                LCD_IF_SPI_IF_CONF_WAIT_CYCLE;
 
-	WRITE_REG(lcd->SPI_IF_CONF, conf & valid_mask);
+    WRITE_REG(lcd->SPI_IF_CONF, conf & valid_mask);
 }
 
 /*==============================================================================
@@ -1054,7 +1090,7 @@ static inline void ll_lcdc_spi_set_bus_config(LCD_IF_TypeDef *lcd, uint32_t conf
  */
 static inline void ll_lcdc_spi_cs_auto_dis_set(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS);
+    SET_BIT(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS);
 }
 
 /**
@@ -1064,7 +1100,7 @@ static inline void ll_lcdc_spi_cs_auto_dis_set(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_spi_cs_auto_dis_clear(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS);
+    CLEAR_BIT(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_CS_AUTO_DIS);
 }
 
 /**
@@ -1075,11 +1111,11 @@ static inline void ll_lcdc_spi_cs_auto_dis_clear(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_spi_set_data_len(LCD_IF_TypeDef *lcd, uint32_t rd_len, uint32_t wr_len)
 {
-	MODIFY_REG(lcd->SPI_IF_CONF,
-		   LCD_IF_SPI_IF_CONF_RD_LEN | LCD_IF_SPI_IF_CONF_WR_LEN |
-			   LCD_IF_SPI_IF_CONF_SPI_RD_MODE,
-		   MAKE_REG_VAL(rd_len, LCD_IF_SPI_IF_CONF_RD_LEN_Msk, LCD_IF_SPI_IF_CONF_RD_LEN_Pos) |
-		   MAKE_REG_VAL(wr_len, LCD_IF_SPI_IF_CONF_WR_LEN_Msk, LCD_IF_SPI_IF_CONF_WR_LEN_Pos));
+    MODIFY_REG(lcd->SPI_IF_CONF,
+               LCD_IF_SPI_IF_CONF_RD_LEN | LCD_IF_SPI_IF_CONF_WR_LEN |
+               LCD_IF_SPI_IF_CONF_SPI_RD_MODE,
+               MAKE_REG_VAL(rd_len, LCD_IF_SPI_IF_CONF_RD_LEN_Msk, LCD_IF_SPI_IF_CONF_RD_LEN_Pos) |
+               MAKE_REG_VAL(wr_len, LCD_IF_SPI_IF_CONF_WR_LEN_Msk, LCD_IF_SPI_IF_CONF_WR_LEN_Pos));
 }
 
 /**
@@ -1089,8 +1125,8 @@ static inline void ll_lcdc_spi_set_data_len(LCD_IF_TypeDef *lcd, uint32_t rd_len
  */
 static inline void ll_lcdc_spi_set_read_mode(LCD_IF_TypeDef *lcd, uint32_t en)
 {
-	MODIFY_REG(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_RD_MODE,
-		   en ? LCD_IF_SPI_IF_CONF_SPI_RD_MODE : 0UL);
+    MODIFY_REG(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_SPI_RD_MODE,
+               en ? LCD_IF_SPI_IF_CONF_SPI_RD_MODE : 0UL);
 }
 
 /**
@@ -1100,8 +1136,8 @@ static inline void ll_lcdc_spi_set_read_mode(LCD_IF_TypeDef *lcd, uint32_t en)
  */
 static inline void ll_lcdc_spi_set_clock_div(LCD_IF_TypeDef *lcd, uint32_t div)
 {
-	MODIFY_REG(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_CLK_DIV,
-		   MAKE_REG_VAL(div, LCD_IF_SPI_IF_CONF_CLK_DIV_Msk, LCD_IF_SPI_IF_CONF_CLK_DIV_Pos));
+    MODIFY_REG(lcd->SPI_IF_CONF, LCD_IF_SPI_IF_CONF_CLK_DIV,
+               MAKE_REG_VAL(div, LCD_IF_SPI_IF_CONF_CLK_DIV_Msk, LCD_IF_SPI_IF_CONF_CLK_DIV_Pos));
 }
 
 /*==============================================================================
@@ -1110,12 +1146,12 @@ static inline void ll_lcdc_spi_set_clock_div(LCD_IF_TypeDef *lcd, uint32_t div)
 
 static inline void ll_lcdc_te_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->TE_CONF, LL_LCDC_TE_CONF_EN);
+    SET_BIT(lcd->TE_CONF, LL_LCDC_TE_CONF_EN);
 }
 
 static inline void ll_lcdc_te_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->TE_CONF, LL_LCDC_TE_CONF_EN);
+    CLEAR_BIT(lcd->TE_CONF, LL_LCDC_TE_CONF_EN);
 }
 
 /**
@@ -1125,8 +1161,8 @@ static inline void ll_lcdc_te_disable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_te_set_fmark_source(LCD_IF_TypeDef *lcd, uint32_t source)
 {
-	MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_FMARK_SOURCE,
-		   source ? LCD_IF_TE_CONF_FMARK_SOURCE : 0UL);
+    MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_FMARK_SOURCE,
+               source ? LCD_IF_TE_CONF_FMARK_SOURCE : 0UL);
 }
 
 /**
@@ -1136,8 +1172,8 @@ static inline void ll_lcdc_te_set_fmark_source(LCD_IF_TypeDef *lcd, uint32_t sou
  */
 static inline void ll_lcdc_te_set_fmark_mode(LCD_IF_TypeDef *lcd, uint32_t mode)
 {
-	MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_FMARK_MODE,
-		   mode ? LCD_IF_TE_CONF_FMARK_MODE : 0UL);
+    MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_FMARK_MODE,
+               mode ? LCD_IF_TE_CONF_FMARK_MODE : 0UL);
 }
 
 /**
@@ -1147,9 +1183,9 @@ static inline void ll_lcdc_te_set_fmark_mode(LCD_IF_TypeDef *lcd, uint32_t mode)
  */
 static inline void ll_lcdc_te_set_vsync_det_cnt(LCD_IF_TypeDef *lcd, uint32_t cnt)
 {
-	MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_VSYNC_DET_CNT,
-		   MAKE_REG_VAL(cnt, LCD_IF_TE_CONF_VSYNC_DET_CNT_Msk,
-				LCD_IF_TE_CONF_VSYNC_DET_CNT_Pos));
+    MODIFY_REG(lcd->TE_CONF, LCD_IF_TE_CONF_VSYNC_DET_CNT,
+               MAKE_REG_VAL(cnt, LCD_IF_TE_CONF_VSYNC_DET_CNT_Msk,
+                            LCD_IF_TE_CONF_VSYNC_DET_CNT_Pos));
 }
 
 /**
@@ -1160,12 +1196,13 @@ static inline void ll_lcdc_te_set_vsync_det_cnt(LCD_IF_TypeDef *lcd, uint32_t cn
  * @param[in] mode     TE mode.
  */
 static inline void ll_lcdc_te_set_config(LCD_IF_TypeDef *lcd, uint32_t enable,
-					 uint32_t polarity, uint32_t mode)
+        uint32_t polarity, uint32_t mode)
 {
-	WRITE_REG(lcd->TE_CONF,
-		  MAKE_REG_VAL(enable, LCD_IF_TE_CONF_ENABLE_Msk, LCD_IF_TE_CONF_ENABLE_Pos) |
-		  MAKE_REG_VAL(polarity, LCD_IF_TE_CONF_FMARK_POL_Msk, LCD_IF_TE_CONF_FMARK_POL_Pos) |
-		  MAKE_REG_VAL(mode, LCD_IF_TE_CONF_MODE_Msk, LCD_IF_TE_CONF_MODE_Pos));
+    MODIFY_REG(lcd->TE_CONF,
+               LCD_IF_TE_CONF_ENABLE | LCD_IF_TE_CONF_FMARK_POL | LCD_IF_TE_CONF_MODE,
+               MAKE_REG_VAL(enable, LCD_IF_TE_CONF_ENABLE_Msk, LCD_IF_TE_CONF_ENABLE_Pos) |
+               MAKE_REG_VAL(polarity, LCD_IF_TE_CONF_FMARK_POL_Msk, LCD_IF_TE_CONF_FMARK_POL_Pos) |
+               MAKE_REG_VAL(mode, LCD_IF_TE_CONF_MODE_Msk, LCD_IF_TE_CONF_MODE_Pos));
 }
 
 /**
@@ -1175,7 +1212,7 @@ static inline void ll_lcdc_te_set_config(LCD_IF_TypeDef *lcd, uint32_t enable,
  */
 static inline void ll_lcdc_te_set_delay(LCD_IF_TypeDef *lcd, uint32_t dly)
 {
-	WRITE_REG(lcd->TE_CONF2, dly);
+    WRITE_REG(lcd->TE_CONF2, dly);
 }
 
 /*==============================================================================
@@ -1193,17 +1230,17 @@ static inline void ll_lcdc_te_set_delay(LCD_IF_TypeDef *lcd, uint32_t dly)
  * @param[in] vfp VFP, vertical front porch.
  */
 static inline void ll_lcdc_dpi_set_timing(LCD_IF_TypeDef *lcd, uint16_t hsync, uint16_t hbp,
-					  uint16_t hfp, uint16_t vsync, uint16_t vbp, uint16_t vfp)
+        uint16_t hfp, uint16_t vsync, uint16_t vbp, uint16_t vfp)
 {
-	WRITE_REG(lcd->DPI_IF_CONF1,
-		  MAKE_REG_VAL(vsync, LCD_IF_DPI_IF_CONF1_VSH_Msk, LCD_IF_DPI_IF_CONF1_VSH_Pos) |
-		  MAKE_REG_VAL(hsync, LCD_IF_DPI_IF_CONF1_HSW_Msk, LCD_IF_DPI_IF_CONF1_HSW_Pos));
-	WRITE_REG(lcd->DPI_IF_CONF2,
-		  MAKE_REG_VAL(vbp, LCD_IF_DPI_IF_CONF2_VBP_Msk, LCD_IF_DPI_IF_CONF2_VBP_Pos) |
-		  MAKE_REG_VAL(hbp, LCD_IF_DPI_IF_CONF2_HBP_Msk, LCD_IF_DPI_IF_CONF2_HBP_Pos));
-	WRITE_REG(lcd->DPI_IF_CONF3,
-		  MAKE_REG_VAL(vfp, LCD_IF_DPI_IF_CONF3_VFP_Msk, LCD_IF_DPI_IF_CONF3_VFP_Pos) |
-		  MAKE_REG_VAL(hfp, LCD_IF_DPI_IF_CONF3_HFP_Msk, LCD_IF_DPI_IF_CONF3_HFP_Pos));
+    WRITE_REG(lcd->DPI_IF_CONF1,
+              MAKE_REG_VAL(vsync, LCD_IF_DPI_IF_CONF1_VSH_Msk, LCD_IF_DPI_IF_CONF1_VSH_Pos) |
+              MAKE_REG_VAL(hsync, LCD_IF_DPI_IF_CONF1_HSW_Msk, LCD_IF_DPI_IF_CONF1_HSW_Pos));
+    WRITE_REG(lcd->DPI_IF_CONF2,
+              MAKE_REG_VAL(vbp, LCD_IF_DPI_IF_CONF2_VBP_Msk, LCD_IF_DPI_IF_CONF2_VBP_Pos) |
+              MAKE_REG_VAL(hbp, LCD_IF_DPI_IF_CONF2_HBP_Msk, LCD_IF_DPI_IF_CONF2_HBP_Pos));
+    WRITE_REG(lcd->DPI_IF_CONF3,
+              MAKE_REG_VAL(vfp, LCD_IF_DPI_IF_CONF3_VFP_Msk, LCD_IF_DPI_IF_CONF3_VFP_Pos) |
+              MAKE_REG_VAL(hfp, LCD_IF_DPI_IF_CONF3_HFP_Msk, LCD_IF_DPI_IF_CONF3_HFP_Pos));
 }
 
 /**
@@ -1213,11 +1250,11 @@ static inline void ll_lcdc_dpi_set_timing(LCD_IF_TypeDef *lcd, uint16_t hsync, u
  * @param[in] active_h VAH, vertical active height.
  */
 static inline void ll_lcdc_dpi_set_active_size(LCD_IF_TypeDef *lcd, uint16_t active_w,
-					       uint16_t active_h)
+        uint16_t active_h)
 {
-	WRITE_REG(lcd->DPI_IF_CONF4,
-		  MAKE_REG_VAL(active_h, LCD_IF_DPI_IF_CONF4_VAH_Msk, LCD_IF_DPI_IF_CONF4_VAH_Pos) |
-		  MAKE_REG_VAL(active_w, LCD_IF_DPI_IF_CONF4_HAW_Msk, LCD_IF_DPI_IF_CONF4_HAW_Pos));
+    WRITE_REG(lcd->DPI_IF_CONF4,
+              MAKE_REG_VAL(active_h, LCD_IF_DPI_IF_CONF4_VAH_Msk, LCD_IF_DPI_IF_CONF4_VAH_Pos) |
+              MAKE_REG_VAL(active_w, LCD_IF_DPI_IF_CONF4_HAW_Msk, LCD_IF_DPI_IF_CONF4_HAW_Pos));
 }
 
 /**
@@ -1232,24 +1269,24 @@ static inline void ll_lcdc_dpi_set_active_size(LCD_IF_TypeDef *lcd, uint16_t act
  * @param[in] clk_force  Force DPI clock on (1 bit).
  */
 static inline void ll_lcdc_dpi_set_clock_polarity(LCD_IF_TypeDef *lcd, uint32_t pclk_div,
-						  uint32_t pclk_pol, uint32_t de_pol,
-						  uint32_t vs_pol, uint32_t hs_pol,
-						  uint32_t int_line, uint32_t clk_force)
+        uint32_t pclk_pol, uint32_t de_pol,
+        uint32_t vs_pol, uint32_t hs_pol,
+        uint32_t int_line, uint32_t clk_force)
 {
-	MODIFY_REG(lcd->DPI_IF_CONF5,
-		   LCD_IF_DPI_IF_CONF5_PCLK_DIV | LCD_IF_DPI_IF_CONF5_PCLKPOL |
-			   LCD_IF_DPI_IF_CONF5_DEPOL | LCD_IF_DPI_IF_CONF5_VSPOL |
-			   LCD_IF_DPI_IF_CONF5_HSPOL | LCD_IF_DPI_IF_CONF5_INT_LINE_NUM |
-			   LCD_IF_DPI_IF_CONF5_CLK_FORCE_ON,
-		   MAKE_REG_VAL(pclk_div, LCD_IF_DPI_IF_CONF5_PCLK_DIV_Msk,
-				LCD_IF_DPI_IF_CONF5_PCLK_DIV_Pos) |
-		   (pclk_pol ? LCD_IF_DPI_IF_CONF5_PCLKPOL : 0UL) |
-		   (de_pol ? LCD_IF_DPI_IF_CONF5_DEPOL : 0UL) |
-		   (vs_pol ? LCD_IF_DPI_IF_CONF5_VSPOL : 0UL) |
-		   (hs_pol ? LCD_IF_DPI_IF_CONF5_HSPOL : 0UL) |
-		   MAKE_REG_VAL(int_line, LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Msk,
-				LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Pos) |
-		   (clk_force ? LCD_IF_DPI_IF_CONF5_CLK_FORCE_ON : 0UL));
+    MODIFY_REG(lcd->DPI_IF_CONF5,
+               LCD_IF_DPI_IF_CONF5_PCLK_DIV | LCD_IF_DPI_IF_CONF5_PCLKPOL |
+               LCD_IF_DPI_IF_CONF5_DEPOL | LCD_IF_DPI_IF_CONF5_VSPOL |
+               LCD_IF_DPI_IF_CONF5_HSPOL | LCD_IF_DPI_IF_CONF5_INT_LINE_NUM |
+               LCD_IF_DPI_IF_CONF5_CLK_FORCE_ON,
+               MAKE_REG_VAL(pclk_div, LCD_IF_DPI_IF_CONF5_PCLK_DIV_Msk,
+                            LCD_IF_DPI_IF_CONF5_PCLK_DIV_Pos) |
+               (pclk_pol ? LCD_IF_DPI_IF_CONF5_PCLKPOL : 0UL) |
+               (de_pol ? LCD_IF_DPI_IF_CONF5_DEPOL : 0UL) |
+               (vs_pol ? LCD_IF_DPI_IF_CONF5_VSPOL : 0UL) |
+               (hs_pol ? LCD_IF_DPI_IF_CONF5_HSPOL : 0UL) |
+               MAKE_REG_VAL(int_line, LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Msk,
+                            LCD_IF_DPI_IF_CONF5_INT_LINE_NUM_Pos) |
+               (clk_force ? LCD_IF_DPI_IF_CONF5_CLK_FORCE_ON : 0UL));
 }
 
 /**
@@ -1259,8 +1296,8 @@ static inline void ll_lcdc_dpi_set_clock_polarity(LCD_IF_TypeDef *lcd, uint32_t 
  */
 static inline void ll_lcdc_dpi_set_update_cfg(LCD_IF_TypeDef *lcd, uint32_t uc)
 {
-	MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_UC,
-		   uc ? LCD_IF_DPI_CTRL_DPI_UC : 0UL);
+    MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_UC,
+               uc ? LCD_IF_DPI_CTRL_DPI_UC : 0UL);
 }
 
 /**
@@ -1270,8 +1307,8 @@ static inline void ll_lcdc_dpi_set_update_cfg(LCD_IF_TypeDef *lcd, uint32_t uc)
  */
 static inline void ll_lcdc_dpi_set_shutdown(LCD_IF_TypeDef *lcd, uint32_t sd)
 {
-	MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_SD,
-		   sd ? LCD_IF_DPI_CTRL_DPI_SD : 0UL);
+    MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_SD,
+               sd ? LCD_IF_DPI_CTRL_DPI_SD : 0UL);
 }
 
 /**
@@ -1281,8 +1318,8 @@ static inline void ll_lcdc_dpi_set_shutdown(LCD_IF_TypeDef *lcd, uint32_t sd)
  */
 static inline void ll_lcdc_dpi_set_color_mode(LCD_IF_TypeDef *lcd, uint32_t cm)
 {
-	MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_CM,
-		   cm ? LCD_IF_DPI_CTRL_DPI_CM : 0UL);
+    MODIFY_REG(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_CM,
+               cm ? LCD_IF_DPI_CTRL_DPI_CM : 0UL);
 }
 
 /*==============================================================================
@@ -1295,7 +1332,7 @@ static inline void ll_lcdc_dpi_set_color_mode(LCD_IF_TypeDef *lcd, uint32_t cm)
  */
 static inline void ll_lcdc_dpi_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_EN);
+    SET_BIT(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_EN);
 }
 
 /**
@@ -1304,7 +1341,7 @@ static inline void ll_lcdc_dpi_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_dpi_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_EN);
+    CLEAR_BIT(lcd->DPI_CTRL, LCD_IF_DPI_CTRL_DPI_EN);
 }
 
 /**
@@ -1314,7 +1351,7 @@ static inline void ll_lcdc_dpi_disable(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_dpi_get_vpos(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_VPOS);
+    return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_VPOS);
 }
 
 /**
@@ -1324,7 +1361,7 @@ static inline uint32_t ll_lcdc_dpi_get_vpos(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_dpi_get_hstat(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_HSTAT);
+    return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_HSTAT);
 }
 
 /**
@@ -1334,7 +1371,7 @@ static inline uint32_t ll_lcdc_dpi_get_hstat(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_dpi_get_hpos(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_HPOS);
+    return GET_REG_VAL2(lcd->DPI_STAT, LCD_IF_DPI_STAT_HPOS);
 }
 
 /*==============================================================================
@@ -1348,14 +1385,14 @@ static inline uint32_t ll_lcdc_dpi_get_hpos(LCD_IF_TypeDef *lcd)
  * @param[in] wr_len  Single write bit length (5 bits).
  */
 static inline void ll_lcdc_jdi_ser_set_conf1(LCD_IF_TypeDef *lcd, uint32_t clk_div,
-					     uint32_t wr_len)
+        uint32_t wr_len)
 {
-	MODIFY_REG(lcd->JDI_SER_CONF1,
-		   LCD_IF_JDI_SER_CONF1_CLK_DIV | LCD_IF_JDI_SER_CONF1_WR_LEN,
-		   MAKE_REG_VAL(clk_div, LCD_IF_JDI_SER_CONF1_CLK_DIV_Msk,
-				LCD_IF_JDI_SER_CONF1_CLK_DIV_Pos) |
-		   MAKE_REG_VAL(wr_len, LCD_IF_JDI_SER_CONF1_WR_LEN_Msk,
-				LCD_IF_JDI_SER_CONF1_WR_LEN_Pos));
+    MODIFY_REG(lcd->JDI_SER_CONF1,
+               LCD_IF_JDI_SER_CONF1_CLK_DIV | LCD_IF_JDI_SER_CONF1_WR_LEN,
+               MAKE_REG_VAL(clk_div, LCD_IF_JDI_SER_CONF1_CLK_DIV_Msk,
+                            LCD_IF_JDI_SER_CONF1_CLK_DIV_Pos) |
+               MAKE_REG_VAL(wr_len, LCD_IF_JDI_SER_CONF1_WR_LEN_Msk,
+                            LCD_IF_JDI_SER_CONF1_WR_LEN_Pos));
 }
 
 /**
@@ -1365,13 +1402,13 @@ static inline void ll_lcdc_jdi_ser_set_conf1(LCD_IF_TypeDef *lcd, uint32_t clk_d
  * @param[in] wr_cmd    Data transfer write command (16 bits).
  */
 static inline void ll_lcdc_jdi_ser_set_conf2(LCD_IF_TypeDef *lcd, uint32_t init_line,
-					     uint32_t wr_cmd)
+        uint32_t wr_cmd)
 {
-	WRITE_REG(lcd->JDI_SER_CONF2,
-		  MAKE_REG_VAL(init_line, LCD_IF_JDI_SER_CONF2_INIT_LINE_CNT_Msk,
-			       LCD_IF_JDI_SER_CONF2_INIT_LINE_CNT_Pos) |
-		  MAKE_REG_VAL(wr_cmd, LCD_IF_JDI_SER_CONF2_WR_CMD_Msk,
-			       LCD_IF_JDI_SER_CONF2_WR_CMD_Pos));
+    WRITE_REG(lcd->JDI_SER_CONF2,
+              MAKE_REG_VAL(init_line, LCD_IF_JDI_SER_CONF2_INIT_LINE_CNT_Msk,
+                           LCD_IF_JDI_SER_CONF2_INIT_LINE_CNT_Pos) |
+              MAKE_REG_VAL(wr_cmd, LCD_IF_JDI_SER_CONF2_WR_CMD_Msk,
+                           LCD_IF_JDI_SER_CONF2_WR_CMD_Pos));
 }
 
 /**
@@ -1381,8 +1418,8 @@ static inline void ll_lcdc_jdi_ser_set_conf2(LCD_IF_TypeDef *lcd, uint32_t init_
  */
 static inline void ll_lcdc_jdi_ser_set_extcomin(LCD_IF_TypeDef *lcd, uint32_t extcomin)
 {
-	MODIFY_REG(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_EXTCOMIN,
-		   extcomin ? LCD_IF_JDI_SER_CTRL_EXTCOMIN : 0UL);
+    MODIFY_REG(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_EXTCOMIN,
+               extcomin ? LCD_IF_JDI_SER_CTRL_EXTCOMIN : 0UL);
 }
 
 /**
@@ -1391,7 +1428,7 @@ static inline void ll_lcdc_jdi_ser_set_extcomin(LCD_IF_TypeDef *lcd, uint32_t ex
  */
 static inline void ll_lcdc_jdi_ser_display_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_DISP);
+    SET_BIT(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_DISP);
 }
 
 /**
@@ -1400,7 +1437,7 @@ static inline void ll_lcdc_jdi_ser_display_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_jdi_ser_display_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_DISP);
+    CLEAR_BIT(lcd->JDI_SER_CTRL, LCD_IF_JDI_SER_CTRL_DISP);
 }
 
 /*==============================================================================
@@ -1415,13 +1452,13 @@ static inline void ll_lcdc_jdi_ser_display_disable(LCD_IF_TypeDef *lcd)
  * @param[in] max_col  Max column (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_max(LCD_IF_TypeDef *lcd, uint32_t max_line,
-					   uint32_t max_col)
+        uint32_t max_col)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF1,
-		  MAKE_REG_VAL(max_line, LCD_IF_JDI_PAR_CONF1_MAX_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF1_MAX_LINE_Pos) |
-		  MAKE_REG_VAL(max_col, LCD_IF_JDI_PAR_CONF1_MAX_COL_Msk,
-			       LCD_IF_JDI_PAR_CONF1_MAX_COL_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF1,
+              MAKE_REG_VAL(max_line, LCD_IF_JDI_PAR_CONF1_MAX_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF1_MAX_LINE_Pos) |
+              MAKE_REG_VAL(max_col, LCD_IF_JDI_PAR_CONF1_MAX_COL_Msk,
+                           LCD_IF_JDI_PAR_CONF1_MAX_COL_Pos));
 }
 
 /**
@@ -1431,13 +1468,13 @@ static inline void ll_lcdc_jdi_par_set_max(LCD_IF_TypeDef *lcd, uint32_t max_lin
  * @param[in] end_line End line (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_line_range(LCD_IF_TypeDef *lcd, uint32_t st_line,
-						  uint32_t end_line)
+        uint32_t end_line)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF2,
-		  MAKE_REG_VAL(st_line, LCD_IF_JDI_PAR_CONF2_ST_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF2_ST_LINE_Pos) |
-		  MAKE_REG_VAL(end_line, LCD_IF_JDI_PAR_CONF2_END_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF2_END_LINE_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF2,
+              MAKE_REG_VAL(st_line, LCD_IF_JDI_PAR_CONF2_ST_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF2_ST_LINE_Pos) |
+              MAKE_REG_VAL(end_line, LCD_IF_JDI_PAR_CONF2_END_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF2_END_LINE_Pos));
 }
 
 /**
@@ -1447,13 +1484,13 @@ static inline void ll_lcdc_jdi_par_set_line_range(LCD_IF_TypeDef *lcd, uint32_t 
  * @param[in] end_col End column (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_col_range(LCD_IF_TypeDef *lcd, uint32_t st_col,
-						 uint32_t end_col)
+        uint32_t end_col)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF3,
-		  MAKE_REG_VAL(st_col, LCD_IF_JDI_PAR_CONF3_ST_COL_Msk,
-			       LCD_IF_JDI_PAR_CONF3_ST_COL_Pos) |
-		  MAKE_REG_VAL(end_col, LCD_IF_JDI_PAR_CONF3_END_COL_Msk,
-			       LCD_IF_JDI_PAR_CONF3_END_COL_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF3,
+              MAKE_REG_VAL(st_col, LCD_IF_JDI_PAR_CONF3_ST_COL_Msk,
+                           LCD_IF_JDI_PAR_CONF3_ST_COL_Pos) |
+              MAKE_REG_VAL(end_col, LCD_IF_JDI_PAR_CONF3_END_COL_Msk,
+                           LCD_IF_JDI_PAR_CONF3_END_COL_Pos));
 }
 
 /**
@@ -1463,13 +1500,13 @@ static inline void ll_lcdc_jdi_par_set_col_range(LCD_IF_TypeDef *lcd, uint32_t s
  * @param[in] hst_width HST width (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_hck_hst(LCD_IF_TypeDef *lcd, uint32_t hck_width,
-					       uint32_t hst_width)
+        uint32_t hst_width)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF4,
-		  MAKE_REG_VAL(hck_width, LCD_IF_JDI_PAR_CONF4_HCK_WIDTH_Msk,
-			       LCD_IF_JDI_PAR_CONF4_HCK_WIDTH_Pos) |
-		  MAKE_REG_VAL(hst_width, LCD_IF_JDI_PAR_CONF4_HST_WIDTH_Msk,
-			       LCD_IF_JDI_PAR_CONF4_HST_WIDTH_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF4,
+              MAKE_REG_VAL(hck_width, LCD_IF_JDI_PAR_CONF4_HCK_WIDTH_Msk,
+                           LCD_IF_JDI_PAR_CONF4_HCK_WIDTH_Pos) |
+              MAKE_REG_VAL(hst_width, LCD_IF_JDI_PAR_CONF4_HST_WIDTH_Msk,
+                           LCD_IF_JDI_PAR_CONF4_HST_WIDTH_Pos));
 }
 
 /**
@@ -1479,13 +1516,13 @@ static inline void ll_lcdc_jdi_par_set_hck_hst(LCD_IF_TypeDef *lcd, uint32_t hck
  * @param[in] vst_width VST width (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_vck_vst(LCD_IF_TypeDef *lcd, uint32_t vck_width,
-					       uint32_t vst_width)
+        uint32_t vst_width)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF5,
-		  MAKE_REG_VAL(vck_width, LCD_IF_JDI_PAR_CONF5_VCK_WIDTH_Msk,
-			       LCD_IF_JDI_PAR_CONF5_VCK_WIDTH_Pos) |
-		  MAKE_REG_VAL(vst_width, LCD_IF_JDI_PAR_CONF5_VST_WIDTH_Msk,
-			       LCD_IF_JDI_PAR_CONF5_VST_WIDTH_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF5,
+              MAKE_REG_VAL(vck_width, LCD_IF_JDI_PAR_CONF5_VCK_WIDTH_Msk,
+                           LCD_IF_JDI_PAR_CONF5_VCK_WIDTH_Pos) |
+              MAKE_REG_VAL(vst_width, LCD_IF_JDI_PAR_CONF5_VST_WIDTH_Msk,
+                           LCD_IF_JDI_PAR_CONF5_VST_WIDTH_Pos));
 }
 
 /**
@@ -1495,13 +1532,13 @@ static inline void ll_lcdc_jdi_par_set_vck_vst(LCD_IF_TypeDef *lcd, uint32_t vck
  * @param[in] hst_dly HST delay (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_vck_hst_delay(LCD_IF_TypeDef *lcd, uint32_t vck_dly,
-						     uint32_t hst_dly)
+        uint32_t hst_dly)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF6,
-		  MAKE_REG_VAL(vck_dly, LCD_IF_JDI_PAR_CONF6_VCK_DLY_Msk,
-			       LCD_IF_JDI_PAR_CONF6_VCK_DLY_Pos) |
-		  MAKE_REG_VAL(hst_dly, LCD_IF_JDI_PAR_CONF6_HST_DLY_Msk,
-			       LCD_IF_JDI_PAR_CONF6_HST_DLY_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF6,
+              MAKE_REG_VAL(vck_dly, LCD_IF_JDI_PAR_CONF6_VCK_DLY_Msk,
+                           LCD_IF_JDI_PAR_CONF6_VCK_DLY_Pos) |
+              MAKE_REG_VAL(hst_dly, LCD_IF_JDI_PAR_CONF6_HST_DLY_Msk,
+                           LCD_IF_JDI_PAR_CONF6_HST_DLY_Pos));
 }
 
 /**
@@ -1511,8 +1548,8 @@ static inline void ll_lcdc_jdi_par_set_vck_hst_delay(LCD_IF_TypeDef *lcd, uint32
  */
 static inline void ll_lcdc_jdi_par_set_dp_mode(LCD_IF_TypeDef *lcd, uint32_t mode)
 {
-	MODIFY_REG(lcd->JDI_PAR_CONF7, LCD_IF_JDI_PAR_CONF7_DP_MODE,
-		   mode ? LCD_IF_JDI_PAR_CONF7_DP_MODE : 0UL);
+    MODIFY_REG(lcd->JDI_PAR_CONF7, LCD_IF_JDI_PAR_CONF7_DP_MODE,
+               mode ? LCD_IF_JDI_PAR_CONF7_DP_MODE : 0UL);
 }
 
 /**
@@ -1522,9 +1559,9 @@ static inline void ll_lcdc_jdi_par_set_dp_mode(LCD_IF_TypeDef *lcd, uint32_t mod
  */
 static inline void ll_lcdc_jdi_par_set_hck_delay(LCD_IF_TypeDef *lcd, uint32_t hck_dly)
 {
-	MODIFY_REG(lcd->JDI_PAR_CONF7, LCD_IF_JDI_PAR_CONF7_HCK_DLY,
-		   MAKE_REG_VAL(hck_dly, LCD_IF_JDI_PAR_CONF7_HCK_DLY_Msk,
-				LCD_IF_JDI_PAR_CONF7_HCK_DLY_Pos));
+    MODIFY_REG(lcd->JDI_PAR_CONF7, LCD_IF_JDI_PAR_CONF7_HCK_DLY,
+               MAKE_REG_VAL(hck_dly, LCD_IF_JDI_PAR_CONF7_HCK_DLY_Msk,
+                            LCD_IF_JDI_PAR_CONF7_HCK_DLY_Pos));
 }
 
 /**
@@ -1534,9 +1571,9 @@ static inline void ll_lcdc_jdi_par_set_hck_delay(LCD_IF_TypeDef *lcd, uint32_t h
  */
 static inline void ll_lcdc_jdi_par_set_int_line(LCD_IF_TypeDef *lcd, uint32_t line_no)
 {
-	MODIFY_REG(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM,
-		   MAKE_REG_VAL(line_no, LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM_Msk,
-				LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM_Pos));
+    MODIFY_REG(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM,
+               MAKE_REG_VAL(line_no, LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM_Msk,
+                            LCD_IF_JDI_PAR_CTRL_INT_LINE_NUM_Pos));
 }
 
 /**
@@ -1549,18 +1586,18 @@ static inline void ll_lcdc_jdi_par_set_int_line(LCD_IF_TypeDef *lcd, uint32_t li
  * @param[in] enb_pol  ENB polarity (1 bit).
  */
 static inline void ll_lcdc_jdi_par_set_polarity(LCD_IF_TypeDef *lcd, uint32_t vst_pol,
-						uint32_t vck_pol, uint32_t hst_pol,
-						uint32_t hck_pol, uint32_t enb_pol)
+        uint32_t vck_pol, uint32_t hst_pol,
+        uint32_t hck_pol, uint32_t enb_pol)
 {
-	MODIFY_REG(lcd->JDI_PAR_CTRL,
-		   LCD_IF_JDI_PAR_CTRL_VSTPOL | LCD_IF_JDI_PAR_CTRL_VCKPOL |
-			   LCD_IF_JDI_PAR_CTRL_HSTPOL | LCD_IF_JDI_PAR_CTRL_HCKPOL |
-			   LCD_IF_JDI_PAR_CTRL_ENBPOL,
-		   (vst_pol ? LCD_IF_JDI_PAR_CTRL_VSTPOL : 0UL) |
-		   (vck_pol ? LCD_IF_JDI_PAR_CTRL_VCKPOL : 0UL) |
-		   (hst_pol ? LCD_IF_JDI_PAR_CTRL_HSTPOL : 0UL) |
-		   (hck_pol ? LCD_IF_JDI_PAR_CTRL_HCKPOL : 0UL) |
-		   (enb_pol ? LCD_IF_JDI_PAR_CTRL_ENBPOL : 0UL));
+    MODIFY_REG(lcd->JDI_PAR_CTRL,
+               LCD_IF_JDI_PAR_CTRL_VSTPOL | LCD_IF_JDI_PAR_CTRL_VCKPOL |
+               LCD_IF_JDI_PAR_CTRL_HSTPOL | LCD_IF_JDI_PAR_CTRL_HCKPOL |
+               LCD_IF_JDI_PAR_CTRL_ENBPOL,
+               (vst_pol ? LCD_IF_JDI_PAR_CTRL_VSTPOL : 0UL) |
+               (vck_pol ? LCD_IF_JDI_PAR_CTRL_VCKPOL : 0UL) |
+               (hst_pol ? LCD_IF_JDI_PAR_CTRL_HSTPOL : 0UL) |
+               (hck_pol ? LCD_IF_JDI_PAR_CTRL_HCKPOL : 0UL) |
+               (enb_pol ? LCD_IF_JDI_PAR_CTRL_ENBPOL : 0UL));
 }
 
 /**
@@ -1570,8 +1607,8 @@ static inline void ll_lcdc_jdi_par_set_polarity(LCD_IF_TypeDef *lcd, uint32_t vs
  */
 static inline void ll_lcdc_jdi_par_set_xrst(LCD_IF_TypeDef *lcd, uint32_t xrst)
 {
-	MODIFY_REG(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_XRST,
-		   xrst ? LCD_IF_JDI_PAR_CTRL_XRST : 0UL);
+    MODIFY_REG(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_XRST,
+               xrst ? LCD_IF_JDI_PAR_CTRL_XRST : 0UL);
 }
 
 /**
@@ -1580,7 +1617,7 @@ static inline void ll_lcdc_jdi_par_set_xrst(LCD_IF_TypeDef *lcd, uint32_t xrst)
  */
 static inline void ll_lcdc_jdi_par_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_ENABLE);
+    SET_BIT(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_ENABLE);
 }
 
 /**
@@ -1589,7 +1626,7 @@ static inline void ll_lcdc_jdi_par_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_jdi_par_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_ENABLE);
+    CLEAR_BIT(lcd->JDI_PAR_CTRL, LCD_IF_JDI_PAR_CTRL_ENABLE);
 }
 
 /**
@@ -1599,7 +1636,7 @@ static inline void ll_lcdc_jdi_par_disable(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_get_vpos(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->JDI_PAR_STAT, LCD_IF_JDI_PAR_STAT_VPOS);
+    return GET_REG_VAL2(lcd->JDI_PAR_STAT, LCD_IF_JDI_PAR_STAT_VPOS);
 }
 
 /**
@@ -1609,7 +1646,7 @@ static inline uint32_t ll_lcdc_jdi_par_get_vpos(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_get_hpos(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->JDI_PAR_STAT, LCD_IF_JDI_PAR_STAT_HPOS);
+    return GET_REG_VAL2(lcd->JDI_PAR_STAT, LCD_IF_JDI_PAR_STAT_HPOS);
 }
 
 /**
@@ -1619,7 +1656,7 @@ static inline uint32_t ll_lcdc_jdi_par_get_hpos(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_get_vcom(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_VCOM);
+    return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_VCOM);
 }
 
 /**
@@ -1629,7 +1666,7 @@ static inline uint32_t ll_lcdc_jdi_par_get_vcom(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_get_frp(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_FRP);
+    return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_FRP);
 }
 
 /**
@@ -1639,7 +1676,7 @@ static inline uint32_t ll_lcdc_jdi_par_get_frp(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_jdi_par_get_xfrp(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_XFRP);
+    return READ_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_XFRP);
 }
 
 /**
@@ -1648,7 +1685,7 @@ static inline uint32_t ll_lcdc_jdi_par_get_xfrp(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_jdi_par_ext_cnt_enable(LCD_IF_TypeDef *lcd)
 {
-	SET_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_CNT_EN);
+    SET_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_CNT_EN);
 }
 
 /**
@@ -1657,7 +1694,7 @@ static inline void ll_lcdc_jdi_par_ext_cnt_enable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_jdi_par_ext_cnt_disable(LCD_IF_TypeDef *lcd)
 {
-	CLEAR_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_CNT_EN);
+    CLEAR_BIT(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_CNT_EN);
 }
 
 /**
@@ -1667,9 +1704,9 @@ static inline void ll_lcdc_jdi_par_ext_cnt_disable(LCD_IF_TypeDef *lcd)
  */
 static inline void ll_lcdc_jdi_par_set_ext_max_cnt(LCD_IF_TypeDef *lcd, uint32_t max_cnt)
 {
-	MODIFY_REG(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT,
-		   MAKE_REG_VAL(max_cnt, LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT_Msk,
-				LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT_Pos));
+    MODIFY_REG(lcd->JDI_PAR_EX_CTRL, LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT,
+               MAKE_REG_VAL(max_cnt, LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT_Msk,
+                            LCD_IF_JDI_PAR_EX_CTRL_MAX_CNT_Pos));
 }
 
 /**
@@ -1679,13 +1716,13 @@ static inline void ll_lcdc_jdi_par_set_ext_max_cnt(LCD_IF_TypeDef *lcd, uint32_t
  * @param[in] enb_end_col ENB end column (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_enb_col(LCD_IF_TypeDef *lcd, uint32_t enb_st_col,
-					       uint32_t enb_end_col)
+        uint32_t enb_end_col)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF8,
-		  MAKE_REG_VAL(enb_st_col, LCD_IF_JDI_PAR_CONF8_ENB_ST_COL_Msk,
-			       LCD_IF_JDI_PAR_CONF8_ENB_ST_COL_Pos) |
-		  MAKE_REG_VAL(enb_end_col, LCD_IF_JDI_PAR_CONF8_ENB_END_COL_Msk,
-			       LCD_IF_JDI_PAR_CONF8_ENB_END_COL_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF8,
+              MAKE_REG_VAL(enb_st_col, LCD_IF_JDI_PAR_CONF8_ENB_ST_COL_Msk,
+                           LCD_IF_JDI_PAR_CONF8_ENB_ST_COL_Pos) |
+              MAKE_REG_VAL(enb_end_col, LCD_IF_JDI_PAR_CONF8_ENB_END_COL_Msk,
+                           LCD_IF_JDI_PAR_CONF8_ENB_END_COL_Pos));
 }
 
 /**
@@ -1695,13 +1732,13 @@ static inline void ll_lcdc_jdi_par_set_enb_col(LCD_IF_TypeDef *lcd, uint32_t enb
  * @param[in] enb_end_line ENB end line (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_enb_line(LCD_IF_TypeDef *lcd, uint32_t enb_st_line,
-						uint32_t enb_end_line)
+        uint32_t enb_end_line)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF9,
-		  MAKE_REG_VAL(enb_st_line, LCD_IF_JDI_PAR_CONF9_ENB_ST_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF9_ENB_ST_LINE_Pos) |
-		  MAKE_REG_VAL(enb_end_line, LCD_IF_JDI_PAR_CONF9_ENB_END_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF9_ENB_END_LINE_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF9,
+              MAKE_REG_VAL(enb_st_line, LCD_IF_JDI_PAR_CONF9_ENB_ST_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF9_ENB_ST_LINE_Pos) |
+              MAKE_REG_VAL(enb_end_line, LCD_IF_JDI_PAR_CONF9_ENB_END_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF9_ENB_END_LINE_Pos));
 }
 
 /**
@@ -1711,13 +1748,13 @@ static inline void ll_lcdc_jdi_par_set_enb_line(LCD_IF_TypeDef *lcd, uint32_t en
  * @param[in] hc_end_line HC end line (16 bits).
  */
 static inline void ll_lcdc_jdi_par_set_hc_line(LCD_IF_TypeDef *lcd, uint32_t hc_st_line,
-					       uint32_t hc_end_line)
+        uint32_t hc_end_line)
 {
-	WRITE_REG(lcd->JDI_PAR_CONF10,
-		  MAKE_REG_VAL(hc_st_line, LCD_IF_JDI_PAR_CONF10_HC_ST_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF10_HC_ST_LINE_Pos) |
-		  MAKE_REG_VAL(hc_end_line, LCD_IF_JDI_PAR_CONF10_HC_END_LINE_Msk,
-			       LCD_IF_JDI_PAR_CONF10_HC_END_LINE_Pos));
+    WRITE_REG(lcd->JDI_PAR_CONF10,
+              MAKE_REG_VAL(hc_st_line, LCD_IF_JDI_PAR_CONF10_HC_ST_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF10_HC_ST_LINE_Pos) |
+              MAKE_REG_VAL(hc_end_line, LCD_IF_JDI_PAR_CONF10_HC_END_LINE_Msk,
+                           LCD_IF_JDI_PAR_CONF10_HC_END_LINE_Pos));
 }
 
 /**
@@ -1727,7 +1764,7 @@ static inline void ll_lcdc_jdi_par_set_hc_line(LCD_IF_TypeDef *lcd, uint32_t hc_
  */
 static inline uint32_t ll_lcdc_get_canvas_y(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT0, LCD_IF_CANVAS_STAT0_Y_COR);
+    return GET_REG_VAL2(lcd->CANVAS_STAT0, LCD_IF_CANVAS_STAT0_Y_COR);
 }
 
 /*==============================================================================
@@ -1742,7 +1779,7 @@ static inline uint32_t ll_lcdc_get_canvas_y(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_canvas_x(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT0, LCD_IF_CANVAS_STAT0_X_COR);
+    return GET_REG_VAL2(lcd->CANVAS_STAT0, LCD_IF_CANVAS_STAT0_X_COR);
 }
 
 /**
@@ -1752,7 +1789,7 @@ static inline uint32_t ll_lcdc_get_canvas_x(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_canvas_fetch_stat(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_FETCH_STAT);
+    return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_FETCH_STAT);
 }
 
 /**
@@ -1762,7 +1799,7 @@ static inline uint32_t ll_lcdc_get_canvas_fetch_stat(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_canvas_prec_stat(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_PREC_STAT);
+    return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_PREC_STAT);
 }
 
 /**
@@ -1772,7 +1809,7 @@ static inline uint32_t ll_lcdc_get_canvas_prec_stat(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_canvas_postc_stat(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_POSTC_STAT);
+    return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_POSTC_STAT);
 }
 
 /**
@@ -1782,7 +1819,7 @@ static inline uint32_t ll_lcdc_get_canvas_postc_stat(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_canvas_fifo_cnt(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_FIFO_CNT);
+    return GET_REG_VAL2(lcd->CANVAS_STAT1, LCD_IF_CANVAS_STAT1_FIFO_CNT);
 }
 
 /**
@@ -1792,7 +1829,7 @@ static inline uint32_t ll_lcdc_get_canvas_fifo_cnt(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_sc_lb0(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB0);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB0);
 }
 
 /**
@@ -1802,7 +1839,7 @@ static inline uint32_t ll_lcdc_get_ol0_sc_lb0(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_sc_lb1(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB1);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_LB1);
 }
 
 /**
@@ -1812,7 +1849,7 @@ static inline uint32_t ll_lcdc_get_ol0_sc_lb1(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_sc_fe(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_FE);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_FE);
 }
 
 /**
@@ -1822,7 +1859,7 @@ static inline uint32_t ll_lcdc_get_ol0_sc_fe(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_sc_be(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_BE);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_BE);
 }
 
 /**
@@ -1832,7 +1869,7 @@ static inline uint32_t ll_lcdc_get_ol0_sc_be(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_sc_out(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_OUT);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_SC_OUT);
 }
 
 /**
@@ -1842,7 +1879,7 @@ static inline uint32_t ll_lcdc_get_ol0_sc_out(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_pf_pr(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PF_PR);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PF_PR);
 }
 
 /**
@@ -1852,7 +1889,7 @@ static inline uint32_t ll_lcdc_get_ol0_pf_pr(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_pf_df(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PF_DF);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PF_DF);
 }
 
 /**
@@ -1862,7 +1899,7 @@ static inline uint32_t ll_lcdc_get_ol0_pf_df(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_data_conv(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_DATA_CONV);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_DATA_CONV);
 }
 
 /**
@@ -1872,7 +1909,7 @@ static inline uint32_t ll_lcdc_get_ol0_data_conv(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_prefetch_read(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PREFETCH_READ);
+    return GET_REG_VAL2(lcd->OL0_STAT, LCD_IF_OL0_STAT_PREFETCH_READ);
 }
 
 /**
@@ -1882,7 +1919,7 @@ static inline uint32_t ll_lcdc_get_ol0_prefetch_read(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_prefetch_out(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->OL0_STAT, LCD_IF_OL0_STAT_PREFETCH_OUT);
+    return READ_BIT(lcd->OL0_STAT, LCD_IF_OL0_STAT_PREFETCH_OUT);
 }
 
 /**
@@ -1892,7 +1929,7 @@ static inline uint32_t ll_lcdc_get_ol0_prefetch_out(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol0_done_req(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->OL0_STAT, LCD_IF_OL0_STAT_DONE_REQ);
+    return READ_BIT(lcd->OL0_STAT, LCD_IF_OL0_STAT_DONE_REQ);
 }
 
 /**
@@ -1902,7 +1939,7 @@ static inline uint32_t ll_lcdc_get_ol0_done_req(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_pf_pr(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PF_PR);
+    return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PF_PR);
 }
 
 /**
@@ -1912,7 +1949,7 @@ static inline uint32_t ll_lcdc_get_ol1_pf_pr(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_pf_df(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PF_DF);
+    return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PF_DF);
 }
 
 /**
@@ -1922,7 +1959,7 @@ static inline uint32_t ll_lcdc_get_ol1_pf_df(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_data_conv(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_DATA_CONV);
+    return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_DATA_CONV);
 }
 
 /**
@@ -1932,7 +1969,7 @@ static inline uint32_t ll_lcdc_get_ol1_data_conv(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_prefetch_read(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PREFETCH_READ);
+    return GET_REG_VAL2(lcd->OL1_STAT, LCD_IF_OL1_STAT_PREFETCH_READ);
 }
 
 /**
@@ -1942,7 +1979,7 @@ static inline uint32_t ll_lcdc_get_ol1_prefetch_read(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_prefetch_out(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->OL1_STAT, LCD_IF_OL1_STAT_PREFETCH_OUT);
+    return READ_BIT(lcd->OL1_STAT, LCD_IF_OL1_STAT_PREFETCH_OUT);
 }
 
 /**
@@ -1952,7 +1989,7 @@ static inline uint32_t ll_lcdc_get_ol1_prefetch_out(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_ol1_done_req(LCD_IF_TypeDef *lcd)
 {
-	return READ_BIT(lcd->OL1_STAT, LCD_IF_OL1_STAT_DONE_REQ);
+    return READ_BIT(lcd->OL1_STAT, LCD_IF_OL1_STAT_DONE_REQ);
 }
 
 /**
@@ -1962,7 +1999,7 @@ static inline uint32_t ll_lcdc_get_ol1_done_req(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_mem_if_arb_main(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_MAIN);
+    return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_MAIN);
 }
 
 /**
@@ -1972,7 +2009,7 @@ static inline uint32_t ll_lcdc_get_mem_if_arb_main(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_mem_if_arb_read_port(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_READ_PORT);
+    return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_ARB_READ_PORT);
 }
 
 /**
@@ -1982,7 +2019,7 @@ static inline uint32_t ll_lcdc_get_mem_if_arb_read_port(LCD_IF_TypeDef *lcd)
  */
 static inline uint32_t ll_lcdc_get_mem_if_ahb(LCD_IF_TypeDef *lcd)
 {
-	return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_AHB);
+    return GET_REG_VAL2(lcd->MEM_IF_STAT, LCD_IF_MEM_IF_STAT_AHB);
 }
 
 /*==============================================================================
@@ -1991,7 +2028,7 @@ static inline uint32_t ll_lcdc_get_mem_if_ahb(LCD_IF_TypeDef *lcd)
 
 static inline uint32_t ll_lcdc_get_perf_count(LCD_IF_TypeDef *lcd)
 {
-	return READ_REG(lcd->PERF_CNT);
+    return READ_REG(lcd->PERF_CNT);
 }
 
 #ifdef __cplusplus

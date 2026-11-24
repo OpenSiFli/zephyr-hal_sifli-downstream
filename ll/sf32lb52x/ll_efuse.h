@@ -9,8 +9,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "efusec.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,12 +41,12 @@ extern "C" {
 #define LL_EFUSE_BANK_WORD_COUNT (8UL)
 static inline void ll_efuse_enable_interrupt(EFUSEC_TypeDef *efuse)
 {
-	SET_BIT(efuse->CR, EFUSEC_CR_IE);
+    SET_BIT(efuse->CR, EFUSEC_CR_IE);
 }
 
 static inline void ll_efuse_disable_interrupt(EFUSEC_TypeDef *efuse)
 {
-	CLEAR_BIT(efuse->CR, EFUSEC_CR_IE);
+    CLEAR_BIT(efuse->CR, EFUSEC_CR_IE);
 }
 
 /**
@@ -55,8 +54,8 @@ static inline void ll_efuse_disable_interrupt(EFUSEC_TypeDef *efuse)
  */
 static inline void ll_efuse_set_bank(EFUSEC_TypeDef *efuse, uint32_t bank)
 {
-	MODIFY_REG(efuse->CR, EFUSEC_CR_BANKSEL,
-		   MAKE_REG_VAL(bank, EFUSEC_CR_BANKSEL_Msk, EFUSEC_CR_BANKSEL_Pos));
+    MODIFY_REG(efuse->CR, EFUSEC_CR_BANKSEL,
+               MAKE_REG_VAL(bank, EFUSEC_CR_BANKSEL_Msk, EFUSEC_CR_BANKSEL_Pos));
 }
 
 /**
@@ -64,8 +63,8 @@ static inline void ll_efuse_set_bank(EFUSEC_TypeDef *efuse, uint32_t bank)
  */
 static inline void ll_efuse_set_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
 {
-	MODIFY_REG(efuse->CR, EFUSEC_CR_MODE,
-		   MAKE_REG_VAL(mode, EFUSEC_CR_MODE_Msk, EFUSEC_CR_MODE_Pos));
+    MODIFY_REG(efuse->CR, EFUSEC_CR_MODE,
+               MAKE_REG_VAL(mode, EFUSEC_CR_MODE_Msk, EFUSEC_CR_MODE_Pos));
 }
 
 /*==============================================================================
@@ -79,7 +78,7 @@ static inline void ll_efuse_set_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
  */
 static inline void ll_efuse_start(EFUSEC_TypeDef *efuse)
 {
-	SET_BIT(efuse->CR, EFUSEC_CR_EN);
+    SET_BIT(efuse->CR, EFUSEC_CR_EN);
 }
 
 /*==============================================================================
@@ -93,12 +92,12 @@ static inline void ll_efuse_start(EFUSEC_TypeDef *efuse)
  * @param tckhp  Clock high pulse
  */
 static inline void ll_efuse_set_timing(EFUSEC_TypeDef *efuse, uint32_t thrck, uint32_t thpck,
-				       uint32_t tckhp)
+                                       uint32_t tckhp)
 {
-	WRITE_REG(efuse->TIMR,
-		  MAKE_REG_VAL(thrck, EFUSEC_TIMR_THRCK_Msk, EFUSEC_TIMR_THRCK_Pos) |
-		  MAKE_REG_VAL(thpck, EFUSEC_TIMR_THPCK_Msk, EFUSEC_TIMR_THPCK_Pos) |
-		  MAKE_REG_VAL(tckhp, EFUSEC_TIMR_TCKHP_Msk, EFUSEC_TIMR_TCKHP_Pos));
+    WRITE_REG(efuse->TIMR,
+              MAKE_REG_VAL(thrck, EFUSEC_TIMR_THRCK_Msk, EFUSEC_TIMR_THRCK_Pos) |
+              MAKE_REG_VAL(thpck, EFUSEC_TIMR_THPCK_Msk, EFUSEC_TIMR_THPCK_Pos) |
+              MAKE_REG_VAL(tckhp, EFUSEC_TIMR_TCKHP_Msk, EFUSEC_TIMR_TCKHP_Pos));
 }
 
 /*==============================================================================
@@ -107,7 +106,7 @@ static inline void ll_efuse_set_timing(EFUSEC_TypeDef *efuse, uint32_t thrck, ui
 
 static inline uint32_t ll_efuse_is_done(EFUSEC_TypeDef *efuse)
 {
-	return READ_BIT(efuse->SR, EFUSEC_SR_DONE) ? 1UL : 0UL;
+    return READ_BIT(efuse->SR, EFUSEC_SR_DONE) ? 1UL : 0UL;
 }
 
 /**
@@ -116,7 +115,7 @@ static inline uint32_t ll_efuse_is_done(EFUSEC_TypeDef *efuse)
  */
 static inline void ll_efuse_clear_done(EFUSEC_TypeDef *efuse)
 {
-	WRITE_REG(efuse->SR, EFUSEC_SR_DONE);
+    WRITE_REG(efuse->SR, EFUSEC_SR_DONE);
 }
 
 /*==============================================================================
@@ -130,10 +129,11 @@ static inline void ll_efuse_clear_done(EFUSEC_TypeDef *efuse)
  */
 static inline void ll_efuse_set_program_data(EFUSEC_TypeDef *efuse, uint32_t idx, uint32_t val)
 {
-	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
-	if (idx < 8U) {
-		pgm_regs[idx] = val;
-	}
+    volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
+    if (idx < 8U)
+    {
+        pgm_regs[idx] = val;
+    }
 }
 
 /**
@@ -141,16 +141,18 @@ static inline void ll_efuse_set_program_data(EFUSEC_TypeDef *efuse, uint32_t idx
  */
 static inline void ll_efuse_set_program_data_all(EFUSEC_TypeDef *efuse, const uint32_t *data)
 {
-	volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
-	uint32_t idx;
+    volatile uint32_t *pgm_regs = &efuse->PGM_DATA0;
+    uint32_t idx;
 
-	if (data == NULL) {
-		return;
-	}
+    if (data == NULL)
+    {
+        return;
+    }
 
-	for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++) {
-		pgm_regs[idx] = data[idx];
-	}
+    for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++)
+    {
+        pgm_regs[idx] = data[idx];
+    }
 }
 
 /*==============================================================================
@@ -168,16 +170,17 @@ static inline void ll_efuse_set_program_data_all(EFUSEC_TypeDef *efuse, const ui
  */
 static inline uint32_t ll_efuse_read_word(EFUSEC_TypeDef *efuse, uint32_t bank, uint32_t idx)
 {
-	volatile uint32_t *data_reg;
+    volatile uint32_t *data_reg;
 
-	if ((bank >= LL_EFUSE_BANK_COUNT) || (idx >= LL_EFUSE_BANK_WORD_COUNT)) {
-		return 0UL;
-	}
+    if ((bank >= LL_EFUSE_BANK_COUNT) || (idx >= LL_EFUSE_BANK_WORD_COUNT))
+    {
+        return 0UL;
+    }
 
-	data_reg =
-		(volatile uint32_t *)((uintptr_t)efuse + offsetof(EFUSEC_TypeDef, BANK0_DATA0) +
-				      ((bank * LL_EFUSE_BANK_WORD_COUNT + idx) * sizeof(uint32_t)));
-	return READ_REG(*data_reg);
+    data_reg =
+        (volatile uint32_t *)((uintptr_t)efuse + offsetof(EFUSEC_TypeDef, BANK0_DATA0) +
+                              ((bank * LL_EFUSE_BANK_WORD_COUNT + idx) * sizeof(uint32_t)));
+    return READ_REG(*data_reg);
 }
 
 /**
@@ -191,17 +194,19 @@ static inline uint32_t ll_efuse_read_word(EFUSEC_TypeDef *efuse, uint32_t bank, 
  */
 static inline uint32_t ll_efuse_read_bank(EFUSEC_TypeDef *efuse, uint32_t bank, uint32_t *buf)
 {
-	uint32_t idx;
+    uint32_t idx;
 
-	if ((bank >= LL_EFUSE_BANK_COUNT) || (buf == NULL)) {
-		return 0UL;
-	}
+    if ((bank >= LL_EFUSE_BANK_COUNT) || (buf == NULL))
+    {
+        return 0UL;
+    }
 
-	for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++) {
-		buf[idx] = ll_efuse_read_word(efuse, bank, idx);
-	}
+    for (idx = 0U; idx < LL_EFUSE_BANK_WORD_COUNT; idx++)
+    {
+        buf[idx] = ll_efuse_read_word(efuse, bank, idx);
+    }
 
-	return 1UL;
+    return 1UL;
 }
 
 /**
@@ -215,9 +220,9 @@ static inline uint32_t ll_efuse_read_bank(EFUSEC_TypeDef *efuse, uint32_t bank, 
  */
 static inline uint32_t ll_efuse_read_word_at(EFUSEC_TypeDef *efuse, uint32_t offset)
 {
-        volatile uint32_t *data_reg = (volatile uint32_t *)((uintptr_t)efuse + offset);
+    volatile uint32_t *data_reg = (volatile uint32_t *)((uintptr_t)efuse + offset);
 
-        return READ_REG(*data_reg);
+    return READ_REG(*data_reg);
 }
 
 /**
@@ -227,8 +232,8 @@ static inline uint32_t ll_efuse_read_word_at(EFUSEC_TypeDef *efuse, uint32_t off
  */
 static inline uint32_t ll_efuse_get_anacr_reserve1(EFUSEC_TypeDef *efuse)
 {
-	return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE1) >>
-	       EFUSEC_ANACR_RESERVE1_Pos;
+    return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE1) >>
+           EFUSEC_ANACR_RESERVE1_Pos;
 }
 
 /**
@@ -238,9 +243,9 @@ static inline uint32_t ll_efuse_get_anacr_reserve1(EFUSEC_TypeDef *efuse)
  */
 static inline void ll_efuse_set_anacr_reserve0(EFUSEC_TypeDef *efuse, uint32_t value)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_RESERVE0,
-		   MAKE_REG_VAL(value, EFUSEC_ANACR_RESERVE0_Msk,
-				EFUSEC_ANACR_RESERVE0_Pos));
+    MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_RESERVE0,
+               MAKE_REG_VAL(value, EFUSEC_ANACR_RESERVE0_Msk,
+                            EFUSEC_ANACR_RESERVE0_Pos));
 }
 
 /**
@@ -250,8 +255,8 @@ static inline void ll_efuse_set_anacr_reserve0(EFUSEC_TypeDef *efuse, uint32_t v
  */
 static inline uint32_t ll_efuse_get_anacr_reserve0(EFUSEC_TypeDef *efuse)
 {
-	return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE0) >>
-	       EFUSEC_ANACR_RESERVE0_Pos;
+    return (READ_REG(efuse->ANACR) & EFUSEC_ANACR_RESERVE0) >>
+           EFUSEC_ANACR_RESERVE0_Pos;
 }
 
 /**
@@ -261,8 +266,8 @@ static inline uint32_t ll_efuse_get_anacr_reserve0(EFUSEC_TypeDef *efuse)
  */
 static inline void ll_efuse_set_anacr_ldo_dc_trim(EFUSEC_TypeDef *efuse, uint32_t tr)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_DC_TR,
-		   MAKE_REG_VAL(tr, EFUSEC_ANACR_LDO_DC_TR_Msk, EFUSEC_ANACR_LDO_DC_TR_Pos));
+    MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_DC_TR,
+               MAKE_REG_VAL(tr, EFUSEC_ANACR_LDO_DC_TR_Msk, EFUSEC_ANACR_LDO_DC_TR_Pos));
 }
 
 /**
@@ -272,8 +277,8 @@ static inline void ll_efuse_set_anacr_ldo_dc_trim(EFUSEC_TypeDef *efuse, uint32_
  */
 static inline void ll_efuse_set_anacr_ldo_mode(EFUSEC_TypeDef *efuse, uint32_t mode)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_MODE,
-		   MAKE_REG_VAL(mode, EFUSEC_ANACR_LDO_MODE_Msk, EFUSEC_ANACR_LDO_MODE_Pos));
+    MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_MODE,
+               MAKE_REG_VAL(mode, EFUSEC_ANACR_LDO_MODE_Msk, EFUSEC_ANACR_LDO_MODE_Pos));
 }
 
 /**
@@ -283,8 +288,8 @@ static inline void ll_efuse_set_anacr_ldo_mode(EFUSEC_TypeDef *efuse, uint32_t m
  */
 static inline void ll_efuse_set_anacr_ldo_vref(EFUSEC_TypeDef *efuse, uint32_t sel)
 {
-	MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_VREF_SEL,
-		   MAKE_REG_VAL(sel, EFUSEC_ANACR_LDO_VREF_SEL_Msk, EFUSEC_ANACR_LDO_VREF_SEL_Pos));
+    MODIFY_REG(efuse->ANACR, EFUSEC_ANACR_LDO_VREF_SEL,
+               MAKE_REG_VAL(sel, EFUSEC_ANACR_LDO_VREF_SEL_Msk, EFUSEC_ANACR_LDO_VREF_SEL_Pos));
 }
 
 /**
@@ -294,7 +299,7 @@ static inline void ll_efuse_set_anacr_ldo_vref(EFUSEC_TypeDef *efuse, uint32_t s
  */
 static inline void ll_efuse_set_anacr_ldo_enable(EFUSEC_TypeDef *efuse, uint32_t en)
 {
-	en ? SET_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN) : CLEAR_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN);
+    en ? SET_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN) : CLEAR_BIT(efuse->ANACR, EFUSEC_ANACR_LDO_EN);
 }
 
 #ifdef __cplusplus

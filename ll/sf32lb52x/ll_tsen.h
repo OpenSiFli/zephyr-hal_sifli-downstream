@@ -8,8 +8,7 @@
 #define __LL_TSEN_H
 
 #include <stdint.h>
-#include "tsen.h"
-#include "cmsis_utils.h"
+#include "register.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,9 +23,9 @@ extern "C" {
  */
 static inline void ll_tsen_set_clock_div(TSEN_TypeDef *tsen, uint32_t div)
 {
-	MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV,
-		   MAKE_REG_VAL(div, TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV_Msk,
-				TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV_Pos));
+    MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV,
+               MAKE_REG_VAL(div, TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV_Msk,
+                            TSEN_TSEN_CTRL_REG_ANAU_TSEN_CLK_DIV_Pos));
 }
 
 /**
@@ -53,7 +52,7 @@ static inline void ll_tsen_set_clock_div(TSEN_TypeDef *tsen, uint32_t div)
  */
 static inline void ll_tsen_enable(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_EN);
+    SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_EN);
 }
 
 /**
@@ -62,7 +61,7 @@ static inline void ll_tsen_enable(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_disable(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_EN);
+    CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_EN);
 }
 
 /**
@@ -72,7 +71,7 @@ static inline void ll_tsen_disable(TSEN_TypeDef *tsen)
  */
 static inline uint32_t ll_tsen_is_ready(TSEN_TypeDef *tsen)
 {
-	return READ_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RDY) ? 1UL : 0UL;
+    return READ_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RDY) ? 1UL : 0UL;
 }
 
 /**
@@ -82,9 +81,9 @@ static inline uint32_t ll_tsen_is_ready(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_set_sd_mode(TSEN_TypeDef *tsen, uint32_t mode)
 {
-	MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL,
-		   MAKE_REG_VAL(mode, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL_Msk,
-				TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL_Pos));
+    MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL,
+               MAKE_REG_VAL(mode, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL_Msk,
+                            TSEN_TSEN_CTRL_REG_ANAU_TSEN_SER_PAR_SEL_Pos));
 }
 
 /**
@@ -93,7 +92,7 @@ static inline void ll_tsen_set_sd_mode(TSEN_TypeDef *tsen, uint32_t mode)
  */
 static inline void ll_tsen_sd_enable(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
+    SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
 }
 
 /**
@@ -102,7 +101,7 @@ static inline void ll_tsen_sd_enable(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_sd_disable(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
+    CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_SGN_EN);
 }
 
 /**
@@ -112,9 +111,9 @@ static inline void ll_tsen_sd_disable(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_set_fck_sel(TSEN_TypeDef *tsen, uint32_t sel)
 {
-	MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL,
-		   MAKE_REG_VAL(sel, TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL_Msk,
-				TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL_Pos));
+    MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL,
+               MAKE_REG_VAL(sel, TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL_Msk,
+                            TSEN_TSEN_CTRL_REG_ANAU_TSEN_FCK_SEL_Pos));
 }
 
 /*==============================================================================
@@ -128,9 +127,9 @@ static inline void ll_tsen_set_fck_sel(TSEN_TypeDef *tsen, uint32_t sel)
  */
 static inline void ll_tsen_set_bias_current(TSEN_TypeDef *tsen, uint32_t ig_vbe)
 {
-	MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE,
-		   MAKE_REG_VAL(ig_vbe, TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE_Msk,
-				TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE_Pos));
+    MODIFY_REG(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE,
+               MAKE_REG_VAL(ig_vbe, TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE_Msk,
+                            TSEN_TSEN_CTRL_REG_ANAU_TSEN_IG_VBE_Pos));
 }
 
 /*==============================================================================
@@ -143,7 +142,7 @@ static inline void ll_tsen_set_bias_current(TSEN_TypeDef *tsen, uint32_t ig_vbe)
  */
 static inline void ll_tsen_start(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RUN);
+    SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RUN);
 }
 
 /**
@@ -152,7 +151,7 @@ static inline void ll_tsen_start(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_stop(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RUN);
+    CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RUN);
 }
 
 /**
@@ -161,7 +160,7 @@ static inline void ll_tsen_stop(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_release_reset(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RSTB);
+    SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RSTB);
 }
 
 /**
@@ -172,7 +171,7 @@ static inline void ll_tsen_release_reset(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_assert_reset(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RSTB);
+    CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_RSTB);
 }
 
 /**
@@ -181,7 +180,7 @@ static inline void ll_tsen_assert_reset(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_power_up(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_PU);
+    SET_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_PU);
 }
 
 /**
@@ -190,7 +189,7 @@ static inline void ll_tsen_power_up(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_power_down(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_PU);
+    CLEAR_BIT(tsen->TSEN_CTRL_REG, TSEN_TSEN_CTRL_REG_ANAU_TSEN_PU);
 }
 
 /*==============================================================================
@@ -204,7 +203,7 @@ static inline void ll_tsen_power_down(TSEN_TypeDef *tsen)
  */
 static inline uint16_t ll_tsen_read_data(TSEN_TypeDef *tsen)
 {
-	return (uint16_t)(READ_REG(tsen->TSEN_RDATA) & TSEN_TSEN_RDATA_TSEN_RDATA);
+    return (uint16_t)(READ_REG(tsen->TSEN_RDATA) & TSEN_TSEN_RDATA_TSEN_RDATA);
 }
 
 /**
@@ -214,7 +213,7 @@ static inline uint16_t ll_tsen_read_data(TSEN_TypeDef *tsen)
  */
 static inline uint32_t ll_tsen_get_interrupt_status(TSEN_TypeDef *tsen)
 {
-	return READ_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_ISR) ? 1UL : 0UL;
+    return READ_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_ISR) ? 1UL : 0UL;
 }
 
 /**
@@ -224,7 +223,7 @@ static inline uint32_t ll_tsen_get_interrupt_status(TSEN_TypeDef *tsen)
  */
 static inline uint32_t ll_tsen_get_interrupt_raw(TSEN_TypeDef *tsen)
 {
-	return READ_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IRSR) ? 1UL : 0UL;
+    return READ_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IRSR) ? 1UL : 0UL;
 }
 
 /*==============================================================================
@@ -239,7 +238,7 @@ static inline uint32_t ll_tsen_get_interrupt_raw(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_enable_interrupt(TSEN_TypeDef *tsen)
 {
-	CLEAR_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IMR);
+    CLEAR_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IMR);
 }
 
 /**
@@ -250,7 +249,7 @@ static inline void ll_tsen_enable_interrupt(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_disable_interrupt(TSEN_TypeDef *tsen)
 {
-	SET_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IMR);
+    SET_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_IMR);
 }
 
 /**
@@ -259,8 +258,8 @@ static inline void ll_tsen_disable_interrupt(TSEN_TypeDef *tsen)
  */
 static inline void ll_tsen_clear_interrupt(TSEN_TypeDef *tsen)
 {
-	/* ICR is rw1c: SET_BIT preserves the IMR mask bit in the same register. */
-	SET_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_ICR);
+    /* ICR is rw1c: SET_BIT preserves the IMR mask bit in the same register. */
+    SET_BIT(tsen->TSEN_IRQ, TSEN_TSEN_IRQ_TSEN_ICR);
 }
 
 #ifdef __cplusplus
